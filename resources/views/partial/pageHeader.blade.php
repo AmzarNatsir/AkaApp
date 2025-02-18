@@ -212,7 +212,12 @@
                     <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
                     <li><a href="letter-box.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
                     <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li>
-                    <li><a class="btn btn-pill btn-outline-primary btn-sm" href="login.html">Log Out</a></li>
+                    <li><a class="btn btn-pill btn-outline-primary btn-sm" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                      document.getElementById('logout-form').submit();">Log Out</a>
+                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                     </form>
+                    </li>
                 </ul>
             </li>
         </ul>
