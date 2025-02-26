@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Material;
 use App\Http\Requests\StoreMaterialRequest;
 use App\Http\Requests\UpdateMaterialRequest;
+use App\Models\BeliDetailModel;
 use App\Models\Merek;
 use App\Models\SatuanModel;
 use Illuminate\Http\RedirectResponse;
@@ -55,12 +56,12 @@ class MaterialController extends Controller
             $counter = $request->input('start') + 1;
             foreach($query as $r){
                 $material = '<div class="product-names">
-                                <div class="light-product-box"><a href="'.url(Storage::url('material/'.$r->gambar)).'" data-fancybox data-caption="'. $r->material.'"><img class="img-fluid" src="'.url(Storage::url('material/'.$r->gambar)).'" alt="headphones"></a></div>
+                                <div class="light-product-box"><a href="'.Storage::url('material/'.$r->gambar).'" data-fancybox data-caption="'. $r->material.'"><img class="img-fluid" src="'.Storage::url('material/'.$r->gambar).'" alt="headphones"></a></div>
                                 <p>'.$r->material.'</p>
                               </div>';
                 $btn2 = '<ul class="action">
                             <li class="edit"> <a href="'.url('material/edit',$r->id).'"><i class="icon-pencil-alt"></i></a></li>
-                            <li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete(this)"><i class="icon-trash"></i></a></li>
+                            <li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>
                         </ul>';
                 $Data['act'] = $btn2;
                 $Data['id'] =  $r->id;
@@ -228,11 +229,27 @@ class MaterialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Material $material): RedirectResponse
+    public function destroy($id)
     {
-        $material->delete();
-        return redirect()->route('material.index')
-                ->withSuccess('Material is deleted successfully.');
+        $checkUses = BeliDetailModel::where('material_id', $id)->count();
+        if($checkUses > 0) {
+            $success = false;
+            $message = "Data material yang dipilih tidak bisa dihapus. Data sudah terpakai.";
+        } else {
+            $execDelete = Material::find($id)->delete();
+            if($execDelete) {
+                $success = true;
+                $message = "Data material berhasil dihapus";
+            } else {
+                $success = false;
+                $message = "Data material gagal dihapus. Terdapat error";
+            }
+
+        }
+        return response()->json([
+            'success' => $success,
+            'message' => $message
+        ]);
     }
 
     public function del_image_folder($id)

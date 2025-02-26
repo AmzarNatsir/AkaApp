@@ -2,14 +2,18 @@
 
 use App\Http\Controllers\AgenVoucherController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\DistribusiMaterialController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MerekController;
+use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WilayahController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +31,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('auth.login');
 });
+
+// Route::get('/foo', function () {
+//     Artisan::call('storage:link');
+// });
 
 Auth::routes();
 
@@ -80,7 +88,7 @@ Route::group(["prefix" => "material"], function(){
     Route::put('update/{id}', [MaterialController::class, 'update'])->name('material.update');
     Route::get('list', [MaterialController::class, 'index'])->name('material.index');
     Route::get('getData', [MaterialController::class, 'getData'])->name('material.getData');
-
+    Route::get('destroy/{id}', [MaterialController::class, 'destroy'])->name('material.destroy');
     //control stok
     Route::get('kontrol', [MaterialController::class, 'kontrol'])->name('material.kontrol');
 });
@@ -112,6 +120,14 @@ Route::group(['prefix' => 'voucher'], function(){
     Route::get('edit/{id}', [VoucherController::class, 'edit'])->name('voucher.edit');
     Route::put('update/{id}', [VoucherController::class, 'update'])->name('voucher.update');
     Route::get('destroy/{id}', [VoucherController::class, 'destroy'])->name('voucher.destroy');
+
+    //distribusi
+    Route::get('distribusi', [VoucherController::class, 'distribusi'])->name('voucher.distribusi');
+    Route::get('distribusi/load_form/{bulan}/{tahun}/{agen}', [VoucherController::class, 'load_form_pengaturan'])->name('voucher.distribusi.load_form_pengaturan');
+    Route::post('distribusi/store', [VoucherController::class, 'distribusi_store'])->name('voucher.distribusi.store');
+    //penjualan
+    Route::get('penjualan', [VoucherController::class, 'penjualan'])->name('voucher.penjualan');
+    Route::get('penjualan/load_form/{bulan}/{tahun}/{agen}', [VoucherController::class, 'load_form_data_agen_voucher'])->name('voucher.penjualan.load_form_voucher_agen');
 });
 Route::group(['prefix' => 'agen'], function(){
     Route::get('list', [AgenVoucherController::class, 'list'])->name('agen.list');
@@ -121,4 +137,40 @@ Route::group(['prefix' => 'agen'], function(){
     Route::get('edit/{id}', [AgenVoucherController::class, 'edit'])->name('agen.edit');
     Route::put('update/{id}', [AgenVoucherController::class, 'update'])->name('agen.update');
     Route::get('destroy/{id}', [AgenVoucherController::class, 'destroy'])->name('agen.destroy');
+});
+
+Route::group(['prefix' => 'petugas'], function(){
+    Route::get('list', [PetugasController::class, 'list'])->name('petugas.list');
+    Route::get('getData', [PetugasController::class, 'getData'])->name('petugas.getdata');
+    Route::get('create', [PetugasController::class, 'create'])->name('petugas.create');
+    Route::post('store', [PetugasController::class, 'store'])->name('petugas.store');
+    Route::get('edit/{id}', [PetugasController::class, 'edit'])->name('petugas.edit');
+    Route::put('update/{id}', [PetugasController::class, 'update'])->name('petugas.update');
+    Route::get('destroy/{id}', [PetugasController::class, 'destroy'])->name('petugas.destroy');
+});
+
+Route::group(['prefix' => 'distribusiMaterial'], function(){
+    Route::get('list', [DistribusiMaterialController::class, 'list'])->name('distribusiMaterial.list');
+    Route::get('getData', [DistribusiMaterialController::class, 'getData'])->name('distribusiMaterial.getdata');
+
+    // Route::get('create', [PetugasController::class, 'create'])->name('distribusiMaterial.create');
+    // Route::post('store', [PetugasController::class, 'store'])->name('distribusiMaterial.store');
+    // Route::get('edit/{id}', [PetugasController::class, 'edit'])->name('distribusiMaterial.edit');
+    // Route::put('update/{id}', [PetugasController::class, 'update'])->name('distribusiMaterial.update');
+    // Route::get('destroy/{id}', [PetugasController::class, 'destroy'])->name('distribusiMaterial.destroy');
+});
+
+Route::group(['prefix' => 'pemakaianMaterial'], function(){
+
+    Route::get('/', [PemakaianController::class, 'index'])->name('pemakaianMaterial.index');
+    Route::get('create/{gudang}', [PemakaianController::class, 'create'])->name('pemakaianMaterial.create');
+    Route::post('getItem', [PemakaianController::class, 'getItem'])->name('pemakaianMaterial.getItem');
+    Route::post('store', [PemakaianController::class, 'store'])->name('pemakaianMaterial.store');
+
+    Route::get('list', [PemakaianController::class, 'list'])->name('pemakaianMaterial.list');
+    Route::get('getData', [PemakaianController::class, 'getData'])->name('pemakaianMaterial.getdata');
+
+    // Route::get('edit/{id}', [PetugasController::class, 'edit'])->name('distribusiMaterial.edit');
+    // Route::put('update/{id}', [PetugasController::class, 'update'])->name('distribusiMaterial.update');
+    // Route::get('destroy/{id}', [PetugasController::class, 'destroy'])->name('distribusiMaterial.destroy');
 });

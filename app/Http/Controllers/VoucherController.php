@@ -2,12 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AgenVoucherModel;
+use App\Models\VoucherDetailModel;
+use App\Models\VoucherHeadModel;
 use App\Models\VoucherModel;
+use App\Traits\General;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class VoucherController extends Controller
 {
+    use General;
+    protected $dateTimeInsert;
+
+    function __construct()
+    {
+        $this->dateTimeInsert = date("Y-m-d H:s:i");
+    }
+
     public function list()
     {
         return view('voucher.list');
@@ -123,5 +136,151 @@ class VoucherController extends Controller
             ]);
         }
         return $rs;
+    }
+
+    //distribusi
+    public function distribusi()
+    {
+        $data = [
+            'list_bulan' => General::getListMonth(),
+            "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
+            'start_year' => 2024,
+            'end_year' => date('Y')
+        ];
+        return view('voucher.distribusi.index', $data);
+    }
+    public function load_form_pengaturan($bulan, $tahun, $agen)
+    {
+        $dataH  = VoucherHeadModel::where('agen_id', $agen)->where('bulan', $bulan)->where('tahun', $tahun)->get();
+        if($dataH->count()==0) {
+            $data = [
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'agen' => $agen,
+                "list_voucher" => VoucherModel::where('aktif', 'y')->orderBy('harga_modal')->get()
+            ];
+            return view('voucher.distribusi.form_pengaturan_baru', $data);
+        } else {
+            $data = [
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'agen' => $agen,
+                'head_id' => $dataH->first()->id,
+                'status_data' => $dataH->first()->status,
+                "list_distribusi" => VoucherDetailModel::where('head_id', $dataH->first()->id)->get()
+            ];
+            return view('voucher.distribusi.form_pengaturan_open', $data);
+        }
+
+    }
+    public function distribusi_store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if($request->postAction=="store")
+            {
+                $dataH = [
+                    "bulan" => $request->postBulan,
+                    "tahun" => $request->postTahun,
+                    "agen_id" => $request->postAgen,
+                    "status" => 'open',
+                    "user_id" => auth()->user()->id,
+                    "created_at" => $this->dateTimeInsert
+                ];
+                $lastID = VoucherHeadModel::insertGetId($dataH);
+                if($lastID) {
+                    $jml_item = count($request->inpVoucherID);
+                    foreach(array($request) as $key => $value)
+                    {
+                        for($i=0; $i<$jml_item; $i++)
+                        {
+                            $dataD = [
+                                "head_id" => $lastID,
+                                "voucher_id" => $value['inpVoucherID'][$i],
+                                "nama_voucher" => $value['inpVoucher'][$i],
+                                "harga_modal" => $value['inphargaModal'][$i],
+                                "harga_jual" => $value['inphargaJual'][$i],
+                                "stok_awal" => str_replace(",","", $value['inpStokAwal'][$i]),
+                                "created_at" => $this->dateTimeInsert
+                            ];
+
+                            VoucherDetailModel::insert($dataD);
+                        }
+                    }
+                    DB::commit(); // Commit Transaction if everything is successful
+                    $rs = response()->json([
+                        'success' => true,
+                        'message' => "Pengaturan distribusi voucher agen berhasil disimpan"
+                    ]);
+                } else {
+                    DB::rollBack(); // Rollback on error
+                    $rs = response()->json([
+                        'success' => false,
+                        'message' => "Terdapat error pada proses penyimpanan data"
+                    ]);
+                }
+            }
+
+            if($request->postAction=="update")
+            {
+                $jml_item = count($request->idDetail);
+                foreach(array($request) as $key => $value)
+                {
+                    for($i=0; $i<$jml_item; $i++)
+                    {
+                        $idDetail = $value['idDetail'][$i];
+                        $dataUpdate = [
+                            "stok_awal" => str_replace(",","", $value['inpStokAwal'][$i]),
+                            "stok_tambahan" => str_replace(",","", $value['inpStokTambahan'][$i]),
+                            "updated_at" => $this->dateTimeInsert
+                        ];
+
+                        VoucherDetailModel::find($idDetail)->update($dataUpdate);
+                    }
+                }
+                DB::commit(); // Commit Transaction if everything is successful
+                $rs = response()->json([
+                    'success' => true,
+                    'message' => "Pengaturan distribusi voucher agen berhasil disimpan"
+                ]);
+            }
+
+        } catch (Throwable $e) {
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data ".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+
+    //penjualan
+    public function penjualan()
+    {
+        $data = [
+            'list_bulan' => General::getListMonth(),
+            "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
+            'start_year' => 2024,
+            'end_year' => date('Y')
+        ];
+        return view('voucher.penjualan.index', $data);
+    }
+    public function load_form_data_agen_voucher($bulan, $tahun, $agen)
+    {
+        $dataH  = VoucherHeadModel::where('agen_id', $agen)->where('bulan', $bulan)->where('tahun', $tahun)->get();
+        if($dataH->count()==0) {
+            return view('voucher.penjualan.data_empty');
+        } else {
+            $data = [
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'agen' => $agen,
+                'head_id' => $dataH->first()->id,
+                'status_data' => $dataH->first()->status,
+                "list_distribusi" => VoucherDetailModel::where('head_id', $dataH->first()->id)->get()
+            ];
+            return view('voucher.penjualan.form_penjualan', $data);
+        }
+
     }
 }

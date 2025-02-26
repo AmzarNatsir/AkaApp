@@ -44,7 +44,7 @@
             <li class="sidebar-main-title"><div><h6>Manajemen Data</h6></div></li>
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-project') }}"></use></svg>
-                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-project') }}"></use></svg><span>Authentication</span></a>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-project') }}"></use></svg><span>Pengguna</span></a>
                 <ul class="sidebar-submenu">
                 <li><a href="{{ route('roles.index') }}">Roles</a></li>
                 <li><a href="{{ route('users.index') }}">Users</a></li>
@@ -76,8 +76,12 @@
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"> </use></svg><span>Wilayah</span></a>
             </li>
+            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ route('petugas.list') }}">
+                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"> </use></svg><span>Petugas</span></a>
+            </li>
             <li class="sidebar-main-title">
-                <div><h6>Transaction</h6></div>
+                <div><h6>Transaksi</h6></div>
             </li>
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-ui-kits') }}"></use></svg>
@@ -94,29 +98,29 @@
                         <a class="submenu-title" href="#">Distribusi<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                         <ul class="nav-sub-childmenu submenu-content">
                             <li><a href="avatars.html">Baru</a></li>
-                            <li><a href="avatars.html">Daftar</a></li>
+                            <li><a href="{{ route('distribusiMaterial.list') }}">Daftar</a></li>
                         </ul>
                     </li>
                     <li>
                         <a class="submenu-title" href="#">Pemakaian<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                         <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="avatars.html">Baru</a></li>
-                            <li><a href="avatars.html">Daftar</a></li>
+                            <li><a href="{{ route('pemakaianMaterial.index') }}">Baru</a></li>
+                            <li><a href="{{ route('pemakaianMaterial.list') }}">Daftar</a></li>
                         </ul>
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-main-title">
+            {{-- <li class="sidebar-main-title">
                 <div><h6>AKANET</h6></div>
-            </li>
+            </li> --}}
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-bonus-kit') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-bonus-kit') }}"></use></svg><span>Voucher</span></a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('voucher.list') }}">Voucher</a></li>
                     <li><a href="{{ route('agen.list') }}">Agent</a></li>
-                    <li><a href="scrollable.html">Distribusi</a></li>
-                    <li><a href="scrollable.html">Penjualan</a></li>
+                    <li><a href="{{ route('voucher.distribusi') }}">Distribusi</a></li>
+                    <li><a href="{{ route('voucher.penjualan') }}">Penjualan</a></li>
                 </ul>
             </li>
         </ul>

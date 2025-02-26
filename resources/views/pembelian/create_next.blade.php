@@ -10,7 +10,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">
                         <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg></a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('material.index') }}">Daftar</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('pembelian.list') }}">Daftar</a></li>
                     <li class="breadcrumb-item active">Pembelian Baru</li>
                 </ol>
             </div>
