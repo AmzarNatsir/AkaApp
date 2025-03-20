@@ -17,6 +17,7 @@ class VoucherHeadModel extends Model
         "total_voucher",
         "total_modal",
         "total_laba",
+        "status_tagih",
         "user_id"
     ];
 

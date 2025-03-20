@@ -17,6 +17,10 @@ class BeliDetailModel extends Model
         "jumlah",
         "sub_total"
     ];
+    public function getHeader()
+    {
+        return $this->belongsTo(BeliHeaderModel::class, 'header_id', 'id');
+    }
 
     public function getMaterial()
     {

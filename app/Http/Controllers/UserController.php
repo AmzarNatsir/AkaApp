@@ -15,11 +15,11 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index','show']]);
-        $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+        // $this->middleware('auth');
+        // $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index','show']]);
+        // $this->middleware('permission:create-user', ['only' => ['create','store']]);
+        // $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+        // $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
@@ -88,7 +88,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest  $request, User $user): RedirectResponse
+    public function update(Request  $request, User $user): RedirectResponse
     {
         $input = $request->all();
 

@@ -124,7 +124,66 @@
         {
             $(el).val("0");
         }
+        getTerjual(el);
     }
+
+    var getTerjual = function(el)
+    {
+        var currentRow=$(el).closest("tr");
+        var current_stok_sisa = $(el).parent().parent().find('input[name="inpSisaStok[]"]').val();
+        var current_stok_awal = $(el).parent().parent().find('input[name="tempStokAwal[]"]').val();
+        var current_stok_tambahan = $(el).parent().parent().find('input[name="inpStokTambahan[]"]').val();
+        var current_harga_modal = $(el).parent().parent().find('input[name="inphargaModal[]"]').val();
+        var current_total_stok = parseFloat(current_stok_awal) + parseFloat(current_stok_tambahan);
+        var current_stok_terjual = parseFloat(current_total_stok) - parseFloat(current_stok_sisa);
+        var current_total_laba = parseFloat(current_harga_modal) * parseFloat(current_stok_terjual);
+
+
+        if(parseFloat(current_stok_sisa) > parseFloat(current_total_stok))
+        {
+            swal("Jumlah stok sisa tidak boleh > "+current_total_stok+" !", { icon: "error" });
+            $(el).parent().parent().find('input[name="inpSisaStok[]"]').val("0");
+            current_stok_terjual = current_total_stok;
+            current_total_laba = parseFloat(current_harga_modal) * parseFloat(current_total_stok);
+            // $(el).parent().parent().find('input[name="inpStokTerjual[]"]').val(current_stok_terjual);
+            // $(el).parent().parent().find('input[name="inpSubTotal[]"]').val(current_total_laba);
+            // return false;
+        }
+
+        $(el).parent().parent().find('input[name="inpStokTerjual[]"]').val(current_stok_terjual);
+        $(el).parent().parent().find('input[name="inpSubTotal[]"]').val(current_total_laba);
+        calculateTotalSisa();
+        calculateTotalTerjual();
+        calculateTotalLaba();
+    }
+
+    var calculateTotalSisa = function()
+    {
+        var total = 0;
+        $.each($('input[name="inpSisaStok[]"]'),function(key, value){
+            total += parseFloat($(value).val());
+        })
+        $("#inpTotalSisa").val(total);
+    }
+
+    var calculateTotalTerjual = function()
+    {
+        var total = 0;
+        $.each($('input[name="inpStokTerjual[]"]'),function(key, value){
+            total += parseFloat($(value).val());
+        })
+        $("#inpTotalTerjual").val(total);
+    }
+
+    var calculateTotalLaba = function()
+    {
+        var total = 0;
+        $.each($('input[name="inpSubTotal[]"]'),function(key, value){
+            total += parseFloat($(value).val());
+        })
+        $("#inpTotalLaba").val(total);
+    }
+
 
     document.querySelector('#createForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting
@@ -145,8 +204,8 @@
         }
         // alert($("#pilKategori").val());
         swal({
-            title: "Anda yakin menyimpan pengaturan ?",
-            text: "Pengaturan distribusi voucher !",
+            title: "Anda yakin menyimpan penjualan voucher ?",
+            text: "Realisasi penjualan voucher !",
             type: "warning",
             buttons: {
             confirm: {
@@ -161,7 +220,7 @@
         }).then((result) => {
             if (result==true) {
                 $.ajax({
-                    url: "{{ route('voucher.distribusi.store') }}", // Update this with your route
+                    url: "{{ route('voucher.penjualan.store') }}", // Update this with your route
                     type: "POST",
                     data: $(this).serialize(),
                     beforeSend: function()
@@ -176,10 +235,7 @@
                                 buttons: false,
                                 timer: 2000
                             }).then(() => {
-                                // location.replace("{{ route('voucher.distribusi') }}");
-                                $("#view_form").load("{{ url('voucher/distribusi/load_form') }}/"+pil_bulan+"/"+pil_tahun+"/"+pil_agen, function(){
-                                    $(".angka").number(true, 0);
-                                });
+                                location.replace("{{ route('voucher.penjualan') }}");
                             });
 
                         } else {

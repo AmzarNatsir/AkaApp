@@ -9,7 +9,7 @@
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
-    <title>Material Application</title>
+    <title>AKAGroup - Application</title>
     <!-- Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -41,14 +41,17 @@
         <div class="col-xl-7 p-0">
           <div class="login-card login-dark">
             <div>
-              <div><a class="logo text-start" href="index.html"> <img class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo.png') }}" alt="looginpage"><img class="img-fluid for-light" src="{{ asset('assets/images/logo/logo_dark.png') }}" alt="looginpage"></a></div>
+                <div><a class="logo text-start" href="javascript:void(0)">
+                    <img class="img-fluid for-dark" src="{{ asset('assets/images/akagroup/akagroup.png') }}" alt="looginpage">
+                    <img class="img-fluid for-light" src="{{ asset('assets/images/logo/logo_akagroup.png') }}" alt="looginpage" width="40%"></a>
+                </div>
               <div class="login-main">
                 <form class="theme-form" method="POST" action="{{ route('login') }}">
                 @csrf
-                  <h4>Sign in to account </h4>
-                  <p>Enter your email & password to login</p>
+                  <h4>Login </h4>
+                  <p>Masukkan email dan password anda!</p>
                   <div class="form-group">
-                    <label class="col-form-label">Email Address</label>
+                    <label class="col-form-label">Alamat Email</label>
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Test@gmail.com" autofocus>
                     @error('email')
                         <span class="invalid-feedback" role="alert">

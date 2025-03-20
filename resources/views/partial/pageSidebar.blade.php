@@ -1,4 +1,4 @@
-<div class="logo-wrapper"><a href="{{ route('home') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/logo.png') }}" alt=""></a>
+<div class="logo-wrapper"><a href="{{ route('home') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/akagroup.png') }}" style="width: 85%" alt=""></a>
     <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
     <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
 </div>
@@ -30,16 +30,17 @@
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-widget') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-widget') }}"></use></svg><span>Reports</span></a>
                 <ul class="sidebar-submenu">
-                    <li><a href="{{ route('home') }}">Coming Soon</a></li>
+                    <li><a href="{{ route('report.distribusiVoucher') }}">Distribusi Voucher</a></li>
+                    <li><a href="{{ route('report.penjualanVoucher') }}">Penjualan Voucher</a></li>
                 </ul>
             </li>
-            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
+            {{-- <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-layout') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-layout') }}"></use></svg><span>Summary</span></a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('home') }}">Coming Soon</a></li>
                 </ul>
-            </li>
+            </li> --}}
 
             <li class="sidebar-main-title"><div><h6>Manajemen Data</h6></div></li>
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
@@ -108,6 +109,13 @@
                             <li><a href="{{ route('pemakaianMaterial.list') }}">Daftar</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a class="submenu-title" href="#">Pengembalian<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                        <ul class="nav-sub-childmenu submenu-content">
+                            <li><a href="{{ route('pengembalian.material.index') }}">Baru</a></li>
+                            <li><a href="{{ route('pengembalian.material.list') }}">Daftar</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
             {{-- <li class="sidebar-main-title">
@@ -120,7 +128,15 @@
                     <li><a href="{{ route('voucher.list') }}">Voucher</a></li>
                     <li><a href="{{ route('agen.list') }}">Agent</a></li>
                     <li><a href="{{ route('voucher.distribusi') }}">Distribusi</a></li>
-                    <li><a href="{{ route('voucher.penjualan') }}">Penjualan</a></li>
+                    {{-- <li><a href="">Penjualan</a></li> --}}
+                    <li>
+                        <a class="submenu-title" href="#">Penjualan<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                        <ul class="nav-sub-childmenu submenu-content">
+                            <li><a href="{{ route('voucher.penjualan') }}">Baru</a></li>
+                            <li><a href="{{ route('voucher.penjualan.list') }}">Daftar</a></li>
+                        </ul>
+                    </li>
+
                 </ul>
             </li>
         </ul>

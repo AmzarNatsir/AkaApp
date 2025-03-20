@@ -4,21 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\CabangModel;
 use App\Models\Material;
-use App\Models\PemakaianDetailModel;
-use App\Models\PemakaianModel;
-use App\Models\PetugasModel;
-use App\Models\WilayahModel;
-use App\Traits\General;
-use App\Traits\GenerateNumber;
+use App\Models\PengembalianDetailModel;
+use App\Models\PengembalianModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Colors\Rgb\Channels\Red;
 use Throwable;
 
-class PemakaianController extends Controller
+class PengembalianMaterialController extends Controller
 {
-    use GenerateNumber;
-    use General;
     protected $dateTimeInsert;
 
     function __construct()
@@ -32,10 +25,10 @@ class PemakaianController extends Controller
             'gudang_utama' => Material::get()->sum('stok_akhir'),
             'list_cabang' => CabangModel::where('aktif', 'y')->get(),
         ];
-        return view('pemakaian.index', $data);
+        return view('pengembalian.material.index', $data);
     }
 
-    public function create($gudang)
+    public function baru($gudang)
     {
         if($gudang==1) {
             $list_material = Material::with(['getMerek'])->get();
@@ -43,10 +36,8 @@ class PemakaianController extends Controller
         $data = [
             'gudangID' => $gudang,
             'list_material' => $list_material,
-            'list_wilayah' => WilayahModel::all(),
-            'list_petugas' => PetugasModel::where('aktif', 'y')->get()
         ];
-        return view('pemakaian.create', $data);
+        return view('pengembalian.material.baru', $data);
     }
 
     public function getItem(Request $request)
@@ -64,15 +55,12 @@ class PemakaianController extends Controller
         try {
             $dataH = [
                 "tanggal" => $request->inpTanggal,
-                "kategori_id" => $request->pilKategori,
-                "wilayah_id" => $request->pilWilayah,
-                "petugas_id" => $request->pilPetugas,
                 "keterangan" => $request->inpKeterangan,
                 "user_id" => auth()->user()->id,
                 "gudang_id" => $request->gudangID,
                 "created_at" => $this->dateTimeInsert
             ];
-            $lastID = PemakaianModel::insertGetId($dataH);
+            $lastID = PengembalianModel::insertGetId($dataH);
             $jml_item = count($request->item_id_material);
             foreach(array($request) as $key => $value)
             {
@@ -82,16 +70,15 @@ class PemakaianController extends Controller
                         "head_id" => $lastID,
                         "material_id" => $value['item_id_material'][$i],
                         "jumlah" => $value['item_qty'][$i],
-                        "harga" => $value['current_harga'][$i],
                         "gudang_id" => $request->gudangID,
                         "created_at" => $this->dateTimeInsert
                     ];
-                    PemakaianDetailModel::insert($dataD);
+                    PengembalianDetailModel::insert($dataD);
                     //update stok
                     if($request->gudangID==1)
                     {
                         $updateStok = Material::find($value['item_id_material'][$i]);
-                        $updateStok->stok_akhir -= str_replace(",","", $value['item_qty'][$i]);
+                        $updateStok->stok_akhir += str_replace(",","", $value['item_qty'][$i]);
                         $updateStok->update();
                     }
                 }
@@ -100,29 +87,29 @@ class PemakaianController extends Controller
             DB::commit(); // Commit Transaction if everything is successful
             $rs = response()->json([
                 'success' => true,
-                'message' => "Data pemakaian material berhasil disimpan."
+                'message' => "Data pengembalian material berhasil disimpan."
             ]);
 
         } catch (Throwable $e) {
             $rs = response()->json([
                 'success' => false,
-                'message' => "Terdapat error pada proses penyimpanan data"
+                'message' => "Terdapat error pada proses penyimpanan data. ".$e->getMessage()
             ]);
         }
         return $rs;
     }
-    //list pemakaian
+
     public function list()
     {
-        return view("pemakaian.list");
+        return view("pengembalian.material.list");
     }
 
     public function getData(Request $request)
     {
         $columns = ['created_at'];
-        $totalData = PemakaianModel::count();
+        $totalData = PengembalianModel::count();
         $search = $request->input('search.value');
-        $query = PemakaianModel::with(['getWilayah', 'getPetugas']);
+        $query = PengembalianModel::select("*");
         if(!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->Where('tanggal', 'like', "%{$search}%");
@@ -139,13 +126,10 @@ class PemakaianController extends Controller
             $counter = $request->input('start') + 1;
             foreach($query as $r){
                 $btn = "<button type='button' class='btn btn-success btn-sm' id='btn_detail' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-eye'></i></button>";
-                $totalItem = PemakaianDetailModel::where('head_id', $r->id)->sum('jumlah');
+                $totalItem = PengembalianDetailModel::where('head_id', $r->id)->sum('jumlah');
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['tanggal'] =  $r->tanggal; // $r->material;
-                $Data['kategori'] =  $this->getKategori($r->kategori_id);
-                $Data['wilayah'] =  $r->getWilayah->wilayah;
-                $Data['petugas'] =  $r->getPetugas->nama_petugas;
                 $Data['keterangan'] =  $r->keterangan;
                 $Data['total'] =  "<span class='badge badge-success'>".$totalItem."</span>";
                 $Data['no'] = $counter;
@@ -163,30 +147,14 @@ class PemakaianController extends Controller
 
     public function detail($id)
     {
-        $resultH = PemakaianModel::with([
-            "getWilayah",
-            "getPetugas"
-        ])->find($id);
+        $resultH = PengembalianModel::find($id);
         $data = [
             "dataH" => $resultH,
-            'kategori_pemakaian' => General::get_kategori_pemakaian_material($resultH->kategori_id),
-            'dataD' => PemakaianDetailModel::with([
+            'dataD' => PengembalianDetailModel::with([
                 "getMaterial"
             ])->where('head_id', $id)->get()
         ];
-        return view("pemakaian.detail", $data);
+        return view("pengembalian.material.detail", $data);
     }
 
-    function getKategori($id)
-    {
-        $arr = array("1" => "Pemesangan Baru", "2" => "Pengembangan", "3" => "Maintanance - Perbaikan", "4" => "Maintanance - Penggantian");
-        foreach($arr as $key => $value)
-        {
-            if($key==$id)
-            {
-                return $value;
-                break;
-            }
-        }
-    }
 }

@@ -7,9 +7,9 @@
     </thead>
     <tbody>
         <tr>
-            <td colspan="4">
-                <div class="alert alert-warning dark" role="alert">
-                    <p>Data Kosong</p>
+            <td colspan="4" style="text-align: center">
+                <div class="alert alert-danger dark" role="alert">
+                    <p><b>Distribusi voucher belum dibuat!</b></p>
                 </div>
             </td>
         </tr>

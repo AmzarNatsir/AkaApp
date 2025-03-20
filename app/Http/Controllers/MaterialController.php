@@ -6,8 +6,14 @@ use App\Models\Material;
 use App\Http\Requests\StoreMaterialRequest;
 use App\Http\Requests\UpdateMaterialRequest;
 use App\Models\BeliDetailModel;
+use App\Models\BeliHeaderModel;
+use App\Models\CabangModel;
 use App\Models\Merek;
+use App\Models\PemakaianDetailModel;
+use App\Models\PengembalianDetailModel;
 use App\Models\SatuanModel;
+use App\Traits\General;
+use Generator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -18,6 +24,8 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class MaterialController extends Controller
 {
+    use General;
+
     public function __construct()
     {
        $this->middleware('auth');
@@ -66,8 +74,8 @@ class MaterialController extends Controller
                 $Data['act'] = $btn2;
                 $Data['id'] =  $r->id;
                 $Data['material'] =  $material; // $r->material;
-                $Data['merek'] =  $r->getMerek->merek;
-                $Data['satuan'] =  $r->getSatuan->satuan;
+                $Data['merek'] =  (empty($r->getMerek->merek)) ? "" : $r->getMerek->merek;
+                $Data['satuan'] =  (empty($r->getSatuan->satuan)) ? "" : $r->getSatuan->satuan;
                 $Data['jumlah'] =  $r->stok_akhir;
                 $Data['harga'] =  "Rp. ".number_format($r->harga_beli, 0);
                 $Data['no'] = $counter;
@@ -265,7 +273,47 @@ class MaterialController extends Controller
     //kontrol stok
     public function kontrol()
     {
-        return view('material.kontrol');
+        $data = [
+            'list_material' => Material::with([
+                'getMerek',
+                'getSatuan'
+            ])->get()
+        ];
+        return view('material.kontrol', $data);
     }
 
+    public function kontrol_get_data_material(Request $request)
+    {
+        $itemID = $request->itemID;
+        $dataMaterial = Material::with([
+            'getMerek',
+            'getSatuan'
+        ])->find($itemID);
+        $result_cabang = CabangModel::where('aktif', 'y')->get();
+        return response()->json([
+            "material" => $dataMaterial->material,
+            "material_keterangan" => $dataMaterial->deskripsi,
+            "material_merk" => (empty($dataMaterial->getMerek->merek)) ? "" : $dataMaterial->getMerek->merek,
+            "material_satuan" => (empty($dataMaterial->getSatuan->satuan)) ? "" : $dataMaterial->getSatuan->satuan,
+            "material_stok_awal" => $dataMaterial->stok_awal,
+            "material_stok_akhir" => $dataMaterial->stok_akhir,
+            'list_cabang' => $result_cabang,
+            'total_penerimaan' => BeliDetailModel::where('material_id', $itemID)->sum('jumlah'),
+            'total_pemakaian' => PemakaianDetailModel::where('material_id', $itemID)->sum('jumlah'),
+            'total_pengembalian' => PengembalianDetailModel::where('material_id', $itemID)->sum('jumlah')
+
+        ]);
+    }
+
+    public function kontrol_get_detail($gudang, $material)
+    {
+        $rs = BeliDetailModel::with(['getHeader', 'getMaterial'])->where('material_id', $material)->get();
+        $data = [
+            'list_penerimaan' => $rs,
+            'list_pemakaian' => PemakaianDetailModel::with(['getHeader'])->where('material_id', $material)->get(),
+            'list_return' => PengembalianDetailModel::with(['getHeader'])->where('material_id', $material)->get(),
+            'getKategori' => General::class,
+        ];
+        return view('material.detail_transaksi', $data);
+    }
 }

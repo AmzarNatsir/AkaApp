@@ -11,7 +11,7 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                <th scope="col">S#</th>
+                <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Roles</th>

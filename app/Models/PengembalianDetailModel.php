@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PemakaianDetailModel extends Model
+class PengembalianDetailModel extends Model
 {
     use HasFactory;
-    protected $table = "pemakaian_detail";
+
+    protected $table = "pengembalian_detail";
     protected $fillable = [
         "head_id",
         "material_id",
         "jumlah",
-        "harga",
         "gudang_id"
     ];
 
     public function getHeader()
     {
-        return $this->belongsTo(PemakaianModel::class, 'head_id', 'id');
+        return $this->belongsTo(PengembalianModel::class, 'head_id', 'id');
     }
 
     public function getMaterial()

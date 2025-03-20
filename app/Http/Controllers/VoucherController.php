@@ -9,6 +9,7 @@ use App\Models\VoucherModel;
 use App\Traits\General;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Throwable;
 
 class VoucherController extends Controller
@@ -144,7 +145,7 @@ class VoucherController extends Controller
         $data = [
             'list_bulan' => General::getListMonth(),
             "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
-            'start_year' => 2024,
+            'start_year' => 2025,
             'end_year' => date('Y')
         ];
         return view('voucher.distribusi.index', $data);
@@ -260,7 +261,7 @@ class VoucherController extends Controller
         $data = [
             'list_bulan' => General::getListMonth(),
             "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
-            'start_year' => 2024,
+            'start_year' => 2025,
             'end_year' => date('Y')
         ];
         return view('voucher.penjualan.index', $data);
@@ -271,16 +272,159 @@ class VoucherController extends Controller
         if($dataH->count()==0) {
             return view('voucher.penjualan.data_empty');
         } else {
-            $data = [
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'agen' => $agen,
-                'head_id' => $dataH->first()->id,
-                'status_data' => $dataH->first()->status,
-                "list_distribusi" => VoucherDetailModel::where('head_id', $dataH->first()->id)->get()
-            ];
-            return view('voucher.penjualan.form_penjualan', $data);
+            if($dataH->first()->status=="close") {
+                $data = [
+                    'status_data' => $dataH->first()->status,
+                    "list_penjualan" => VoucherDetailModel::where('head_id', $dataH->first()->id)->get()
+                ];
+                return view('voucher.penjualan.detail_penjualan', $data);
+            } else {
+                $data = [
+                    'bulan' => $bulan,
+                    'tahun' => $tahun,
+                    'agen' => $agen,
+                    'head_id' => $dataH->first()->id,
+                    'status_data' => $dataH->first()->status,
+                    "list_distribusi" => VoucherDetailModel::where('head_id', $dataH->first()->id)->get()
+                ];
+                return view('voucher.penjualan.form_penjualan', $data);
+            }
         }
 
+    }
+
+    public function penjualan_store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $idHead = $request->postHeadID;
+            VoucherHeadModel::find($idHead)->update([
+                "total_voucher" => str_replace(",","", $request['inpTotalTerjual']),
+                "total_laba" => str_replace(",","", $request['inpTotalLaba']),
+                "status" => "close"
+            ]);
+            $jml_item = count($request->idDetail);
+            foreach(array($request) as $key => $value)
+            {
+                for($i=0; $i<$jml_item; $i++)
+                {
+                    $idDetail = $value['idDetail'][$i];
+                    VoucherDetailModel::find($idDetail)->update([
+                        "stok_terjual" => str_replace(",","", $value['inpStokTerjual'][$i]),
+                        "updated_at" => $this->dateTimeInsert
+                    ]);
+                }
+            }
+            DB::commit(); // Commit Transaction if everything is successful
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Realisasi penjualan voucher periode ini telah disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback on error
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data ".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+
+    //list penjualan
+    public function penjualan_list()
+    {
+        $data = [
+            'list_bulan' => General::getListMonth(),
+            "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
+            'start_year' => 2025,
+            'end_year' => date('Y')
+        ];
+        return view('voucher.penjualan.list', $data);
+    }
+
+    public function penjualan_list_getData(Request $request)
+    {
+        $columns = ['created_at'];
+        $totalData = VoucherHeadModel::where('status', 'close')->count();
+        $search = $request->input('search.value');
+        $query = VoucherHeadModel::with([
+            'getAgen'
+            ])->where('status', 'close');
+        if(!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->Where('bulan', 'like', "%{$search}%");
+            });
+        }
+        if(!empty($request->bulan))
+        {
+            $query->where('bulan', $request->bulan);
+        }
+        if(!empty($request->tahun))
+        {
+            $query->where('tahun', $request->tahun);
+        }
+        if(!empty($request->agen))
+        {
+            $query->where('agen_id', $request->agen);
+        }
+
+        $totalFiltered = $query->count();
+        $query = $query->offset($request->input('start'))
+                      ->limit($request->input('length'))
+                        ->orderBy('id', 'asc')
+                      ->get();
+
+        $data = array();
+        if($query){
+            $counter = $request->input('start') + 1;
+            foreach($query as $r){
+                $btn = "";
+                if(empty($r->status_tagih)) {
+                    $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_preview_print' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-printer'></i></button>";
+                }
+                // $btn = "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button><button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                $Data['act'] = $btn;
+                $Data['id'] =  $r->id;
+                $Data['periode'] =  General::get_nama_bulan($r->bulan)." ".$r->tahun;
+                $Data['agen'] =  $r->getAgen->nama_agen;
+                $Data['total_voucher'] =  $r->total_voucher;
+                $Data['total_laba'] =  "Rp. ".number_format($r->total_laba, 0);
+                $Data['status'] =  (empty($r->status_tagih)) ? "<span class='badge badge-warning'>Penagihan</span>" : "<span class='badge badge-success'>Selesai</span>";
+                $Data['no'] = $counter;
+                $data[] = $Data;
+                $counter++;
+            }
+        }
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalData,
+            'recordsFiltered' => $totalFiltered,
+            'data' => $data
+        ]);
+    }
+    public function penjualan_detail_to_print($id)
+    {
+        $resultH = VoucherHeadModel::with(['getAgen'])->find($id);
+        $data = [
+            "dataH" => $resultH,
+            "dataD" => VoucherDetailModel::where('head_id', $id)->get(),
+            'periode' => General::get_nama_bulan($resultH->bulan)." ".$resultH->tahun
+        ];
+        return view('voucher.penjualan.detail_print', $data);
+    }
+    public function print_penagihan($id)
+    {
+        $dataH  = VoucherHeadModel::with([
+            "getAgen"
+        ])->find($id);
+        $ket_periode = (empty($dataH->first()->bulan)) ? "" : General::get_nama_bulan($dataH->first()->bulan)." ".$dataH->first()->tahun;
+        $idH = (empty($dataH->first()->id)) ? NULL : $dataH->first()->id;
+        $data = [
+            'data_head' => $dataH->first(),
+            'periode' => $ket_periode,
+           "list_penjualan" => VoucherDetailModel::where('head_id', $id)->get()
+        ];
+        $pdf = Pdf::loadView('voucher.penjualan.print_tagihan', $data)->setPaper('A4', 'potrait');
+        return $pdf->stream();
     }
 }
