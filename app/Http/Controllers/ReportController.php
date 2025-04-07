@@ -124,6 +124,19 @@ class ReportController extends Controller
                  $q->Where('bulan', 'like', "%{$search}%");
              });
          }
+         if(!empty($request->bulan))
+        {
+            $query->where('bulan', $request->bulan);
+        }
+        if(!empty($request->tahun))
+        {
+            $query->where('tahun', $request->tahun);
+        }
+        if(!empty($request->agen))
+        {
+            $query->where('agen_id', $request->agen);
+        }
+
          $totalFiltered = $query->count();
          $query = $query->offset($request->input('start'))
                        ->limit($request->input('length'))

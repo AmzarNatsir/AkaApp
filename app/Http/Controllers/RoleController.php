@@ -44,13 +44,31 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $role = Role::create(['name' => $request->name]);
+        // dd($request);
+        $role = Role::findOrCreate($request->name);
+        $menuSelect = $request->has('menu') ? $request->menu : [];
+        foreach ($menuSelect as $mn) {
+            $result_permission = Permission::where('name', $mn)->get();
 
-        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+            if($result_permission->count() == 0)
+            {
+                $permission = Permission::create(['name' => $mn]);
+                $role->givePermissionTo($permission);
+            } else {
+                foreach ($result_permission as $key => $val) {
+                    $id_permission = $val['id'];
+                }
+                $role->givePermissionTo($id_permission);
+            }
+        }
 
-        $role->syncPermissions($permissions);
+        // $role = Role::create(['name' => $request->name]);
+
+        // $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+
+        // $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')
                 ->withSuccess('New role is added successfully.');
@@ -80,8 +98,10 @@ class RoleController extends Controller
             abort(403, 'SUPER ADMIN ROLE CAN NOT BE EDITED');
         }
 
-        $rolePermissions = DB::table("role_has_permissions")->where("role_id",$role->id)
-            ->pluck('permission_id')
+        $rolePermissions = DB::table("role_has_permissions")
+            ->join('permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
+            ->where("role_has_permissions.role_id",$role->id)
+            ->pluck('permissions.name')
             ->all();
 
         return view('roles.edit', [
@@ -94,16 +114,22 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
+    public function update(Request $request, Role $role): RedirectResponse
     {
         $input = $request->only('name');
-
         $role->update($input);
-
-        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
-
+        //menghapus data sebelumnya
+        $role->syncPermissions([]);
+        // Ambil input menu
+        $menuSelect = $request->input('menu', []);
+        // Loop dan assign permission
+        $permissions = [];
+        foreach ($menuSelect as $mn) {
+            $permission = Permission::firstOrCreate(['name' => $mn]);
+            $permissions[] = $permission;
+        }
+        // Sinkronisasi permission baru
         $role->syncPermissions($permissions);
-
         return redirect()->back()
                 ->withSuccess('Role is updated successfully.');
     }

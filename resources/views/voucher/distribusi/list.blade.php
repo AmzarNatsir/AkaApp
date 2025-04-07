@@ -3,18 +3,16 @@
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
-            <div class="col-6"><h4>Report</h4></div>
+            <div class="col-6"><h4>Distribusi Voucher</h4></div>
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">
                         <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg></a></li>
-                    <li class="breadcrumb-item active">Penjualan Voucher</li>
+                    <li class="breadcrumb-item active">Daftar Distribusi Voucher</li>
                 </ol>
             </div>
         </div>
     </div>
-    <form id="createForm" class="timepicker-wrapper needs-validation" method="post" novalidate="">
-        @csrf
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
@@ -56,7 +54,6 @@
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <button class="btn btn-primary" type="button" id="btnFilter"><i class="fa fa-table"></i> Preview</button>
-                                {{-- <button class="btn btn-danger" type="button" onclick="showPrint()"><i class="fa fa-print"></i> Print</button> --}}
                             </div>
                         </div>
                     </div>
@@ -70,17 +67,24 @@
                 <div class="col-md-12 project-list">
                     <div class="card">
                         <div class="card-header border-b-info total-revenue">
-                            <h4>Daftar Penjualan Voucher</h4>
+                            <h4>Daftar Distribusi Voucher</h4>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive custom-scrollbar">
-                                <table class="display" id="table_view" style="width: 100%">
+                            <div class="table-responsive custom-scrollbar" id="view_form">
+                                <table class="table" id="table_view">
                                     <thead>
-                                        <th style="width: 5%">#</th>
-                                        <th style="width: 20%">Periode</th>
-                                        <th>Agen</th>
-                                        <th style="width: 15%">Total Voucher</th>
-                                        <th style="width: 15%">Total Laba</th>
+                                        <tr>
+                                            <th style="width: 5%" rowspan="2">#</th>
+                                            <th style="width: 15%" rowspan="2">Periode</th>
+                                            <th rowspan="2">Agen</th>
+                                            <th colspan="3" style="text-align: center">Voucher</th>
+                                            <th style="width: 10%" rowspan="2">Act</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 10%">Awal</th>
+                                            <th style="width: 10%">Tambahan</th>
+                                            <th style="width: 10%">Total</th>
+                                        </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -90,21 +94,22 @@
                 </div>
             </div>
         </div>
-
     </div>
-</form>
+</div>
+<div class="modal fade" id="exampleModalgetbootstrap" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalgetbootstrap" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="form_view"></div>
+    </div>
 </div>
 <script>
     $(document).ready(function () {
-        $('#spinner-div').hide();
         $(".select").select2({
             placeholder: "Pilihan",
             allowClear: true
         });
         var tableAjax = $("#table_view").DataTable({
-            // ajax: "{{ route('report.distribusiVoucher.getdata') }}",
             ajax: {
-                url: "{{ route('report.penjualanVoucher.getdata') }}",
+                url: "{{ route('voucher.distribusi.list.getData') }}",
                 type: "post",
                 headers : {
                         'X-CSRF-TOKEN' : '<?php echo csrf_token() ?>'
@@ -121,66 +126,40 @@
             autoWidth: true,
             columns: [
                 { data: 'no' },
-                { data: 'bulan' },
+                { data: 'periode' },
                 { data: 'agen' },
+                { data: 'total_awal' },
+                { data: 'total_tambahan' },
                 { data: 'total_voucher' },
-                { data: 'total_laba' },
+                { data: 'act' },
             ],
             responsive: true,
             columnDefs: [
                 {
                     class: 'dt-center',
-                    targets: [4]
+                    targets: [3, 4, 5]
                 }
             ]
         });
         $("#btnFilter").on("click", function(){
             tableAjax.ajax.reload();
         });
-    });
-
-    var showForm = function()
-    {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-
-        $("#view_form").load("{{ url('report/penjualanVoucher/load_data_penjualan') }}/"+pil_bulan+"/"+pil_tahun+"/"+pil_agen, function(){
-            $(".angka").number(true, 0);
+        $("#table_view").on('click', '#btn_edit', function(){
+            $("#form_view").load("{{ url('voucher/distribusi/edit') }}/"+$(this).val());
         });
-    }
-
-    var showPrint = function()
+    });
+    var showPrint = function(el)
     {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-        window.open('{{ url("report/penjualanVoucher/print") }}/'+pil_bulan+"/"+pil_tahun+"/"+pil_agen);
+        var id_head = $(el).val();
+        window.open('{{ url("voucher/distribusi/print") }}/'+id_head);
     }
 
+    var changeToNull = function(el)
+    {
+        if($(el).val()=="")
+        {
+            $(el).val("0");
+        }
+    }
 </script>
 @endsection

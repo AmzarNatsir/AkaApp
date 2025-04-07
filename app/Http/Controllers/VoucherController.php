@@ -6,6 +6,7 @@ use App\Models\AgenVoucherModel;
 use App\Models\VoucherDetailModel;
 use App\Models\VoucherHeadModel;
 use App\Models\VoucherModel;
+use App\Models\VoucherTambahanModel;
 use App\Traits\General;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -253,6 +254,103 @@ class VoucherController extends Controller
             ]);
         }
         return $rs;
+    }
+    public function distribusi_list()
+    {
+        $data = [
+            'list_bulan' => General::getListMonth(),
+            "list_agen" => AgenVoucherModel::where('aktif', 'y')->get(),
+            'start_year' => 2025,
+            'end_year' => date('Y')
+        ];
+        return view('voucher.distribusi.list', $data);
+    }
+    public function distribusi_list_get_data(Request $request)
+    {
+        $columns = ['created_at'];
+        $totalData = VoucherHeadModel::where('status', 'open')->count();
+        $search = $request->input('search.value');
+        $query = VoucherHeadModel::with([
+            'getAgen'
+            ])->where('status', 'open');
+        if(!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->Where('bulan', 'like', "%{$search}%");
+            });
+        }
+        if(!empty($request->bulan))
+        {
+            $query->where('bulan', $request->bulan);
+        }
+        if(!empty($request->tahun))
+        {
+            $query->where('tahun', $request->tahun);
+        }
+        if(!empty($request->agen))
+        {
+            $query->where('agen_id', $request->agen);
+        }
+
+        $totalFiltered = $query->count();
+        $query = $query->offset($request->input('start'))
+                      ->limit($request->input('length'))
+                        ->orderBy('id', 'asc')
+                      ->get();
+
+        $data = array();
+        if($query){
+            $counter = $request->input('start') + 1;
+            foreach($query as $r){
+                $btn = "";
+                if(empty($r->status_tagih)) {
+                    $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil'></i></button><button type='button' class='btn btn-secondary btn-sm' id='btn_print' value='".$r->id."' onclick='showPrint(this)'><i class='icon-printer'></i></button>";
+                }
+                $tota_voucher_awal = VoucherDetailModel::where('head_id', $r->id)->sum('stok_awal');
+                $tota_voucher_tambahan = VoucherDetailModel::where('head_id', $r->id)->sum('stok_tambahan');
+                $total = $tota_voucher_awal + $tota_voucher_tambahan;
+                $Data['act'] = $btn;
+                $Data['id'] =  $r->id;
+                $Data['periode'] =  General::get_nama_bulan($r->bulan)." ".$r->tahun;
+                $Data['agen'] =  $r->getAgen->nama_agen;
+                $Data['total_awal'] = "<badge class='badge badge-primary'>".$tota_voucher_awal."</badge>";
+                $Data['total_tambahan'] =  "<badge class='badge badge-secondary'>".$tota_voucher_tambahan."</badge>";
+                $Data['total_voucher'] =  "<badge class='badge badge-success'>".$total."</badge>";
+                $Data['no'] = $counter;
+                $data[] = $Data;
+                $counter++;
+            }
+        }
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalData,
+            'recordsFiltered' => $totalFiltered,
+            'data' => $data
+        ]);
+    }
+    public function distribusi_list_print($id)
+    {
+        $dataH  = VoucherHeadModel::with([
+            "getAgen"
+        ])->find($id);
+        $ket_periode = (empty($dataH->first()->bulan)) ? "" : General::get_nama_bulan($dataH->first()->bulan)." ".$dataH->first()->tahun;
+        $idH = (empty($dataH->first()->id)) ? NULL : $dataH->first()->id;
+        $data = [
+            'data_head' => $dataH->first(),
+            'periode' => $ket_periode,
+           "list_penjualan" => VoucherDetailModel::where('head_id', $id)->get()
+        ];
+        $pdf = Pdf::loadView('voucher.distribusi.print', $data)->setPaper('A4', 'potrait');
+        return $pdf->stream();
+    }
+    public function distribusi_edit($id)
+    {
+        $resultH = VoucherHeadModel::with(['getAgen'])->find($id);
+        $data = [
+            "dataH" => $resultH,
+            "dataD" => VoucherDetailModel::where('head_id', $id)->get(),
+            'periode' => General::get_nama_bulan($resultH->bulan)." ".$resultH->tahun
+        ];
+        return view('voucher.distribusi.edit', $data);
     }
 
     //penjualan

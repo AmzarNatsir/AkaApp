@@ -11,7 +11,9 @@
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">
                         <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg></a></li>
                     <li class="breadcrumb-item"><a href="{{ route('material.index') }}">Daftar</a></li>
+                    @can('material_create')
                     <li class="breadcrumb-item"><a href="{{ route('material.create') }}">Data Baru</a></li>
+                    @endcan
                     <li class="breadcrumb-item active">Edit data material</li>
                 </ol>
             </div>

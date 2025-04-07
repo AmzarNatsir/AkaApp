@@ -70,7 +70,7 @@
                                     <select class="form-control select" name="pilItem" id="pilItem" required="">
                                         <option selected="" disabled="" value="">Pilihan...</option>
                                         @foreach ($list_material as $r)
-                                        <option value="{{ $r->id }}" {{ ($r->stok_akhir==0) ? "disabled" : "" }}>{{ $r->material }} - {{ $r->getMerek->merek }} (Stok : {{ $r->stok_akhir }})</option>
+                                        <option value="{{ $r->id }}">{{ $r->material }} - {{ $r->getMerek->merek }} (Stok : {{ $r->stok_akhir }})</option>
                                         @endforeach
                                     </select>
                                 </div>

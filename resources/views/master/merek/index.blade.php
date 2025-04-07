@@ -20,6 +20,7 @@
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
+        @can('master_merek_create')
         <div class="col-md-12 project-list">
             <div class="card">
               <div class="row">
@@ -31,6 +32,7 @@
               </div>
             </div>
         </div>
+        @endif
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">

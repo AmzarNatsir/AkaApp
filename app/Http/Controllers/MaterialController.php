@@ -29,10 +29,11 @@ class MaterialController extends Controller
     public function __construct()
     {
        $this->middleware('auth');
-       $this->middleware('permission:create-material|edit-material|delete-material', ['only' => ['index','show']]);
-       $this->middleware('permission:create-material', ['only' => ['create','store']]);
-       $this->middleware('permission:edit-material', ['only' => ['edit','update']]);
-       $this->middleware('permission:delete-material', ['only' => ['destroy']]);
+       $this->middleware('permission:material_view|material_edit|material_delete|material_create', ['only' => ['index']]);
+       $this->middleware('permission:material_kartu_stok_view', ['only' => ['kontrol']]);
+    //    $this->middleware('permission:create-material', ['only' => ['create','store']]);
+    //    $this->middleware('permission:edit-material', ['only' => ['edit','update']]);
+    //    $this->middleware('permission:delete-material', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.
@@ -63,14 +64,22 @@ class MaterialController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
+                $btn2 = "";
                 $material = '<div class="product-names">
                                 <div class="light-product-box"><a href="'.Storage::url('material/'.$r->gambar).'" data-fancybox data-caption="'. $r->material.'"><img class="img-fluid" src="'.Storage::url('material/'.$r->gambar).'" alt="headphones"></a></div>
                                 <p>'.$r->material.'</p>
                               </div>';
-                $btn2 = '<ul class="action">
-                            <li class="edit"> <a href="'.url('material/edit',$r->id).'"><i class="icon-pencil-alt"></i></a></li>
-                            <li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>
-                        </ul>';
+                $btn2 .= '<ul class="action">';
+                $btn2 .= '<li class="show"><a href="'.url('material/show',$r->id).'"><i class="icon-eye"></i></a></li>&nbsp;&nbsp;';
+                if(auth()->user()->can('material_edit'))
+                {
+                    $btn2 .= '<li class="edit"> <a href="'.url('material/edit',$r->id).'"><i class="icon-pencil-alt"></i></a></li>';
+                }
+                if(auth()->user()->can('material_delete'))
+                {
+                    $btn2 .= '<li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>';
+                }
+                $btn2 .= '</ul>';
                 $Data['act'] = $btn2;
                 $Data['id'] =  $r->id;
                 $Data['material'] =  $material; // $r->material;
@@ -155,11 +164,17 @@ class MaterialController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Material $material): View
+    public function show($material): View
     {
-        return view('material.show', [
-            'material' => $material
-        ]);
+        $data = [
+            'res' => Material::with([
+                "getMerek",
+                "getSatuan"
+            ])->find($material),
+            'listMerek' => Merek::whereNull('deleted_at')->get(),
+            'listSatuan' => SatuanModel::whereNull('deleted_at')->get()
+        ];
+        return view('material.show', $data);
     }
 
     /**

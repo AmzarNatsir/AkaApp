@@ -14,6 +14,15 @@ class MerekController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:master_merek_create|master_merek_edit|master_merek_delete', ['only' => ['index','show']]);
+        // $this->middleware('permission:master_merek_create', ['only' => ['create','store']]);
+        // $this->middleware('permission:master_merek_edit', ['only' => ['edit','update']]);
+        // $this->middleware('permission:master_merek_delete', ['only' => ['destroy']]);
+    }
+
     public function index(): View
     {
         return view('master.merek.index');
@@ -39,8 +48,17 @@ class MerekController extends Controller
         $data = array();
         if($query){
             $counter = $request->input('start') + 1;
+
             foreach($query as $r){
-                $btn = "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button><button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                $btn = "";
+                if(auth()->user()->can('master_merek_edit'))
+                {
+                    $btn .= "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                }
+                if(auth()->user()->can('master_merek_delete'))
+                {
+                    $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                }
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['merek'] =  $r->merek;
