@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function ()
         Route::get('create', [MaterialController::class, 'create'])->name('material.create');
         Route::post('store', [MaterialController::class, 'store'])->name('material.store');
         Route::get('edit/{id}', [MaterialController::class, 'edit'])->name('material.edit');
+        Route::get('show/{id}', [MaterialController::class, 'show'])->name('material.show');
         Route::put('update/{id}', [MaterialController::class, 'update'])->name('material.update');
         Route::get('list', [MaterialController::class, 'index'])->name('material.index');
         Route::get('getData', [MaterialController::class, 'getData'])->name('material.getData');
@@ -129,6 +130,11 @@ Route::middleware('auth')->group(function ()
         Route::get('distribusi', [VoucherController::class, 'distribusi'])->name('voucher.distribusi');
         Route::get('distribusi/load_form/{bulan}/{tahun}/{agen}', [VoucherController::class, 'load_form_pengaturan'])->name('voucher.distribusi.load_form_pengaturan');
         Route::post('distribusi/store', [VoucherController::class, 'distribusi_store'])->name('voucher.distribusi.store');
+        //daftar distribusi
+        Route::get('listDistribusi', [VoucherController::class, 'distribusi_list'])->name('voucher.distribusi.list');
+        Route::post('distribusi/list/getData', [VoucherController::class, 'distribusi_list_get_data'])->name('voucher.distribusi.list.getData');
+        Route::get('distribusi/print/{id}', [VoucherController::class, 'distribusi_list_print'])->name('voucher.distribusi.print');
+        Route::get('distribusi/edit/{id}', [VoucherController::class, 'distribusi_edit'])->name('voucher.distribusi.edit');
         //penjualan
         Route::get('penjualan', [VoucherController::class, 'penjualan'])->name('voucher.penjualan');
         Route::get('penjualan/load_form/{bulan}/{tahun}/{agen}', [VoucherController::class, 'load_form_data_agen_voucher'])->name('voucher.penjualan.load_form_voucher_agen');
@@ -204,7 +210,8 @@ Route::middleware('auth')->group(function ()
         Route::get('distribusiVoucherDetail/{id}', [ReportController::class, 'distribusiVoucherDetail'])->name('report.distribusiVoucher.detail');
         //penjualan
         Route::get('penjualanVoucher', [ReportController::class, 'penjualanVoucher'])->name('report.penjualanVoucher');
-        // Route::get('penjualanVoucherGetData', [ReportController::class, 'penjualanVoucherGetData'])->name('report.penjualanVoucher.getdata');
+        Route::post('penjualanVoucherGetData', [ReportController::class, 'penjualanVoucherGetData'])->name('report.penjualanVoucher.getdata');
+
         Route::get('penjualanVoucher/load_data_penjualan/{bulan}/{tahun}/{agen}', [ReportController::class, 'load_data_penjualan_voucher'])->name('report.penjualanVoucher.load_data_penjualan_voucher');
         Route::get('penjualanVoucher/print/{bulan}/{tahun}/{agen}', [ReportController::class, 'penjualanVoucherPrint'])->name('report.penjualanVoucher.print');
     });
