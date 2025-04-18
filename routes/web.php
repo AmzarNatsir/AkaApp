@@ -7,6 +7,7 @@ use App\Http\Controllers\DistribusiMaterialController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MerekController;
+use App\Http\Controllers\PaketInternetController;
 use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PengembalianMaterialController;
@@ -229,6 +230,17 @@ Route::middleware('auth')->group(function ()
         Route::put('kasKeluarUpdate/{id}', [KeuanganController::class, 'kasKeluarUpdate'])->name("keuangan.kasKeluar.update");
         Route::get('kasKeluarDelete/{id}', [KeuanganController::class, 'kasKeluarDelete'])->name('keuangan.kasKeluar.delete');
     });
+
+    Route::group(['prefix' => 'paket_internet'], function(){
+        Route::get('/', [PaketInternetController::class, 'index'])->name('paket_internet.index');
+        Route::get('getData', [PaketInternetController::class, 'getData'])->name('paket_internet.getData');
+        Route::get('create', [PaketInternetController::class, 'create'])->name('paket_internet.create');
+        Route::post('store', [PaketInternetController::class, 'store'])->name('paket_internet.store');
+        Route::get('edit/{id}', [PaketInternetController::class, 'edit'])->name('paket_internet.edit');
+        Route::put('update/{id}', [PaketInternetController::class, 'update'])->name('paket_internet.update');
+        Route::get('destroy/{id}', [PaketInternetController::class, 'destroy'])->name('paket_internet.destroy');
+    });
+
 
     Route::group(['prefix' => 'report'], function(){
         Route::get('distribusiVoucher', [ReportController::class, 'distribusiVoucher'])->name('report.distribusiVoucher');

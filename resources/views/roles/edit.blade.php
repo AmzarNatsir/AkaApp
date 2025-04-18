@@ -320,6 +320,34 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    <hr>
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Paket Internet </h6>
+                                    <div class="form-check checkbox checkbox-primary mb-0">
+                                        <input class="form-check-input" id="paket_internet_view" name="menu[]" value="paket_internet_view" type="checkbox" {{ (in_array("paket_internet_view", $rolePermissions)) ? "checked" : "" }}>
+                                        <label class="form-check-label" for="paket_internet_view">Paket Internet</label>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_create" name="menu[]" type="checkbox" value="paket_internet_create" {{ (in_array("paket_internet_create", $rolePermissions)) ? "checked" : "" }}>
+                                                        <label class="form-check-label" for="paket_internet_create">Create</label>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_edit" name="menu[]" type="checkbox" value="paket_internet_edit" {{ (in_array("paket_internet_edit", $rolePermissions)) ? "checked" : "" }}>
+                                                        <label class="form-check-label" for="paket_internet_edit">Edit</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_delete" name="menu[]" type="checkbox" value="paket_internet_delete" {{ (in_array("paket_internet_delete", $rolePermissions)) ? "checked" : "" }}>
+                                                        <label class="form-check-label" for="paket_internet_delete">Delete</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 

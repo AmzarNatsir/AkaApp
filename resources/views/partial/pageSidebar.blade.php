@@ -18,6 +18,7 @@ $canMaterialKartuStok = auth()->user()->can('material_kartu_stok_view');
 $canMasterCabang = auth()->user()->can('cabang_view');
 $canMasterWilayah = auth()->user()->can('wilayah_view');
 $canMasterPetugas = auth()->user()->can('petugas_view');
+$canMasterPaketInternet = auth()->user()->can('paket_internet_view');
 //transaksi
 //material
 $canTransMaterialPembelian = auth()->user()->can('trans_pembelian_view');
@@ -157,6 +158,12 @@ $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ route('petugas.list') }}">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"> </use></svg><span>Petugas</span></a>
+            </li>
+            @endif
+            @if($canMasterPaketInternet)
+            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ route('paket_internet.index') }}">
+                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"> </use></svg><span>Paket Internet</span></a>
             </li>
             @endif
             @if($canTransMaterialPembelian || $canTransMaterialPembelianCreate || $canTransMaterialDistribusi || $canTransMaterialPemakaian || $canTransMaterialPemakaianCreate || $canTransMaterialPengembalian || $canTransVoucher || $canTransAgenVoucher || $canTransDistribusiVoucher || $canTransDistribusiVoucherCreate || $canTransPenjualanVoucher || $canTransPenjualanVoucherCreate || $canTransKasMasuk || $canTransKasKeluar)

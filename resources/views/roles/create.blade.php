@@ -319,6 +319,36 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    {{-- menu paket internet --}}
+                                    <hr>
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Paket Internet </h6>
+                                    <div class="form-check checkbox checkbox-primary mb-0">
+                                        <input class="form-check-input" id="paket_internet_view" name="menu[]" value="paket_internet_view" type="checkbox">
+                                        <label class="form-check-label" for="paket_internet_view">Paket Internet</label>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_create" name="menu[]" type="checkbox" value="paket_internet_create">
+                                                        <label class="form-check-label" for="paket_internet_create">Create</label>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_edit" name="menu[]" type="checkbox" value="paket_internet_edit">
+                                                        <label class="form-check-label" for="paket_internet_edit">Edit</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="paket_internet_delete" name="menu[]" type="checkbox" value="paket_internet_delete">
+                                                        <label class="form-check-label" for="paket_internet_delete">Delete</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    {{-- end menu paket internet --}}
                                 </div>
                             </div>
 

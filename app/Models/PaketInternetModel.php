@@ -13,6 +13,7 @@ class PaketInternetModel extends Model
     protected $fillable = [
         'nama_paket',
         'harga',
+        'aktif'
     ];
 
 }
