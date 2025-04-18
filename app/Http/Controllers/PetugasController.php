@@ -36,6 +36,7 @@ class PetugasController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
+                $btn = "";
                 $no_image = "<a href=".asset('assets/images/avtar/11.jpg')." data-fancybox data-caption='No Image'><img class='img-fluid' src=".asset('assets/images/avtar/11.jpg')." alt='avatar'></a>";
                 $yes_image = "<a href=".Storage::url('petugas/'.$r->photo)." data-fancybox data-caption='No Image'><img class='img-fluid' src=".Storage::url('petugas/'.$r->photo)." alt='avatar'></a>";
                 $photo = (empty($r->photo)) ? $no_image : $yes_image;
@@ -43,7 +44,14 @@ class PetugasController extends Controller
                                 <div class="light-product-box">'.$photo.'</div>
                                 <p>'.$r->nama_petugas.'</p>
                               </div>';
-                $btn = "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button><button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                if(auth()->user()->can("petugas_delete")) {
+                    $btn .= "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                }
+                if(auth()->user()->can("petugas_edit")) {
+                    $btn .="<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                }
+                $btn .="<button type='button' class='btn btn-warning btn-sm' id='btn_show' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-eye'></i></button>";
+
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['nama_petugas'] =  $petugas;
@@ -202,5 +210,13 @@ class PetugasController extends Controller
         if(File::exists($image_path)) {
             File::delete($image_path);
         }
+    }
+
+    public function show($id)
+    {
+        $data = [
+            'res' => PetugasModel::find($id)
+        ];
+        return view('petugas.show', $data);
     }
 }

@@ -19,6 +19,7 @@
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
+        @can("petugas_create")
         <div class="col-md-12 project-list">
             <div class="card">
               <div class="row">
@@ -30,6 +31,7 @@
               </div>
             </div>
         </div>
+        @endcan
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
@@ -44,9 +46,9 @@
                               <th>Nama Petugas</th>
                               <th style="width: 20%">Tempat,Tgl.Lahir</th>
                               <th style="width: 10%">Jenkel</th>
-                              <th style="width: 20%">Alamat</th>
+                              <th style="width: 15%">Alamat</th>
                               <th style="width: 15%">No.Telepon</th>
-                              <th style="width: 10%">Opsi</th>
+                              <th style="width: 15%">Opsi</th>
                             </tr>
                           </thead>
                           <tbody></tbody>
@@ -88,6 +90,9 @@
         });
         $("#table_view").on('click', '#btn_edit', function(){
             $("#form_view").load("{{ url('petugas/edit') }}/"+$(this).val());
+        });
+        $("#table_view").on('click', '#btn_show', function(){
+            $("#form_view").load("{{ url('petugas/show') }}/"+$(this).val());
         });
     });
     var konfirmDelete = function(el)

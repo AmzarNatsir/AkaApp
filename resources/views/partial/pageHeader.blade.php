@@ -25,20 +25,20 @@
     <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
         <ul class="nav-menus">
             <li><div class="mode"><i class="moon" data-feather="moon"> </i></div></li>
-            <li class="onhover-dropdown notification-down">
-                <div class="notification-box">
+            {{-- <li class="onhover-dropdown notification-down"> --}}
+                {{-- <div class="notification-box">
                     <svg>
                     <use href="{{ asset('assets/svg/icon-sprite.svg#notification-header') }}"></use>
                     </svg><span class="badge rounded-pill badge-secondary">4 </span>
-                </div>
-                <div class="onhover-show-div notification-dropdown">
-                    <div class="card mb-0">
-                        <div class="card-header">
+                </div> --}}
+                {{-- <div class="onhover-show-div notification-dropdown">
+                    <div class="card mb-0"> --}}
+                        {{-- <div class="card-header">
                             <div class="common-space">
                                 <h4 class="text-start f-w-600">Notitications</h4>
                                 <div><span>4 New</span></div>
                             </div>
-                        </div>
+                        </div> --}}
                         {{-- <div class="card-body">
                             <div class="notitications-bar">
                                 <ul class="nav nav-pills nav-primary p-0" id="pills-tab" role="tablist">
@@ -198,9 +198,9 @@
                                 </div>
                             </div>
                         </div> --}}
-                    </div>
-                </div>
-            </li>
+                    {{-- </div> --}}
+                {{-- </div> --}}
+            {{-- </li> --}}
             <li class="profile-nav onhover-dropdown">
                 <div class="media profile-media"><img class="b-r-10" src="{{ asset('assets/images/dashboard/profile.png') }}" alt="">
                     <div class="media-body d-xxl-block d-none box-col-none">
@@ -209,9 +209,9 @@
                     </div>
                 </div>
                 <ul class="profile-dropdown onhover-show-div">
-                    <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
+                    {{-- <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
                     <li><a href="letter-box.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
-                    <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li>
+                    <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li> --}}
                     <li><a class="btn btn-pill btn-outline-primary btn-sm" href="{{ route('logout') }}" onclick="event.preventDefault();
                                       document.getElementById('logout-form').submit();">Log Out</a>
                              <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

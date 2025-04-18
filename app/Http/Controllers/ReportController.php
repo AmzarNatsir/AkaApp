@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AgenVoucherModel;
+use App\Models\ArusKasModel;
 use App\Models\VoucherDetailModel;
 use App\Models\VoucherHeadModel;
 use App\Traits\General;
@@ -183,5 +184,127 @@ class ReportController extends Controller
         ];
         $pdf = Pdf::loadView('report.voucher.penjualan.print', $data)->setPaper('A4', 'potrait');
         return $pdf->stream();
+    }
+    //keuangan
+    public function keuangan()
+    {
+        return view('report.keuangan.index');
+    }
+    public function keuanganGetData(Request $request)
+    {
+        $columns = ['created_at'];
+        $totalData = ArusKasModel::count();
+        $search = $request->input('search.value');
+        $query = ArusKasModel::select("*");
+        if(!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->Where('id', 'like', "%{$search}%");
+            });
+        }
+        if(!empty($tglMulai) && !empty($tglSampai)) {
+            $query->WhereDate('tgl_transaksi', '>=', "{$tglMulai}")
+                ->WhereDate('tgl_transaksi', '<=', "{$tglSampai}");
+        }
+        // else {
+        //     $query->WhereDate('tgl_transaksi', '=', "{$toDay}");
+        // }
+
+        $totalFiltered = $query->count();
+        $query = $query->offset($request->input('start'))
+                    ->limit($request->input('length'))
+                        ->orderBy('id', 'asc')
+                    ->get();
+
+         $data = array();
+         if($query){
+             $counter = $request->input('start') + 1;
+             foreach($query as $r){
+                 $Data['id'] =  $r->id;
+                 $Data['periode'] =  date("d-m-Y", strtotime($r->tgl_transaksi));
+                 $Data['keterangan'] =  $r->keterangan;
+                 $Data['debet'] =  number_format($r->debet, 0);
+                 $Data['kredit'] =  number_format($r->kredit, 0);
+                 $Data['saldo'] =  0;
+                 $Data['no'] = $counter;
+                 $data[] = $Data;
+                 $counter++;
+             }
+         }
+         return response()->json([
+             'draw' => intval($request->input('draw')),
+             'recordsTotal' => $totalData,
+             'recordsFiltered' => $totalFiltered,
+             'data' => $data
+         ]);
+    }
+
+    public function filterKeuangan(Request $request)
+    {
+        $nom=1;
+        $tgl_awal = $request->tgl_1;
+        $tgl_akhir = $request->tgl_2;
+        $saldo_d_awal = ArusKasModel::whereDate("tgl_transaksi", "<", $tgl_awal)->sum('debet');
+        $saldo_k_awal = ArusKasModel::whereDate("tgl_transaksi", "<", $tgl_awal)->sum('kredit');
+        $saldo_awal = $saldo_d_awal - $saldo_k_awal;
+        if(empty($tgl_akhir)) {
+            $query = ArusKasModel::whereDate('tgl_transaksi', '=', $tgl_awal);
+        } else {
+            $query = ArusKasModel::whereDate('tgl_transaksi', '>=', $tgl_awal)
+                        ->whereDate('tgl_transaksi', '<=', $tgl_akhir);
+        }
+        $all_data = $query->get();
+        $html = "<table class='table table-bordered table-hover' style='font-size: 12pt; width: 100%;' id='table_keuangan'>
+        <thead>
+            <tr>
+                <td style='text-align: left;' colspan='6'><h4>Laporan Keuangan</h4>
+                <p class='lbl_periode'>Periode laporan tanggal : ".$request->ket_periode_tanggal."</p>
+                </td>
+            </tr>
+            <tr>
+                <th style='width: 5%;'>#</th>
+                <th style='width: 10%;'>Tanggal</th>
+                <th>Keterangan</th>
+                <th style='text-align: right; width: 15%;'>Debet</th>
+                <th style='text-align: right; width: 15%;'>Kredit</th>
+                <th style='text-align: right; width: 15%;'>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>";
+        $html .= '<tr style="background-color: #eaedf1">
+        <td colspan="5" style="text-align: right;"><b>SALDO AWAL</b></td>
+        <td style="text-align: right;"><b>'.number_format($saldo_awal, 0, ",", ".").'</b></td>
+        </tr>';
+        $saldo = $saldo_awal;
+        foreach($all_data as $list)
+        {
+
+            if($list->debet != 0) {
+                $saldo+=$list->debet;
+                $ketDB = "(+)";
+            } else {
+                $saldo-=$list->kredit;
+                $ketDB = "(-)";
+            }
+
+            $html .= "<tr>
+            <td>".$nom."</td>
+            <td>".date_format(date_create($list->tgl_transaksi), 'd-m-Y')."</td>
+            <td style='text-align: left'>".$list->keterangan."</td>
+            <td style='text-align: right'>".number_format($list->debet, 0, ",", ".")."</td>
+            <td style='text-align: right'>".number_format($list->kredit, 0, ",", ".")."</td>
+            <td style='text-align: right'>".number_format($saldo, 0, ",", ".")." ".$ketDB."</td>
+            </tr>";
+            $nom++;
+        }
+        $html .= '<tr style="background-color: #eaedf1">
+        <td colspan="5" style="text-align: right;"><b>SALDO AKHIR</b></td>
+        <td style="text-align: right;"><b>'.number_format($saldo, 0, ",", ".").'</b></td>
+        </tr></tbody>
+        </table>';
+        return response()
+            ->json([
+                'all_result' => $html
+            ])
+            ->withCallback($request->input('callback'));
     }
 }

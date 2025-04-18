@@ -10,7 +10,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">
                         <svg class="stroke-icon">
-                        <use href="../assets/svg/icon-sprite.svg#stroke-home"></use>
+                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg></a></li>
                     <li class="breadcrumb-item active">Home</li>
                 </ol>
@@ -26,7 +26,7 @@
                 <div class="card-header">
                     <h4>Home</h4>
                 </div>
-                <div class="card-body" style="text-align: center; background-color: black">
+                <div class="card-body" style="text-align: center; background-color: rgb(2, 105, 98)">
                     <img class="img-fluid" src="{{ asset('assets/images/logo/akagroup.png') }}" style="width: 85%" alt="">
                 </div>
             </div>

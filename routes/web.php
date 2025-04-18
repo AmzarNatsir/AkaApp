@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AgenVoucherController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistribusiMaterialController;
+use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MerekController;
 use App\Http\Controllers\PemakaianController;
@@ -47,6 +49,10 @@ Route::middleware('auth')->group(function ()
         'users' => UserController::class,
         // 'material' => MaterialController::class
     ]);
+    Route::group(["prefix" => "dashboard"], function(){
+        Route::get("/", [DashboardController::class, 'index'])->name("dashboard.all");
+    });
+
     Route::group(["prefix" => "dataMaster"], function(){
         //master merek
         Route::get('merek', [MerekController::class, 'index'])->name('datamaster.merek');
@@ -163,6 +169,7 @@ Route::middleware('auth')->group(function ()
         Route::get('edit/{id}', [PetugasController::class, 'edit'])->name('petugas.edit');
         Route::put('update/{id}', [PetugasController::class, 'update'])->name('petugas.update');
         Route::get('destroy/{id}', [PetugasController::class, 'destroy'])->name('petugas.destroy');
+        Route::get('show/{id}', [PetugasController::class, 'show'])->name('petugas.show');
     });
 
     Route::group(['prefix' => 'distribusiMaterial'], function(){
@@ -204,6 +211,25 @@ Route::middleware('auth')->group(function ()
         Route::get('detail/{id}', [PengembalianMaterialController::class, 'detail'])->name('pengembalian.material.detail');
     });
 
+    Route::group(['prefix' => 'keuangan'], function(){
+        //kas masuk
+        Route::get('kasMasuk', [KeuanganController::class, 'kasMasuk'])->name("keuangan.kasMasuk.daftar");
+        Route::post('getDataKasMasuk', [KeuanganController::class, 'getDataKasMasuk'])->name("keuangan.kasMasuk.getData");
+        Route::get('kasMasukBaru', [KeuanganController::class, 'kasMasukBaru'])->name("keuangan.kasMasuk.baru");
+        Route::post('kasMasukSimpan', [KeuanganController::class, 'kasMasukSimpan'])->name("keuangan.kasMasuk.simpan");
+        Route::get('kasMasukEdit/{id}', [KeuanganController::class, 'kasMasukEdit'])->name("keuangan.kasMasuk.edit");
+        Route::put('kasMasukUpdate/{id}', [KeuanganController::class, 'kasMasukUpdate'])->name("keuangan.kasMasuk.update");
+        Route::get('kasMasukDelete/{id}', [KeuanganController::class, 'kasMasukDelete'])->name('keuangan.kasMasuk.delete');
+        //kas keluar
+        Route::get('kasKeluar', [KeuanganController::class, 'kasKeluar'])->name("keuangan.kasKeluar.daftar");
+        Route::post('getDataKasKeluar', [KeuanganController::class, 'getDataKasKeluar'])->name("keuangan.kasKeluar.getData");
+        Route::get('kasKeluarBaru', [KeuanganController::class, 'kasKeluarBaru'])->name("keuangan.kasKeluar.baru");
+        Route::post('kasKeluarSimpan', [KeuanganController::class, 'kasKeluarSimpan'])->name("keuangan.kasKeluar.simpan");
+        Route::get('kasKeluarEdit/{id}', [KeuanganController::class, 'kasKeluarEdit'])->name("keuangan.kasKeluar.edit");
+        Route::put('kasKeluarUpdate/{id}', [KeuanganController::class, 'kasKeluarUpdate'])->name("keuangan.kasKeluar.update");
+        Route::get('kasKeluarDelete/{id}', [KeuanganController::class, 'kasKeluarDelete'])->name('keuangan.kasKeluar.delete');
+    });
+
     Route::group(['prefix' => 'report'], function(){
         Route::get('distribusiVoucher', [ReportController::class, 'distribusiVoucher'])->name('report.distribusiVoucher');
         Route::post('distribusiVoucherGetData', [ReportController::class, 'distribusiVoucherGetData'])->name('report.distribusiVoucher.getdata');
@@ -211,8 +237,10 @@ Route::middleware('auth')->group(function ()
         //penjualan
         Route::get('penjualanVoucher', [ReportController::class, 'penjualanVoucher'])->name('report.penjualanVoucher');
         Route::post('penjualanVoucherGetData', [ReportController::class, 'penjualanVoucherGetData'])->name('report.penjualanVoucher.getdata');
-
         Route::get('penjualanVoucher/load_data_penjualan/{bulan}/{tahun}/{agen}', [ReportController::class, 'load_data_penjualan_voucher'])->name('report.penjualanVoucher.load_data_penjualan_voucher');
         Route::get('penjualanVoucher/print/{bulan}/{tahun}/{agen}', [ReportController::class, 'penjualanVoucherPrint'])->name('report.penjualanVoucher.print');
+        //keuangan
+        Route::get('keuangan', [ReportController::class, 'keuangan'])->name('report.keuangan');
+        Route::post('keuanganGetData', [ReportController::class, 'filterKeuangan'])->name('report.keuangan.getdata');
     });
 });

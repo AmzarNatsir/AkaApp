@@ -10,7 +10,9 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">
                         <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg></a></li>
+                    @can("trans_pembelian_create")
                     <li class="breadcrumb-item"><a href="{{ route('pembelian.create') }}">Baru</a></li>
+                    @endcan
                     <li class="breadcrumb-item active">Daftar</a></li>
                 </ol>
             </div>

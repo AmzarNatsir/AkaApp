@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use App\Models\BeliHeaderModel;
+use App\Models\KasKeluarModel;
+use App\Models\KasMasukModel;
 
 trait GenerateNumber
 {
@@ -42,5 +44,41 @@ trait GenerateNumber
             $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
         }
         return $output;
+    }
+
+    public static function generateNoKas($kategori, $tanggal)
+    {
+        if($kategori=="in")
+        {
+            $no_urut = 1;
+            $arr_tgl = explode("-", $tanggal);
+            $bulan = sprintf('%02s', $arr_tgl[1]);
+            $tahun = $arr_tgl[0];
+
+            $result = KasMasukModel::whereYear('tgl_transaksi', $tahun)->orderby('id', 'desc')->first();
+            if(empty($result->no_transaksi)) {
+                $no_baru = "IN".$tahun.$bulan.sprintf('%04s', $no_urut); //Kas masuk
+            } else {
+                $no_bayar_baru = substr($result->no_transaksi, 9, 4)+1;
+                $no_baru = "IN".$tahun.$bulan.sprintf('%04s', $no_bayar_baru);
+            }
+            return $no_baru;
+        }
+        if($kategori=="ot")
+        {
+            $no_urut = 1;
+            $arr_tgl = explode("-", $tanggal);
+            $bulan = sprintf('%02s', $arr_tgl[1]);
+            $tahun = $arr_tgl[0];
+
+            $result = KasKeluarModel::whereYear('tgl_transaksi', $tahun)->orderby('id', 'desc')->first();
+            if(empty($result->no_transaksi)) {
+                $no_baru = "OT".$tahun.$bulan.sprintf('%04s', $no_urut); //Kas masuk
+            } else {
+                $no_bayar_baru = substr($result->no_transaksi, 9, 4)+1;
+                $no_baru = "OT".$tahun.$bulan.sprintf('%04s', $no_bayar_baru);
+            }
+            return $no_baru;
+        }
     }
 }

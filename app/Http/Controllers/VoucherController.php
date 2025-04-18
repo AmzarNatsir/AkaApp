@@ -48,7 +48,13 @@ class VoucherController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
-                $btn = "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button><button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                $btn = "";
+                if(auth()->user()->can("trans_voucher_delete")) {
+                    $btn .= "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                }
+                if(auth()->user()->can("trans_voucher_edit")) {
+                    $btn .="<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                }
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['voucher'] =  $r->nama_voucher;
@@ -303,7 +309,10 @@ class VoucherController extends Controller
             foreach($query as $r){
                 $btn = "";
                 if(empty($r->status_tagih)) {
-                    $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil'></i></button><button type='button' class='btn btn-secondary btn-sm' id='btn_print' value='".$r->id."' onclick='showPrint(this)'><i class='icon-printer'></i></button>";
+                    if(auth()->user()->can("trans_distribusi_voucher_edit")) {
+                        $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil'></i></button>";
+                    }
+                    $btn .="<button type='button' class='btn btn-secondary btn-sm' id='btn_print' value='".$r->id."' onclick='showPrint(this)'><i class='icon-printer'></i></button>";
                 }
                 $tota_voucher_awal = VoucherDetailModel::where('head_id', $r->id)->sum('stok_awal');
                 $tota_voucher_tambahan = VoucherDetailModel::where('head_id', $r->id)->sum('stok_tambahan');
@@ -335,10 +344,11 @@ class VoucherController extends Controller
         $ket_periode = (empty($dataH->first()->bulan)) ? "" : General::get_nama_bulan($dataH->first()->bulan)." ".$dataH->first()->tahun;
         $idH = (empty($dataH->first()->id)) ? NULL : $dataH->first()->id;
         $data = [
-            'data_head' => $dataH->first(),
+            'data_head' => $dataH,
             'periode' => $ket_periode,
            "list_penjualan" => VoucherDetailModel::where('head_id', $id)->get()
         ];
+        // dd($data);
         $pdf = Pdf::loadView('voucher.distribusi.print', $data)->setPaper('A4', 'potrait');
         return $pdf->stream();
     }

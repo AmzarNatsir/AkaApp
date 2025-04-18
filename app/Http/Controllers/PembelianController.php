@@ -148,9 +148,7 @@ class PembelianController extends Controller
                             </ul>
                               </div>';
                 if($dataH->status=="draft") {
-                    $btn2 = '<ul class="action">
-                            <li class="edit"> <a href="javascript:void(0)" onclick="editData('.$r->id.')" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i class="icon-pencil-alt"></i></a></li>
-                            <li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li></ul>';
+                    $btn2 = '<ul class="action"><li class="edit"> <a href="javascript:void(0)" onclick="editData('.$r->id.')" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i class="icon-pencil-alt"></i></a></li><li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>';
                 } else {
                     $btn2 = "<span class='badge badge-success'>Finished</span>";
                 }
@@ -294,8 +292,12 @@ class PembelianController extends Controller
             foreach($query as $r){
                 $action = '<ul class="action">';
                 if($r->status=="draft") {
-                    $action .= '<li class="edit"> <a href="javascript:void(0)" onclick="editData('.$r->id.')"><i class="icon-pencil-alt"></i></a></li>
-                    <li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>';
+                    if(auth()->user()->can("trans_pembelian_edit")) {
+                        $action .= '<li class="edit"> <a href="javascript:void(0)" onclick="editData('.$r->id.')"><i class="icon-pencil-alt"></i></a></li>';
+                    }
+                    if(auth()->user()->can("trans_pembelian_delete")) {
+                        $action .= '<li class="delete"><a href="javascript:void(0)" value="'.$r->id.'" id="btn_delete" onclick="konfirmDelete('.$r->id.')"><i class="icon-trash"></i></a></li>';
+                    }
                 } else {
                     $action .= '<li class="delete"><a href="javascript:void(0)" onclick="detailData('.$r->id.')" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i class="icon-eye"></i></a></li></ul>';
                 }

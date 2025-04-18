@@ -36,7 +36,7 @@
                             <div class="mb-3 row">
                                 <label for="name" class="col-md-4 col-form-label text-md-end text-start">Name</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                                     @if ($errors->has('name'))
                                         <span class="text-danger">{{ $errors->first('name') }}</span>
                                     @endif
@@ -70,6 +70,10 @@
                                     <div class="form-check checkbox checkbox-secondary mb-0">
                                         <input class="form-check-input" id="report_penjualan_voucher_view" name="menu[]" value="report_penjualan_voucher_view" type="checkbox">
                                         <label class="form-check-label" for="report_penjualan_voucher_view">Penjualan Voucher </label>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-secondary mb-0">
+                                        <input class="form-check-input" id="report_keuangan_view" name="menu[]" value="report_keuangan_view" type="checkbox">
+                                        <label class="form-check-label" for="report_keuangan_view">Keuangan </label>
                                     </div>
                                 </div>
                             </div>
@@ -577,6 +581,63 @@
                                                     <div class="form-check checkbox checkbox-secondary">
                                                         <input class="form-check-input" id="trans_penjualan_voucher_delete" name="menu[]" type="checkbox" value="trans_penjualan_voucher_delete">
                                                         <label class="form-check-label" for="trans_penjualan_voucher_delete">Delete</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Keuangan </h6>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="trans_keuangan_kas_masuk_view" name="menu[]" type="checkbox" value="trans_keuangan_kas_masuk_view">
+                                        <label class="form-check-label" for="trans_keuangan_kas_masuk_view">Kas Masuk</label>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_masuk_create" name="menu[]" type="checkbox" value="trans_keuangan_kas_masuk_create">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_masuk_create">Create</label>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_masuk_edit" name="menu[]" type="checkbox" value="trans_keuangan_kas_masuk_edit">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_masuk_edit">Edit</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_masuk_delete" name="menu[]" type="checkbox" value="trans_keuangan_kas_masuk_delete">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_masuk_delete">Delete</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="trans_keuangan_kas_keluar_view" name="menu[]" type="checkbox" value="trans_keuangan_kas_keluar_view">
+                                        <label class="form-check-label" for="trans_keuangan_kas_keluar_view">Kas Keluar</label>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_keluar_create" name="menu[]" type="checkbox" value="trans_keuangan_kas_keluar_create">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_keluar_create">Create</label>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_keluar_edit" name="menu[]" type="checkbox" value="trans_keuangan_kas_keluar_edit">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_keluar_edit">Edit</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="trans_keuangan_kas_keluar_delete" name="menu[]" type="checkbox" value="trans_keuangan_kas_keluar_delete">
+                                                        <label class="form-check-label" for="trans_keuangan_kas_keluar_delete">Delete</label>
                                                     </div>
                                                 </td>
                                             </tr>

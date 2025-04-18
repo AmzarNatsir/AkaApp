@@ -15,7 +15,9 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">
                         <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg></a></li>
+                    @can("trans_pemakaian_create")
                     <li class="breadcrumb-item"><a href="{{ route('pemakaianMaterial.index') }}">Pilihan Gudang</a></li>
+                    @endcan
                     <li class="breadcrumb-item active">Data Baru</li>
                 </ol>
             </div>

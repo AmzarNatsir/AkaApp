@@ -33,11 +33,20 @@ class CabangController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
-                $btn = "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button><button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                $btn = "";
+                if(auth()->user()->can('cabang_delete'))
+                {
+                    $btn .= "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                }
+                if(auth()->user()->can('cabang_edit'))
+                {
+                    $btn .= "<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
+                }
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['kode'] =  $r->kode;
                 $Data['cabang'] =  $r->nama_cabang;
+                $Data['alamat'] =  $r->alamat;
                 $Data['no'] = $counter;
                 $data[] = $Data;
                 $counter++;

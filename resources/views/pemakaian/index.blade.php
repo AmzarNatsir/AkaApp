@@ -48,7 +48,9 @@
                             <li class="bubble"> </li>
                             </ul>
                         </div>
+                        @can("trans_pemakaian_create")
                         <button type="button" class="btn btn-lg btn-primary btn-square" name="btn_gudang_utama" id="btn_gudang_utama" value="1" onclick="goFormCreate(this)">Pilih Gudang</button>
+                        @endcan
                     </div>
                 </div>
                 @foreach ($list_cabang as $cabang)
@@ -77,7 +79,9 @@
                                 <li class="bubble"></li>
                               </ul>
                         </div>
+                        @can("trans_pemakaian_create")
                         <button type="button" class="btn btn-lg btn-primary btn-square" name="btn_gudang[]" id="btn_gudang[]" value="{{ $cabang->kode }}" {{ ($cabang->stok_akhir==0) ? "disabled" : "" }}>Pilih Gudang</button>
+                        @endcan
                     </div>
                 </div>
                 @endforeach

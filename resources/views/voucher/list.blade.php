@@ -19,17 +19,19 @@
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
+        @can("trans_voucher_create")
         <div class="col-md-12 project-list">
             <div class="card">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group mb-0 me-0"></div>
-                  <button class="btn btn-primary" type="button" id="btn_add" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i data-feather="plus-square"> </i> Data Baru</button>
-                    <div class="table-responsive custom-scrollbar">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group mb-0 me-0"></div>
+                        <button class="btn btn-primary" type="button" id="btn_add" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap"        data-whatever="@getbootstrap"><i data-feather="plus-square"> </i> Data Baru</button>
+                        <div class="table-responsive custom-scrollbar">
+                    </div>
                 </div>
-              </div>
             </div>
         </div>
+        @endcan
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">

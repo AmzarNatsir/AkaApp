@@ -19,6 +19,7 @@
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
+        @can("cabang_create")
         <div class="col-md-12 project-list">
             <div class="card">
               <div class="row">
@@ -30,25 +31,25 @@
               </div>
             </div>
         </div>
+        @endcan
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
                     <h4>Data Cabang</h4><span>Daftar data cabang</span>
                 </div>
                 <div class="card-body">
-
-                        <table class="display" id="table_view">
-                          <thead>
-                            <tr>
-                              <th style="width: 5%">#</th>
-                              <th style="width: 10%">Kode</th>
-                              <th>Nama Cabang</th>
-                              <th style="width: 10%">Opsi</th>
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                      </div>
+                    <table class="display" id="table_view">
+                        <thead>
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 10%">Kode</th>
+                            <th>Nama Cabang</th>
+                            <th>Alamat</th>
+                            <th style="width: 10%">Opsi</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -71,6 +72,7 @@
                 { data: 'no' },
                 { data: 'kode' },
                 { data: 'cabang' },
+                { data: 'alamat' },
                 { data: 'act' },
             ],
             responsive: true,

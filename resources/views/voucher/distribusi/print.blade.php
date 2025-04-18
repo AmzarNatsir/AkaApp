@@ -95,7 +95,7 @@
             <tr>
                 <td style="height: 25px">{{ $r->nama_voucher }}</td>
                 <td style="text-align:right">Rp. {{ number_format($r->harga_modal, 0) }}</td>
-                <td style="text-align:center">{{ $r->stok_awal }}<input type="hidden" id="tempStokAwal" name="tempStokAwal[]" value="{{ $r->stok_awal }}"></td>
+                <td style="text-align:center">{{ $r->stok_awal }}</td>
                 <td style="text-align:center"></td>
                 <td style="text-align:center"></td>
                 <td style="font-size:13pt; text-align:center"></td>
