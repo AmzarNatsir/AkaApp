@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'petugas_id'
     ];
 
     /**
@@ -43,4 +44,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function petugas()
+    {
+        return $this->hasOne(PetugasModel::class, 'id', 'petugas_id');
+    }
 }

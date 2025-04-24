@@ -16,7 +16,9 @@ class PemakaianModel extends Model
         "petugas_id",
         "keterangan",
         "user_id",
-        "gudang_id"
+        "gudang_id",
+        "id_pelanggan",
+        "petugas"
     ];
 
     public function getKategori()

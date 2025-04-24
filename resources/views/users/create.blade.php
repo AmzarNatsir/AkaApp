@@ -54,6 +54,18 @@
                     </div>
 
                     <div class="mb-3 row">
+                        <label for="password" class="col-md-4 col-form-label text-md-end text-start">Petugas</label>
+                        <div class="col-md-6">
+                          <select class="form-select select" name="petugas" id="petugas">
+                            <option value="">Pilihan</option>
+                            @foreach ($petugas as $petuga)
+                            <option value="{{ $petuga->id }}">{{ $petuga->nama_petugas }}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
                         <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
                         <div class="col-md-6">
                             <select class="form-select @error('roles') is-invalid @enderror" multiple aria-label="Roles" id="roles" name="roles[]">
@@ -90,4 +102,12 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $(".select").select2({
+            placeholder: "Pilihan",
+            allowClear: true
+        });
+    })
+</script>
 @endsection

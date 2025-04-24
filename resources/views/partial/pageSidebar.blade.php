@@ -19,6 +19,7 @@ $canMasterCabang = auth()->user()->can('cabang_view');
 $canMasterWilayah = auth()->user()->can('wilayah_view');
 $canMasterPetugas = auth()->user()->can('petugas_view');
 $canMasterPaketInternet = auth()->user()->can('paket_internet_view');
+$canMasterPalanggan = auth()->user()->can('pelanggan_view');
 //transaksi
 //material
 $canTransMaterialPembelian = auth()->user()->can('trans_pembelian_view');
@@ -38,6 +39,10 @@ $canTransPenjualanVoucherCreate = auth()->user()->can('trans_penjualan_voucher_c
 //keuangan
 $canTransKasMasuk = auth()->user()->can('trans_keuangan_kas_masuk_view');
 $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
+//pelanggan
+$canRegistrasiPelangan = auth()->user()->can('pelanggan_registrasi_view');
+$canMonitoringPelangan = auth()->user()->can('pelanggan_monitoring_view');
+$canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
 @endphp
 <div class="logo-wrapper"><a href="{{ route('home') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/akagroup.png') }}" style="width: 85%" alt=""></a>
     <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
@@ -56,9 +61,9 @@ $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
                 <h6>Pinned</h6>
                 </div>
             </li>
-            <li class="sidebar-main-title">
+            {{-- <li class="sidebar-main-title">
                 <div><h6 class="lan-1">General</h6>g</div>
-            </li>
+            </li> --}}
             @if($canDashboard)
             <li class="sidebar-list"><i class="fa fa-thumb-tack"> </i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use></svg>
@@ -162,8 +167,8 @@ $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
             @endif
             @if($canMasterPaketInternet)
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ route('paket_internet.index') }}">
-                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
-                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"> </use></svg><span>Paket Internet</span></a>
+                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-form') }}"></use></svg>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"> </use></svg><span>Paket Internet</span></a>
             </li>
             @endif
             @if($canTransMaterialPembelian || $canTransMaterialPembelianCreate || $canTransMaterialDistribusi || $canTransMaterialPemakaian || $canTransMaterialPemakaianCreate || $canTransMaterialPengembalian || $canTransVoucher || $canTransAgenVoucher || $canTransDistribusiVoucher || $canTransDistribusiVoucherCreate || $canTransPenjualanVoucher || $canTransPenjualanVoucherCreate || $canTransKasMasuk || $canTransKasKeluar)
@@ -216,6 +221,23 @@ $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
                             <li><a href="{{ route('pengembalian.material.list') }}">Daftar</a></li>
                         </ul>
                     </li>
+                    @endif
+                </ul>
+            </li>
+            @endif
+            @if($canRegistrasiPelangan || $canMonitoringPelangan || $canPembayaranPelangan)
+            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
+                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg><span>Pelanggan</span></a>
+                <ul class="sidebar-submenu">
+                    @if($canRegistrasiPelangan)
+                    <li><a href="{{ route('pelanggan.index') }}">Registrasi</a></li>
+                    @endif
+                    @if($canMonitoringPelangan)
+                    <li><a href="{{ route('pelanggan.monitoring') }}">Monitoring</a></li>
+                    @endif
+                    @if($canPembayaranPelangan)
+                    <li><a href="#">Pembayaran</a></li>
                     @endif
                 </ul>
             </li>

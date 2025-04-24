@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\PetugasModel;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,8 +37,10 @@ class UserController extends Controller
      */
     public function create(): View
     {
+        $usedPetugasIds = User::pluck('petugas_id');
         return view('users.create', [
-            'roles' => Role::pluck('name')->all()
+            'roles' => Role::pluck('name')->all(),
+            'petugas' => PetugasModel::whereNotIn('id', User::whereNotNull('petugas_id')->pluck('petugas_id'))->where('aktif', 'y')->get()
         ]);
     }
 
@@ -48,7 +51,9 @@ class UserController extends Controller
     {
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
-
+        if(!empty($request->petugas)){
+            $input['petugas_id'] = $request->petugas;
+        }
         $user = User::create($input);
         $user->assignRole($request->roles);
 
@@ -78,10 +83,16 @@ class UserController extends Controller
             }
         }
 
+        $usedPetugasIds = User::whereNotNull('petugas_id')
+        ->where('id', '!=', $user->id)
+        ->pluck('petugas_id');
         return view('users.edit', [
             'user' => $user,
             'roles' => Role::pluck('name')->all(),
-            'userRoles' => $user->roles->pluck('name')->all()
+            'userRoles' => $user->roles->pluck('name')->all(),
+            'petugas' => PetugasModel::whereNotIn('id', $usedPetugasIds)
+                        ->where('aktif', 'y')
+                        ->get()
         ]);
     }
 
@@ -96,6 +107,12 @@ class UserController extends Controller
             $input['password'] = Hash::make($request->password);
         }else{
             $input = $request->except('password');
+        }
+
+        if(!empty($request->petugas)){
+            $input['petugas_id'] = $request->petugas;
+        } else {
+            $input['petugas_id'] = NULL;
         }
 
         $user->update($input);

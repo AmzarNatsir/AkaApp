@@ -8,6 +8,7 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MerekController;
 use App\Http\Controllers\PaketInternetController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PengembalianMaterialController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WilayahController;
@@ -241,6 +243,36 @@ Route::middleware('auth')->group(function ()
         Route::get('destroy/{id}', [PaketInternetController::class, 'destroy'])->name('paket_internet.destroy');
     });
 
+    Route::group(['prefix' => 'pelanggan'], function(){
+        Route::get('/', [PelangganController::class, 'index'])->name('pelanggan.index');
+        Route::get('getData', [PelangganController::class, 'getData'])->name('pelanggan.getData');
+        Route::get('create', [PelangganController::class, 'create'])->name('pelanggan.create');
+        Route::post('store', [PelangganController::class, 'store'])->name('pelanggan.store');
+        Route::get('show/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
+        Route::get('edit/{id}', [PelangganController::class, 'edit'])->name('pelanggan.edit');
+        Route::put('update/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+        Route::get('destroy/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
+        //proses pemasangan tahap 1 - pengaturan awal
+        Route::get('proses/{id}', [PelangganController::class, 'proses'])->name('pelanggan.proses');
+        Route::post('storeProses', [PelangganController::class, 'storeProses'])->name('pelanggan.storeProses');
+        //monitoring pemasangan paket pelanggan
+        Route::get('monitoring', [PelangganController::class, 'monitoring'])->name('pelanggan.monitoring');
+        Route::get('getDataMonitoring', [PelangganController::class, 'getDataMonitoring'])->name('pelanggan.getDataMonitoring');
+        Route::get('showDetail/{id}', [PelangganController::class, 'showDetail'])->name('pelanggan.showDetail');
+        Route::get('showFormAktivasi/{id}', [PelangganController::class, 'showFormAktivasi'])->name('pelanggan.showFormAktivasi');
+        Route::post('storeAktivasi', [PelangganController::class, 'storeAktivasi'])->name('pelanggan.storeAktivasi');
+    });
+
+    Route::group(['prefix' => 'service'], function() {
+        Route::get('getListMaterial/{idHead}', [ServiceController::class, 'getListMaterialPelanggan'])->name('service.getListMaterialPelanggan');
+        Route::get('goFormComplete/{idPelanggan}', [ServiceController::class, 'goFormComplete'])->name('service.goFormComplete');
+        Route::post('storeFormComplete', [ServiceController::class, 'storeFormComplete'])->name('service.storeFormComplete');
+        Route::get('listTaskCompleted', [ServiceController::class, 'listTaskComplete'])->name("service.listTaskCompleted");
+        Route::get('listTaskFinished', [ServiceController::class, 'listTaskFinished'])->name("service.listTaskFinished");
+
+        Route::get('goFormCacelTask/{idPelanggan}', [ServiceController::class, 'goFormCacelTask'])->name('service.goFormCacelTask');
+        Route::post('storeCanceledTask', [ServiceController::class, 'storeCanceledTask'])->name('service.storeCanceledTask');
+    });
 
     Route::group(['prefix' => 'report'], function(){
         Route::get('distribusiVoucher', [ReportController::class, 'distribusiVoucher'])->name('report.distribusiVoucher');

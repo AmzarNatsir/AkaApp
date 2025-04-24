@@ -202,7 +202,7 @@
                 {{-- </div> --}}
             {{-- </li> --}}
             <li class="profile-nav onhover-dropdown">
-                <div class="media profile-media"><img class="b-r-10" src="{{ asset('assets/images/dashboard/profile.png') }}" alt="">
+                <div class="media profile-media"><img class="b-r-10" src="{{ asset('assets/images/user/user.png') }}" alt="">
                     <div class="media-body d-xxl-block d-none box-col-none">
                     <div class="d-flex align-items-center gap-2"> <span>{{ auth()->user()->name }} </span><i class="middle fa fa-angle-down"> </i></div>
                     <p class="mb-0 font-roboto">{{ auth()->user()->roles->pluck('name')[0] }}</p>

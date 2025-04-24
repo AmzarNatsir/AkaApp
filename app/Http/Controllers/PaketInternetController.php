@@ -34,12 +34,12 @@ class PaketInternetController extends Controller
             $counter = $request->input('start') + 1;
             foreach($query as $r){
                 $btn = "";
-                // if(auth()->user()->can("trans_voucher_delete")) {
+                if(auth()->user()->can("paket_internet_delete")) {
                     $btn .= "<button type='button' class='btn btn-danger btn-sm' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
-                // }
-                // if(auth()->user()->can("trans_voucher_edit")) {
+                }
+                if(auth()->user()->can("paket_internet_edit")) {
                     $btn .="<button type='button' class='btn btn-success btn-sm' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
-                // }
+                }
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['nama_paket'] =  $r->nama_paket;

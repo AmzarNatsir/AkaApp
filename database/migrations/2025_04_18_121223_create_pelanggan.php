@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer("wilayah");
             $table->integer("paket_internet")->nullable();
             $table->string('status', 50)->nullable();
+            $table->string('aktif', 10)->nullable();
             $table->timestamps();
         });
     }

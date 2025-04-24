@@ -104,6 +104,7 @@ class PemakaianController extends Controller
             ]);
 
         } catch (Throwable $e) {
+            DB::rollBack();
             $rs = response()->json([
                 'success' => false,
                 'message' => "Terdapat error pada proses penyimpanan data"

@@ -65,8 +65,9 @@ class MaterialController extends Controller
             $counter = $request->input('start') + 1;
             foreach($query as $r){
                 $btn2 = "";
+                $pathPhoto = Storage::url('material/'.$r->gambar);
                 $material = '<div class="product-names">
-                                <div class="light-product-box"><a href="'.Storage::url('material/'.$r->gambar).'" data-fancybox data-caption="'. $r->material.'"><img class="img-fluid" src="'.Storage::url('material/'.$r->gambar).'" alt="headphones"></a></div>
+                                <div class="light-product-box"><a href="'.url($pathPhoto).'" data-fancybox data-caption="'. $r->material.'"><img class="img-fluid" src="'.url($pathPhoto).'" alt="headphones"></a></div>
                                 <p>'.$r->material.'</p>
                               </div>';
                 $btn2 .= '<ul class="action">';

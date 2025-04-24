@@ -37,8 +37,9 @@ class PetugasController extends Controller
             $counter = $request->input('start') + 1;
             foreach($query as $r){
                 $btn = "";
+                $path_photo = Storage::url('petugas/'.$r->photo);
                 $no_image = "<a href=".asset('assets/images/avtar/11.jpg')." data-fancybox data-caption='No Image'><img class='img-fluid' src=".asset('assets/images/avtar/11.jpg')." alt='avatar'></a>";
-                $yes_image = "<a href=".Storage::url('petugas/'.$r->photo)." data-fancybox data-caption='No Image'><img class='img-fluid' src=".Storage::url('petugas/'.$r->photo)." alt='avatar'></a>";
+                $yes_image = "<a href=".url($path_photo)." data-fancybox data-caption='No Image'><img class='img-fluid' src=".url($path_photo)." alt='avatar'></a>";
                 $photo = (empty($r->photo)) ? $no_image : $yes_image;
                 $petugas = '<div class="product-names">
                                 <div class="light-product-box">'.$photo.'</div>

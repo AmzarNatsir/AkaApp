@@ -16,6 +16,22 @@ class PelangganModel extends Model
         "no_telepon_2",
         "wilayah",
         "paket_internet",
-        "status"
+        "status",
+        "aktif",
+        "tgl_completed",
+        "tgl_finished",
+        "tgl_submit_cancel",
+        "keterangan_cancel",
+        "tgl_canceled",
+        "user_canceled"
     ];
+
+    public function getWilayah()
+    {
+        return $this->belongsTo(WilayahModel::class, 'wilayah', 'id');
+    }
+    public function getPaket()
+    {
+        return $this->belongsTo(PaketInternetModel::class, 'paket_internet', 'id');
+    }
 }

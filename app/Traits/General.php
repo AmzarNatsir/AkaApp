@@ -2,6 +2,9 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
 trait General
 {
 
@@ -66,6 +69,24 @@ trait General
                 return $value;
                 break;
             }
+        }
+    }
+
+    public static function upload_gambar($file, $folder)
+    {
+        try {
+            $path = storage_path("app/public/".$folder);
+            if(!File::isDirectory($path)) {
+                $path = Storage::disk('public')->makeDirectory($folder);
+            }
+            $image = $file;
+            $fileName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs("public/" . $folder, $fileName);
+            return $fileName;
+        } catch (\Throwable $th)
+        {
+            report($th);
+            return $th->getMessage();
         }
     }
 }

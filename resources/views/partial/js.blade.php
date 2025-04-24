@@ -25,7 +25,10 @@
 <script src="{{ asset('assets/fancybox/jquery.fancybox.min.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/flatpickr.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/custom-flatpickr.js') }}"></script>
+<script src="{{ asset('assets/js/tooltip-init.js') }}"></script>
 <!-- Plugins JS Ends-->
 <!-- Theme js-->
 <script src="{{ asset('assets/js/script.js') }}"></script>
-<script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script> --}}

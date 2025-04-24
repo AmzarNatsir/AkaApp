@@ -227,11 +227,7 @@
                                         <input class="form-check-input" id="material_kartu_stok_view" name="menu[]" value="material_kartu_stok_view" type="checkbox">
                                         <label class="form-check-label" for="material_kartu_stok_view">Karu Stok </label>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Menu Cabang - wilayah -->
-                            <div class="col-xl-4 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
+                                    <hr>
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Cabang </h6>
                                     <div class="form-check checkbox checkbox-primary mb-0">
                                         <input class="form-check-input" id="cabang_view" name="menu[]" value="cabang_view" type="checkbox">
@@ -259,7 +255,11 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <hr>
+                                </div>
+                            </div>
+                            <!-- Menu Cabang - wilayah -->
+                            <div class="col-xl-4 col-sm-6">
+                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Wilayah </h6>
                                     <div class="form-check checkbox checkbox-primary mb-0">
                                         <input class="form-check-input" id="wilayah_view" name="menu[]" value="wilayah_view" type="checkbox">
@@ -287,11 +287,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Menu petugas -->
-                            <div class="col-xl-4 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
+                                    <hr>
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Petugas </h6>
                                     <div class="form-check checkbox checkbox-primary mb-0">
                                         <input class="form-check-input" id="petugas_view" name="menu[]" value="petugas_view" type="checkbox">
@@ -319,8 +315,12 @@
                                             </tr>
                                         </table>
                                     </div>
+                                </div>
+                            </div>
+                            <!-- Menu petugas -->
+                            <div class="col-xl-4 col-sm-6">
+                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
                                     {{-- menu paket internet --}}
-                                    <hr>
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Paket Internet </h6>
                                     <div class="form-check checkbox checkbox-primary mb-0">
                                         <input class="form-check-input" id="paket_internet_view" name="menu[]" value="paket_internet_view" type="checkbox">
@@ -349,6 +349,34 @@
                                         </table>
                                     </div>
                                     {{-- end menu paket internet --}}
+                                    <hr>
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i>Pelanggan </h6>
+                                    <div class="form-check checkbox checkbox-primary mb-0">
+                                        <input class="form-check-input" id="pelanggan_view" name="menu[]" value="pelanggan_view" type="checkbox">
+                                        <label class="form-check-label" for="pelanggan_view">Pelanggan</label>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="pelanggan_create" name="menu[]" type="checkbox" value="pelanggan_create">
+                                                        <label class="form-check-label" for="pelanggan_create">Create</label>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 30%">
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="pelanggan_edit" name="menu[]" type="checkbox" value="pelanggan_edit">
+                                                        <label class="form-check-label" for="pelanggan_edit">Edit</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-check checkbox checkbox-secondary">
+                                                        <input class="form-check-input" id="pelanggan_delete" name="menu[]" type="checkbox" value="pelanggan_delete">
+                                                        <label class="form-check-label" for="pelanggan_delete">Delete</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
@@ -395,11 +423,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Material </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_distribusi_view" name="menu[]" type="checkbox" value="trans_distribusi_view">
                                         <label class="form-check-label" for="trans_distribusi_view">Distribusi</label>
@@ -426,11 +450,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Material </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_pemakaian_view" name="menu[]" type="checkbox" value="trans_pemakaian_view">
                                         <label class="form-check-label" for="trans_pemakaian_view">Pemakaian</label>
@@ -457,11 +477,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Material </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_pengembalian_view" name="menu[]" type="checkbox" value="trans_pengembalian_view">
                                         <label class="form-check-label" for="trans_pengembalian_view">Pengembalian</label>
@@ -490,10 +506,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- transaksi voucher -->
-                        <hr>
-                        <div class="row">
                             <div class="col-xl-6 col-sm-6">
                                 <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Voucher </h6>
@@ -523,11 +535,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Voucher </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_agen_view" name="menu[]" type="checkbox" value="trans_agen_view">
                                         <label class="form-check-label" for="trans_agen_view">Agen</label>
@@ -554,11 +562,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Voucher </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_distribusi_voucher_view" name="menu[]" type="checkbox" value="trans_distribusi_voucher_view">
                                         <label class="form-check-label" for="trans_distribusi_voucher_view">Distribusi</label>
@@ -585,11 +589,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-sm-6">
-                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Voucher </h6>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_penjualan_voucher_view" name="menu[]" type="checkbox" value="trans_penjualan_voucher_view">
                                         <label class="form-check-label" for="trans_penjualan_voucher_view">Penjualan</label>
@@ -618,6 +618,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- transaksi voucher -->
+                        <hr>
+                        <div class="row">
                             <div class="col-xl-6 col-sm-6">
                                 <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
                                     <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Keuangan </h6>
@@ -647,6 +651,7 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    <hr>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="trans_keuangan_kas_keluar_view" name="menu[]" type="checkbox" value="trans_keuangan_kas_keluar_view">
                                         <label class="form-check-label" for="trans_keuangan_kas_keluar_view">Kas Keluar</label>
@@ -675,8 +680,30 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-xl-6 col-sm-6">
+                                <div class="card-wrapper border rounded-3 h-100 checkbox-checked">
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Pelanggan </h6>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="pelanggan_registrasi_view" name="menu[]" type="checkbox" value="pelanggan_registrasi_view">
+                                        <label class="form-check-label" for="pelanggan_registrasi_view">Registrasi</label>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="pelanggan_monitoring_view" name="menu[]" type="checkbox" value="pelanggan_monitoring_view">
+                                        <label class="form-check-label" for="pelanggan_monitoring_view">Monitoring</label>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="pelanggan_pembayaran_view" name="menu[]" type="checkbox" value="pelanggan_pembayaran_view">
+                                        <label class="form-check-label" for="pelanggan_pembayaran_view">Pembayaran</label>
+                                    </div>
+                                    <hr>
+                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i> Others </h6>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="others_petugas_view" name="menu[]" type="checkbox" value="others_petugas_view">
+                                        <label class="form-check-label" for="others_petugas_view">Akses Petugas</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                         <hr>
                         <div class="mb-3 row">
                             <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Role">

@@ -23,11 +23,11 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header">
+                {{-- <div class="card-header">
                     <h4>Home</h4>
-                </div>
-                <div class="card-body" style="text-align: center; background-color: rgb(2, 105, 98)">
-                    <img class="img-fluid" src="{{ asset('assets/images/logo/akagroup.png') }}" style="width: 85%" alt="">
+                </div> --}}
+                <div class="card-body" style="text-align: center;">
+                    <img class="img-fluid" src="{{ asset('assets/images/logo/akagroup_baru.jpg') }}" style="width: 80%" alt="">
                 </div>
             </div>
         </div>
