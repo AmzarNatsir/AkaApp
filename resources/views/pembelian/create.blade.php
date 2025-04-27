@@ -104,22 +104,31 @@
                 data: $(this).serialize(),
                 success: function (response) {
                     if (response.success==true) {
-                        swal('Success! '+response.message, {
+                        Swal.fire({
+                            title: 'success!',
+                            text: response.message,
                             icon: 'success',
+                            timer: 2000,
                             buttons: false,
-                            timer: 2000
                         }).then(() => {
                             location.replace("{{ url('pembelian/addDetail') }}/"+response.dataID);
                         });
-
                     } else {
-                        swal("It's danger", response.message, "error");
+                        Swal.fire({
+                            icon: 'error',
+                            title: "It's danger!",
+                            text: response.message
+                        });
                         return false;
                     }
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });

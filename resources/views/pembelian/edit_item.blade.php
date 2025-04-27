@@ -57,16 +57,28 @@
                 data: $(this).serialize(),
                 success: function (response) {
                     if (response.success==true) {
-                        swal("Good job!", response.message, "success");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Good Job!',
+                            text: response.message
+                        });
                         location.replace("{{ url('pembelian/addDetail') }}/"+idHead);
                     } else {
-                        swal("It's danger", response.message, "error");
+                        Swal.fire({
+                            icon: 'error',
+                            title: "It's danger!",
+                            text: response.message
+                        });
                         return false;
                     }
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });

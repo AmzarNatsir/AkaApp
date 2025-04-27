@@ -267,10 +267,13 @@ class PelangganController extends Controller
                     $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses' id='btn_proses' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i></button>";
                 }
                 if($r->status=="onCanceled" || empty($r->status)) {
-                    $btn .="<button type='button' class='btn btn-warning btn-sm' title='Detail' id='btn_show' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-eye'></i></button>";
+                    $btn .="<button type='button' class='btn btn-danger btn-sm' title='Detail' id='btn_show' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i> Detail</button>";
                 }
                 if($r->status=="onCompleted") {
-                    $btn .="<button type='button' class='btn btn-danger btn-sm' title='Proses Aktivasi' id='btn_proses_aktivasi' data-bs-toggle='modal' data-bs-target='#modalAktivasi' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i> Aktivasi</button>";
+                    $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses Aktivasi' id='btn_proses_aktivasi' data-bs-toggle='modal' data-bs-target='#modalAktivasi' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i> Aktivasi</button>";
+                }
+                if($r->status=="onFinished") {
+                    $btn .="<button type='button' class='btn btn-success btn-sm' title='Detail Pelanggan' id='btn_detail_finished' data-bs-toggle='modal' data-bs-target='#modalAktivasi' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i> Detail</button>";
                 }
                 $btn .='</div>';
                 if(empty($r->status)) {
@@ -357,10 +360,13 @@ class PelangganController extends Controller
     {
         try {
             $data = [
-                'tgl_finished' => $request->inpTanggalAktivasi,
+                'tgl_finished' => date('Y-m-d'),
                 'status' => 'onFinished'
             ];
             PelangganModel::find($request->id_pelanggan)->update($data);
+            PemasanganDetailModel::find($request->id_pemasangan)->update([
+                'tgl_aktivasi' => $request->inpTanggalAktivasi
+            ]);
             $rs = response()->json([
                 'success' => true,
                 'message' => "Data pemakaian material berhasil disimpan."
@@ -372,5 +378,49 @@ class PelangganController extends Controller
             ]);
         }
         return $rs;
+    }
+    public function showDetaiPelangganFinished($idPelanggan)
+    {
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($idPelanggan),
+            'pemakaian_material' => PemakaianModel::where('id_pelanggan', $idPelanggan)->first(),
+            'pemasangan_detail' => PemasanganDetailModel::where('id_pelanggan', $idPelanggan)->first()
+        ];
+        return view('pelanggan.pemasangan.detail_finished', $data);
+    }
+
+    //pencarian
+    public function pembayaran()
+    {
+        return view('pelanggan.pembayaran.index');
+    }
+
+    public function getPelanggan(Request $request)
+    {
+        $search = $request->get('q');
+
+        $results = PelangganModel::where('nama_pelanggan', 'LIKE', "%$search%")
+            ->orWhere('no_telepon_1', 'LIKE', "%$search%")
+            ->where('status', 'onFinished')
+            ->select('id', 'nama_pelanggan as text') // 'text' is required by Select2
+            ->limit(10)
+            ->get();
+
+        return response()->json($results);
+    }
+
+    public function detailPelanggan($id)
+    {
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first()
+        ];
+        return view('pelanggan.pembayaran.form_pembayaran', $data);
     }
 }

@@ -30,11 +30,11 @@
                             <tr>
                               <th style="width: 5%">#</th>
                               <th>Pelanggan</th>
-                              <th style="width: 30%">Alamat</th>
+                              <th style="width: 25%">Alamat</th>
                               <th style="width: 15%">Paket</th>
                               <th style="width: 10%">Petugas</th>
                               <th style="width: 10%">Status</th>
-                              <th style="width: 10%"></th>
+                              <th style="width: 15%"></th>
                             </tr>
                           </thead>
                           <tbody></tbody>
@@ -84,6 +84,9 @@
         });
         $("#table_view").on('click', '#btn_proses_aktivasi', function(){
             $("#form_aktivasi").load("{{ url('pelanggan/showFormAktivasi') }}/"+$(this).val());
+        });
+        $("#table_view").on('click', '#btn_detail_finished', function(){
+            $("#form_aktivasi").load("{{ url('pelanggan/showDetaiPelangganFinished') }}/"+$(this).val());
         });
     });
 </script>

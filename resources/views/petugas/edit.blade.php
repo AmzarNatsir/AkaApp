@@ -91,7 +91,11 @@
                 processData: false,
                 success: function (response) {
                     if (response.success==true) {
-                        swal("Good job!", response.message, "success");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Good Job!',
+                            text: response.message
+                        });
                         // $('#updateForm')[0].reset();
                         location.reload();
                     } else {
@@ -100,7 +104,11 @@
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });
@@ -123,8 +131,10 @@
                 }
 
                 if (!blnValid) {
-                    swal("Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", "), {
-                        icon: 'warning',
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", ")
                     });
                     oInput.value = "";
                     return false;

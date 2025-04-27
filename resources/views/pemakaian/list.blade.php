@@ -82,44 +82,5 @@
             $("#form_view").load("{{ url('pemakaianMaterial/detail') }}/"+$(this).val());
         });
     });
-
-    // var konfirmDelete = function(el)
-    // {
-    //     swal({
-    //     title: 'Yakin akan menghapus data?',
-    //     text: 'Data material!',
-    //     icon: 'warning',
-    //     buttons: true,
-    //     dangerMode: true,
-    //     })
-    //     .then((willDelete) => {
-    //     if (willDelete)
-    //     {
-    //         $.ajax({
-    //             url: "{{ url('material/destroy') }}/"+el,
-    //             type: "GET",
-    //             success:function(response){
-    //                 if(response.success==true) {
-    //                     swal(response.message, {
-    //                         icon: 'success',
-    //                         buttons: false,
-    //                         timer: 2000
-    //                     }).then(() => {
-    //                         $('#table_view').DataTable().ajax.reload();
-    //                     });
-    //                 } else {
-    //                     swal(response.message, {
-    //                         icon: 'warning',
-    //                     });
-    //                 }
-    //             }
-    //         });
-    //     } else {
-    //         swal('Warning! Selected data failed to delete!', {
-    //             icon: 'warning',
-    //         });
-    //     }
-    //     });
-    // }
 </script>
 @endsection

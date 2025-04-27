@@ -1,9 +1,8 @@
 <div class="modal-toggle-wrapper social-profile text-start dark-sign-up">
-    <h3 class="modal-header justify-content-center border-0">Form Aktivasi Pelanggan</h3>
+    <h3 class="modal-header justify-content-center border-0">Data Pelanggan</h3>
     <form id="aktivasiForm" method="post" class="row g-3 needs-validation" novalidate="">
     @csrf
     <input type="hidden" name="id_pelanggan" id="id_pelanggan" value="{{ $pelanggan->id }}">
-    <input type="hidden" name="id_pemasangan" id="id_pemasangan" value="{{ $pemasangan_detail->id }}">
     <div class="modal-body">
         <div class="todo">
             <div class="todo-list-wrapper theme-scrollbar">
@@ -28,10 +27,11 @@
                                             <div class="project-meeting-details">
                                                 <div class="project-meeting">
                                                     <span class="f-light f-12 f-w-500">Completed at</span>
-                                                    <span class="f-light f-12 f-w-500 badge badge-danger text-white">Waiting Task Finished</span>
+                                                    <span class="f-light f-12 f-w-500">Activated at</span>
                                                 </div>
                                                 <div class="project-meeting-time">
                                                     <a class="f-14 f-w-500 " href="javascript:void(0)"><i class="fa fa-calendar"></i> {{ $pelanggan->tgl_completed }}</a>
+                                                    <a class="f-14 f-w-500 " href="javascript:void(0)"><i class="fa fa-calendar"></i> {{ $pemasangan_detail->tgl_aktivasi }}</a>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -195,22 +195,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="form theme-form">
-                                                        <div class="row form-row align-items-end">
-                                                            <div class="col-md-3">
-                                                                <label>Tanggal Aktivasi</label>
-                                                                <input class="form-control" name="inpTanggalAktivasi" id="inpTanggalAktivasi" type="date" value="{{ date('Y-m-d') }}" required>
-
-                                                            </div>
-                                                            <div class="col-md-9">
-                                                                <button class="btn btn-primary" type="submit">Finished</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -226,46 +210,3 @@
     </div>
     </form>
 </div>
-<script>
-    $(document).ready(function () {
-        $('#aktivasiForm').submit(function (e) {
-            e.preventDefault(); // Prevent default form submission
-            let formData = new FormData(document.getElementById('aktivasiForm'));
-            $.ajax({
-                url: "{{ route('pelanggan.storeAktivasi') }}", // Update this with your route
-                type: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                },
-                data: formData, //$(this).serialize(),
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    if (response.success==true) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Good Job!',
-                            text: response.message
-                        });
-                        location.reload();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: "It's danger!",
-                            text: response.message
-                        });
-                        return false;
-                    }
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText); // Debugging errors
-                    Swal.fire({
-                        icon: 'error',
-                        title: "It's danger!",
-                        text: "Something went wrong! "+xhr.responseText
-                    });
-                }
-            });
-        });
-    });
-</script>

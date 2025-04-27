@@ -87,42 +87,41 @@
             location.replace("{{ route('material.create') }}");
         })
     });
-    var konfirmDelete = function(el)
-    {
-        swal({
-        title: 'Yakin akan menghapus data?',
-        text: 'Data material!',
-        icon: 'warning',
-        buttons: true,
-        dangerMode: true,
-        })
-        .then((willDelete) => {
-        if (willDelete)
-        {
-            $.ajax({
-                url: "{{ url('material/destroy') }}/"+el,
-                type: "GET",
-                success:function(response){
-                    if(response.success==true) {
-                        swal(response.message, {
-                            icon: 'success',
-                            buttons: false,
-                            timer: 2000
-                        }).then(() => {
-                            $('#table_view').DataTable().ajax.reload();
-                        });
-                    } else {
-                        swal(response.message, {
-                            icon: 'warning',
-                        });
+
+    var konfirmDelete = function(el) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Data will be deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('material/destroy') }}/"+el,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Data berhasil dihapus!',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                $('#table_view').DataTable().ajax.reload();
+                            });
+                        } else {
+                            Swal.fire('Oops!', 'Data gagal dihapus!', 'warning');
+                        }
                     }
-                }
-            });
-        } else {
-            swal('Warning! Selected data failed to delete!', {
-                icon: 'warning',
-            });
-        }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Penghapusan data dibatalkan', 'info');
+            }
         });
     }
 </script>

@@ -145,48 +145,5 @@
         var id_head = $(el).val();
         window.open('{{ url("voucher/penjualan/print") }}/'+id_head);
     }
-
-    // var showForm = function()
-    // {
-    //     if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-    //         swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-    //         swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-    //         swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     var pil_bulan = $("#pilBulan").val();
-    //     var pil_tahun = $("#pilTahun").val();
-    //     var pil_agen = $("#pilAgen").val();
-    //     $("#view_form").load("{{ url('report/penjualanVoucher/load_data_penjualan') }}/"+pil_bulan+"/"+pil_tahun+"/"+pil_agen, function(){
-    //         $(".angka").number(true, 0);
-    //     });
-    // }
-
-    // var showPrint = function()
-    // {
-    //     if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-    //         swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-    //         swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-    //         swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-    //         return false;
-    //     }
-    //     var pil_bulan = $("#pilBulan").val();
-    //     var pil_tahun = $("#pilTahun").val();
-    //     var pil_agen = $("#pilAgen").val();
-    //     window.open('{{ url("report/penjualanVoucher/print") }}/'+pil_bulan+"/"+pil_tahun+"/"+pil_agen);
-    // }
-
 </script>
 @endsection

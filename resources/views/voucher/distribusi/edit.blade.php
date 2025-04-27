@@ -56,50 +56,46 @@
 <script>
     document.querySelector('#updateForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting
-        swal({
-            title: "Anda yakin menyimpan perubahan pengaturan ?",
-            text: "Pengaturan distribusi voucher !",
-            type: "warning",
-            buttons: {
-            confirm: {
-                text: "Simpan!",
-                className: "btn btn-success",
+
+        Swal.fire({
+            title: "Anda yakin menyimpan perubahan pengaturan?",
+            text: "Pengaturan distribusi voucher!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Simpan!",
+            cancelButtonText: "Batal",
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
             },
-            cancel: {
-                visible: true,
-                className: "btn btn-danger",
-            },
-            },
+            buttonsStyling: false
         }).then((result) => {
-            if (result==true) {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('voucher.distribusi.store') }}", // Update this with your route
+                    url: "{{ route('voucher.distribusi.store') }}",
                     type: "POST",
                     data: $(this).serialize(),
                     success: function (response) {
-                        if (response.success==true) {
-                            swal('Success! '+response.message, {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response.message,
                                 icon: 'success',
-                                buttons: false,
-                                timer: 2000
+                                timer: 2000,
+                                showConfirmButton: false
                             }).then(() => {
                                 location.replace("{{ route('voucher.distribusi.list') }}");
                             });
-
                         } else {
-                            swal("Terjadi kesalahan", response.message, "error");
-                            return false;
+                            Swal.fire("Terjadi kesalahan", response.message, "error");
                         }
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText); // Debugging errors
-                        swal("Terjadi kesalahan", "Ada yang salah!", "error");
+                        console.log(xhr.responseText);
+                        Swal.fire("Terjadi kesalahan", "Ada yang salah!", "error");
                     }
                 });
-            } else {
-                swal.close();
             }
-
         });
     });
 </script>

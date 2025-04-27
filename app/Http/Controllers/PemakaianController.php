@@ -136,9 +136,15 @@ class PemakaianController extends Controller
                       ->get();
 
         $data = array();
+        $petugas="";
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
+                if(empty($r->petugas_id)) {
+                    $petugas = $this->getMultiPetugas($r->petugas);
+                } else {
+                    $petugas = $r->getPetugas->nama_petugas;
+                }
                 $btn = "<button type='button' class='btn btn-success btn-sm' id='btn_detail' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-eye'></i></button>";
                 $totalItem = PemakaianDetailModel::where('head_id', $r->id)->sum('jumlah');
                 $Data['act'] = $btn;
@@ -146,7 +152,7 @@ class PemakaianController extends Controller
                 $Data['tanggal'] =  $r->tanggal; // $r->material;
                 $Data['kategori'] =  $this->getKategori($r->kategori_id);
                 $Data['wilayah'] =  $r->getWilayah->wilayah;
-                $Data['petugas'] =  $r->getPetugas->nama_petugas;
+                $Data['petugas'] =  $petugas;
                 $Data['keterangan'] =  $r->keterangan;
                 $Data['total'] =  "<span class='badge badge-success'>".$totalItem."</span>";
                 $Data['no'] = $counter;
@@ -168,12 +174,18 @@ class PemakaianController extends Controller
             "getWilayah",
             "getPetugas"
         ])->find($id);
+        if(empty($resultH->petugas_id)) {
+            $petugas = $this->getMultiPetugas($resultH->petugas);
+        } else {
+            $petugas = $resultH->getPetugas->nama_petugas;
+        }
         $data = [
             "dataH" => $resultH,
             'kategori_pemakaian' => General::get_kategori_pemakaian_material($resultH->kategori_id),
             'dataD' => PemakaianDetailModel::with([
                 "getMaterial"
-            ])->where('head_id', $id)->get()
+            ])->where('head_id', $id)->get(),
+            'petugas' => $petugas
         ];
         return view("pemakaian.detail", $data);
     }
@@ -189,5 +201,22 @@ class PemakaianController extends Controller
                 break;
             }
         }
+    }
+
+    function getMultiPetugas($arrPetugas)
+    {
+        $petugasArray = explode(',', $arrPetugas);
+
+        // Get all petugas in one query
+        $petugas = PetugasModel::whereIn('id', $petugasArray)->pluck('nama_petugas', 'id');
+
+        // Map IDs to names (preserving order)
+        $petugasArray = [];
+        foreach ($petugas as $key => $value) {
+            $petugasArray[] = $value;
+        }
+        $allPetugas = (count($petugasArray) > 0) ? (implode(',', $petugasArray)) : "-";
+
+        return $allPetugas;
     }
 }

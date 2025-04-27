@@ -21,7 +21,7 @@
                             <div class="col-sm-5">
                                 <div class="mb-3">
                                     <label style="font-size:16px; font-weight:500; color:#52526C; opacity:0.8; margin:0;line-height: 2;">Petugas</label>
-                                    <p style="font-size: 18px; font-weight: 600;">{{ $dataH->getPetugas->nama_petugas }}</p>
+                                    <p style="font-size: 18px; font-weight: 600;">{{ $petugas }}</p>
                                 </div>
                             </div>
                         </div>

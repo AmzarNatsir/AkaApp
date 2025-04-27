@@ -137,44 +137,40 @@
             $(".angka").number(true, 0);
         });
     }
-    var konfirmDelete = function(el)
-    {
-        var idData = el;
-        swal({
-        title: 'Are you sure?',
-        text: 'Data has been delete!',
-        icon: 'warning',
-        buttons: true,
-        dangerMode: true,
-        })
-        .then((willDelete) => {
-        if (willDelete)
-        {
-            $.ajax({
-                url: "{{ url('keuangan/kasMasukDelete') }}/"+el,
-                type: "GET",
-                success:function(response){
-                    if(response.success==true) {
-                        swal('Success! '+response.message, {
-                            icon: 'success',
-                            buttons: false,
-                            timer: 2000
-                        }).then(() => {
-                            location.replace("{{ route('keuangan.kasMasuk.daftar') }}");
-                            // $('#view_items').DataTable().ajax.reload();
-                        });
-                    } else {
-                        swal('Warning! '+response.message, {
-                            icon: 'warning',
-                        });
+    var konfirmDelete = function(el) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Data will be deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('keuangan/kasMasukDelete') }}/"+el,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Data berhasil dihapus!',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.replace("{{ route('keuangan.kasMasuk.daftar') }}");
+                            });
+                        } else {
+                            Swal.fire('Oops!', 'Data gagal dihapus!', 'warning');
+                        }
                     }
-                }
-            });
-        } else {
-            swal('Warning! Selected data failed to delete!', {
-                icon: 'warning',
-            });
-        }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Penghapusan data dibatalkan', 'info');
+            }
         });
     }
 </script>

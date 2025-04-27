@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgenVoucherController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistribusiMaterialController;
@@ -261,6 +262,11 @@ Route::middleware('auth')->group(function ()
         Route::get('showDetail/{id}', [PelangganController::class, 'showDetail'])->name('pelanggan.showDetail');
         Route::get('showFormAktivasi/{id}', [PelangganController::class, 'showFormAktivasi'])->name('pelanggan.showFormAktivasi');
         Route::post('storeAktivasi', [PelangganController::class, 'storeAktivasi'])->name('pelanggan.storeAktivasi');
+        Route::get('showDetaiPelangganFinished/{id}', [PelangganController::class, 'showDetaiPelangganFinished'])->name('pelanggan.showDetaiPelangganFinished');
+        //pencarian pelanggan
+        Route::get('pembayaran', [PelangganController::class, 'pembayaran'])->name('pelanggan.pembayaran');
+        Route::get('getPelanggan', [PelangganController::class, 'getPelanggan'])->name('pelanggan.getPelanggan');
+        Route::get('detailPelanggan/{id}', [PelangganController::class, 'detailPelanggan'])->name('pelanggan.detailPelanggan');
     });
 
     Route::group(['prefix' => 'service'], function() {
@@ -273,7 +279,10 @@ Route::middleware('auth')->group(function ()
         Route::get('goFormCacelTask/{idPelanggan}', [ServiceController::class, 'goFormCacelTask'])->name('service.goFormCacelTask');
         Route::post('storeCanceledTask', [ServiceController::class, 'storeCanceledTask'])->name('service.storeCanceledTask');
     });
-
+    Route::group(['prefix' => 'asset'], function() {
+        Route::get('list', [AssetController::class, 'list'])->name('asset.list');
+        Route::get('create', [AssetController::class, 'create'])->name('asset.create');
+    });
     Route::group(['prefix' => 'report'], function(){
         Route::get('distribusiVoucher', [ReportController::class, 'distribusiVoucher'])->name('report.distribusiVoucher');
         Route::post('distribusiVoucherGetData', [ReportController::class, 'distribusiVoucherGetData'])->name('report.distribusiVoucher.getdata');

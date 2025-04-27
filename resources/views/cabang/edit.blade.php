@@ -53,7 +53,11 @@
                 success: function (response) {
                     if (response.success==true) {
                         $('#exampleModalgetbootstrap').modal('hide'); // Close modal
-                        swal("Good job!", response.message, "success");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Good Job!',
+                            text: response.message
+                        });
                         $('#table_view').DataTable().ajax.reload(); // Refresh DataTable
                     } else {
                         return false;
@@ -61,7 +65,11 @@
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: xhr.responseText
+                    });
                 }
             });
         });

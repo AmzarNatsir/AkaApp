@@ -83,7 +83,11 @@
                 success: function (response) {
                     if (response.success==true) {
                         $('#exampleModalgetbootstrap').modal('hide'); // Close modal
-                        swal("Good job!", response.message, "success");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Good Job!',
+                            text: response.message
+                        });
                         $('#list_transaksi').DataTable().ajax.reload(); // Refresh DataTable
                     } else {
                         return false;
@@ -92,7 +96,11 @@
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
                     $('#exampleModalgetbootstrap').modal('hide'); // Close modal
-                    swal("It's danger", "Something went wrong! "+xhr.responseText, "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });

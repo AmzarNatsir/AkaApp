@@ -178,23 +178,30 @@
                 processData: false,
                 success: function (response) {
                     if(response.success==true) {
-                        swal('Success! '+response.message, {
+                        Swal.fire({
+                            title: 'success!',
+                            text: response.message,
                             icon: 'success',
+                            timer: 2000,
                             buttons: false,
-                            timer: 2000
                         }).then(() => {
                             location.replace("{{ url('pembelian/addDetail') }}/"+idData);
-                            // $('#view_items').DataTable().ajax.reload();
                         });
                     } else {
-                        swal('Warning! '+response.message, {
+                        Swal.fire({
                             icon: 'warning',
+                            title: 'Warning!',
+                            text: response.message
                         });
                     }
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });
@@ -207,44 +214,42 @@
             $(".angka").number(true, 0);
         });
     }
-    var konfirmDelete = function(el)
-    {
+
+    var konfirmDelete = function(el) {
         var idData = $("#inpID").val();
-        swal({
-        title: 'Are you sure?',
-        text: 'Data has been delete!',
-        icon: 'warning',
-        buttons: true,
-        dangerMode: true,
-        })
-        .then((willDelete) => {
-        if (willDelete)
-        {
-            $.ajax({
-                url: "{{ url('pembelian/destroyItem') }}/"+el,
-                type: "GET",
-                success:function(response){
-                    if(response.success==true) {
-                        swal('Success! '+response.message, {
-                            icon: 'success',
-                            buttons: false,
-                            timer: 2000
-                        }).then(() => {
-                            location.replace("{{ url('pembelian/addDetail') }}/"+idData);
-                            // $('#view_items').DataTable().ajax.reload();
-                        });
-                    } else {
-                        swal('Warning! '+response.message, {
-                            icon: 'warning',
-                        });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Data will be deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('pembelian/destroyItem') }}/"+el,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Data berhasil dihapus!',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.replace("{{ url('pembelian/addDetail') }}/"+idData);
+                            });
+                        } else {
+                            Swal.fire('Oops!', 'Data gagal dihapus!', 'warning');
+                        }
                     }
-                }
-            });
-        } else {
-            swal('Warning! Selected data failed to delete!', {
-                icon: 'warning',
-            });
-        }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Penghapusan data dibatalkan', 'info');
+            }
         });
     }
 </script>

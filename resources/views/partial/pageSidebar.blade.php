@@ -237,7 +237,7 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                     <li><a href="{{ route('pelanggan.monitoring') }}">Monitoring</a></li>
                     @endif
                     @if($canPembayaranPelangan)
-                    <li><a href="#">Pembayaran</a></li>
+                    <li><a href="{{ route('pelanggan.pembayaran') }}">Pembayaran</a></li>
                     @endif
                 </ul>
             </li>
@@ -292,6 +292,15 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                 </ul>
             </li>
             @endif
+
+            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
+                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-bonus-kit') }}"></use></svg>
+                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-bonus-kit') }}"></use></svg><span>Asset</span></a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{{ route('asset.list') }}">Daftar</a></li>
+                </ul>
+            </li>
+
             <li class="sidebar-main-title"></li>
         </ul>
         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

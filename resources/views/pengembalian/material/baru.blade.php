@@ -140,13 +140,21 @@
                     $(".angka").number(true, 0);
                     calculateTotalItem();
                 } else {
-                    swal("It's danger", response.message, "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                     return false;
                 }
             },
             error: function (xhr) {
                 console.log(xhr.responseText); // Debugging errors
-                swal("It's danger", "Something went wrong!", "error");
+                Swal.fire({
+                    icon: 'error',
+                    title: "It's danger!",
+                    text: "Something went wrong! "+response.message
+                });
             }
         });
     }
@@ -180,60 +188,65 @@
     document.querySelector('#createForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting
         if($("#inpKeterangan").val()=="") {
-            swal("Warning", "Pengisian keterangan transaksi tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'Warning',
+                title: "Warning!",
+                text: "Pengisian keterangan transaksi tidak boleh kosong! "
+            });
             return false;
         }
         if($("#totalItem").val()==0) {
-            swal("Warning", "Item pemakaian material masih kosong", "error");
+            Swal.fire({
+                icon: 'Warning',
+                title: "Warning!",
+                text: "Item pemakaian material masih kosong! "
+            });
             return false;
         }
         // alert($("#pilKategori").val());
-        swal({
-            title: "Are you sure ?",
-            text: "Submit this item !",
-            type: "warning",
-            buttons: {
-            confirm: {
-                text: "Yes, save it!",
-                className: "btn btn-success",
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Submit this item!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, save it!",
+            cancelButtonText: "Cancel",
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
             },
-            cancel: {
-                visible: true,
-                className: "btn btn-danger",
-            },
-            },
+            buttonsStyling: false
         }).then((result) => {
-            if (result==true) {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('pengembalian.material.store') }}", // Update this with your route
+                    url: "{{ route('pengembalian.material.store') }}",
                     type: "POST",
                     data: $(this).serialize(),
                     success: function (response) {
-                        if (response.success==true) {
-                            swal('Success! '+response.message, {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response.message,
                                 icon: 'success',
-                                buttons: false,
-                                timer: 2000
+                                timer: 2000,
+                                showConfirmButton: false
                             }).then(() => {
                                 location.replace("{{ url('pengembalianMaterial/baru') }}/"+$("#gudangID").val());
                             });
-
                         } else {
-                            swal("Terjadi kesalahan", response.message, "error");
-                            return false;
+                            Swal.fire("Terjadi kesalahan", response.message, "error");
                         }
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText); // Debugging errors
-                        swal("It's danger", "Something went wrong!", "error");
+                        console.log(xhr.responseText);
+                        Swal.fire("It's danger", "Something went wrong!", "error");
                     }
                 });
             } else {
-                swal.close();
+                Swal.close();
             }
-
         });
     });
-
 </script>
 @endsection

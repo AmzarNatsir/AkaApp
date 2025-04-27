@@ -99,15 +99,27 @@
     var showForm = function()
     {
         if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan periode bulan tidak boleh kosong! "
+            });
             return false;
         }
         if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan periode tahun tidak boleh kosong! "
+            });
             return false;
         }
         if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan agen tidak boleh kosong! "
+            });
             return false;
         }
         var pil_bulan = $("#pilBulan").val();
@@ -191,36 +203,47 @@
         var pil_tahun = $("#pilTahun").val();
         var pil_agen = $("#pilAgen").val();
         if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan periode bulan tidak boleh kosong! "
+            });
             return false;
         }
         if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan periode tahun tidak boleh kosong! "
+            });
             return false;
         }
         if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
+            Swal.fire({
+                icon: 'warning',
+                title: "Warning!",
+                text: "Pilihan agen tidak boleh kosong! "
+            });
             return false;
         }
         // alert($("#pilKategori").val());
-        swal({
+
+        Swal.fire({
             title: "Anda yakin menyimpan penjualan voucher ?",
-            text: "Realisasi penjualan voucher !",
-            type: "warning",
-            buttons: {
-            confirm: {
-                text: "Simpan!",
-                className: "btn btn-success",
+            text: "Realisasi penjualan voucher!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Simpan!",
+            cancelButtonText: "Batal",
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
             },
-            cancel: {
-                visible: true,
-                className: "btn btn-danger",
-            },
-            },
+            buttonsStyling: false
         }).then((result) => {
-            if (result==true) {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('voucher.penjualan.store') }}", // Update this with your route
+                    url: "{{ route('voucher.penjualan.store') }}",
                     type: "POST",
                     data: $(this).serialize(),
                     beforeSend: function()
@@ -228,34 +251,32 @@
                         $(".view_form").empty();
                         $('#spinner-div').show();
                     },
+
                     success: function (response) {
-                        if (response.success==true) {
-                            swal('Success! '+response.message, {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response.message,
                                 icon: 'success',
-                                buttons: false,
-                                timer: 2000
+                                timer: 2000,
+                                showConfirmButton: false
                             }).then(() => {
                                 location.replace("{{ route('voucher.penjualan') }}");
                             });
-
                         } else {
-                            swal("Terjadi kesalahan", response.message, "error");
-                            return false;
+                            Swal.fire("Terjadi kesalahan", response.message, "error");
                         }
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText); // Debugging errors
-                        swal("Terjadi kesalahan", "Ada yang salah!", "error");
+                        console.log(xhr.responseText);
+                        Swal.fire("Terjadi kesalahan", "Ada yang salah!", "error");
                     },
                     complete: function()
                     {
                         $('#spinner-div').hide();
                     }
                 });
-            } else {
-                swal.close();
             }
-
         });
     });
 
