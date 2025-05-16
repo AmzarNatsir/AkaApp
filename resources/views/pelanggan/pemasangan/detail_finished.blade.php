@@ -109,8 +109,12 @@
                                                                 <div class="projectlist-card">
                                                                     <div class="projectlist">
                                                                         <div class="project-data">
+                                                                            @if(empty($pemasangan_detail->gambar_rumah))
+                                                                            Tidak ada<br>gambar
+                                                                            @else
                                                                             <a href="{{ url(Storage::url('gambar_rumah/'.$pemasangan_detail->gambar_rumah)) }}" data-fancybox data-caption="Gambar Rumah">
-                                                                            <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_rumah/'.$pemasangan_detail->gambar_rumah)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                                <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_rumah/'.$pemasangan_detail->gambar_rumah)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                            @endif
                                                                             <div>
                                                                             <a class="f-14 f-w-500 d-block" href="javascript:void(0)">Gambar Rumah</a>
                                                                             </div>
@@ -122,8 +126,12 @@
                                                                 <div class="projectlist-card">
                                                                     <div class="projectlist">
                                                                         <div class="project-data">
+                                                                            @if(empty($pemasangan_detail->gambar_odp))
+                                                                            Tidak ada<br>gambar
+                                                                            @else
                                                                             <a href="{{ url(Storage::url('gambar_odp/'.$pemasangan_detail->gambar_odp)) }}" data-fancybox data-caption="Gambar ODP">
                                                                             <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_odp/'.$pemasangan_detail->gambar_odp)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                            @endif
                                                                             <div>
                                                                             <a class="f-14 f-w-500 d-block" href="javascript:void(0)">Gambar ODP</a>
                                                                             </div>
@@ -135,8 +143,12 @@
                                                                 <div class="projectlist-card">
                                                                     <div class="projectlist">
                                                                         <div class="project-data">
+                                                                            @if(empty($pemasangan_detail->gambar_ont_terpasang))
+                                                                            Tidak ada<br>gambar
+                                                                            @else
                                                                             <a href="{{ url(Storage::url('gambar_ont_terpasang/'.$pemasangan_detail->gambar_ont_terpasang)) }}" data-fancybox data-caption="Gambar ODP">
                                                                             <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_ont_terpasang/'.$pemasangan_detail->gambar_ont_terpasang)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                            @endif
                                                                             <div>
                                                                             <a class="f-14 f-w-500 d-block" href="javascript:void(0)">Gambar ONT Terpasang</a>
                                                                             </div>
@@ -154,8 +166,12 @@
                                                                 <div class="projectlist-card">
                                                                     <div class="projectlist">
                                                                         <div class="project-data">
+                                                                            @if(empty($pemasangan_detail->gambar_redaman_odp))
+                                                                            Tidak ada<br>gambar
+                                                                            @else
                                                                             <a href="{{ url(Storage::url('gambar_redaman_odp/'.$pemasangan_detail->gambar_redaman_odp)) }}" data-fancybox data-caption="Gambar Redaman di ODP">
                                                                             <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_redaman_odp/'.$pemasangan_detail->gambar_redaman_odp)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                            @endif
                                                                             <div>
                                                                             <a class="f-14 f-w-500 d-block" href="javascript:void(0)">Gambar Redaman di ODP</a>
                                                                             </div>
@@ -167,8 +183,12 @@
                                                                 <div class="projectlist-card">
                                                                     <div class="projectlist">
                                                                         <div class="project-data">
+                                                                            @if(empty($pemasangan_detail->gambar_redaman_rumah_pelanggan))
+                                                                            Tidak ada<br>gambar
+                                                                            @else
                                                                             <a href="{{ url(Storage::url('gambar_redaman_rumah_pelanggan/'.$pemasangan_detail->gambar_redaman_rumah_pelanggan)) }}" data-fancybox data-caption="Gambar Redaman Rumah Pelanggan">
                                                                             <img class="nft-img img-fluid" src="{{ url(Storage::url('gambar_redaman_rumah_pelanggan/'.$pemasangan_detail->gambar_redaman_rumah_pelanggan)) }}" alt="nft" style="width: 100px; height: auto;"></a>
+                                                                            @endif
                                                                             <div>
                                                                             <a class="f-14 f-w-500 d-block" href="javascript:void(0)">Gambar Redaman Rumah Pelanggan</a>
                                                                             </div>

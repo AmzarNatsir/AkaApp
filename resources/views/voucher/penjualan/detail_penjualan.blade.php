@@ -14,7 +14,7 @@
             <tr>
                 <th style="width: 10%; background-color: rgba(0, 102, 102, 0.9); color:white" class="text-center">Awal</th>
                 <th style="width: 10%; background-color: rgba(0, 102, 102, 0.9); color:white" class="text-center">Tambahan</th>
-                <th style="width: 10%; background-color: rgba(0, 102, 102, 0.9); color:white" class="text-center">Akhir</th>
+                <th style="width: 10%; background-color: rgba(0, 102, 102, 0.9); color:white" class="text-center">Total</th>
                 <th style="width: 10%; background-color: rgba(254, 106, 73, 0.9); color:white" class="text-center">Terjual</th>
                 <th style="width: 15%; text-align:right; background-color: rgba(254, 106, 73, 0.9); color:white">Sub&nbsp;Total&nbsp;(Rp.)</th>
             </tr>

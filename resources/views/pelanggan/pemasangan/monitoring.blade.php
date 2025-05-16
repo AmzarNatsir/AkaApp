@@ -88,6 +88,9 @@
         $("#table_view").on('click', '#btn_detail_finished', function(){
             $("#form_aktivasi").load("{{ url('pelanggan/showDetaiPelangganFinished') }}/"+$(this).val());
         });
+        $("#table_view").on('click', '#btn_update_data', function(){
+            window.location.href = "{{ url('pelanggan/pembaharuanData') }}/"+$(this).val();
+        });
     });
 </script>
 @endsection

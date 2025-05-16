@@ -56,7 +56,7 @@
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <button class="btn btn-primary" type="button" id="btnFilter"><i class="fa fa-table"></i> Preview</button>
-                                {{-- <button class="btn btn-danger" type="button" onclick="showPrint()"><i class="fa fa-print"></i> Print</button> --}}
+                                <button class="btn btn-danger" type="button" onclick="showPrint()"><i class="fa fa-print"></i> Print</button>
                             </div>
                         </div>
                     </div>
@@ -81,6 +81,7 @@
                                         <th>Agen</th>
                                         <th style="width: 15%">Total Voucher</th>
                                         <th style="width: 15%">Total Laba</th>
+                                        <th style="width: 10%">Aksi</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -93,6 +94,11 @@
 
     </div>
 </form>
+</div>
+<div class="modal fade" id="modalDetail" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalDetail" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="form_detail"></div>
+    </div>
 </div>
 <script>
     $(document).ready(function () {
@@ -125,6 +131,7 @@
                 { data: 'agen' },
                 { data: 'total_voucher' },
                 { data: 'total_laba' },
+                { data: 'act' },
             ],
             responsive: true,
             columnDefs: [
@@ -137,49 +144,17 @@
         $("#btnFilter").on("click", function(){
             tableAjax.ajax.reload();
         });
-    });
-
-    var showForm = function()
-    {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-
-        $("#view_form").load("{{ url('report/penjualanVoucher/load_data_penjualan') }}/"+pil_bulan+"/"+pil_tahun+"/"+pil_agen, function(){
-            $(".angka").number(true, 0);
+        $("#table_view").on('click', '#btn_detail', function(){
+            $("#form_detail").load("{{ url('report/showDetailPenjualanVoucher') }}/"+$(this).val());
         });
-    }
+    });
 
     var showPrint = function()
     {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-        window.open('{{ url("report/penjualanVoucher/print") }}/'+pil_bulan+"/"+pil_tahun+"/"+pil_agen);
+        var pil_bulan = ($("#pilBulan").val()==null) ? 0 : $("#pilBulan").val();
+        var pil_tahun = ($("#pilTahun").val()==null) ? 0 : $("#pilTahun").val();
+        var pil_agen = ($("#pilAgen").val()==null) ? 0 : $("#pilAgen").val();
+        window.open('{{ url("report/printDetailPenjualanVoucher") }}/'+pil_bulan+"/"+pil_tahun+"/"+pil_agen);
     }
 
 </script>

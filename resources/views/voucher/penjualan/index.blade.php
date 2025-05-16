@@ -132,6 +132,7 @@
 
     var changeToNull = function(el)
     {
+
         if($(el).val()=="")
         {
             $(el).val("0");
@@ -147,7 +148,7 @@
         var current_stok_tambahan = $(el).parent().parent().find('input[name="inpStokTambahan[]"]').val();
         var current_harga_modal = $(el).parent().parent().find('input[name="inphargaModal[]"]').val();
         var current_total_stok = parseFloat(current_stok_awal) + parseFloat(current_stok_tambahan);
-        var current_stok_terjual = parseFloat(current_total_stok) - parseFloat(current_stok_sisa);
+        var current_stok_terjual = parseFloat(current_total_stok) - ((current_stok_sisa=="") ? 0 : parseFloat(current_stok_sisa));
         var current_total_laba = parseFloat(current_harga_modal) * parseFloat(current_stok_terjual);
 
 
@@ -173,7 +174,7 @@
     {
         var total = 0;
         $.each($('input[name="inpSisaStok[]"]'),function(key, value){
-            total += parseFloat($(value).val());
+            total += ($(value).val()=="") ? 0 : parseFloat($(value).val());
         })
         $("#inpTotalSisa").val(total);
     }
@@ -226,14 +227,15 @@
             });
             return false;
         }
-        // alert($("#pilKategori").val());
-
+        var action = document.activeElement.value;
         Swal.fire({
+            title: "Anda yakin " + (action === 'finish' ? "menyelesaikan" : "menyimpan") + " penjualan voucher?",
             title: "Anda yakin menyimpan penjualan voucher ?",
             text: "Realisasi penjualan voucher!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Simpan!",
+            confirmButtonText: action === 'finish' ? "Finish!" : "Simpan!",
+            // confirmButtonText: "Simpan!",
             cancelButtonText: "Batal",
             customClass: {
                 confirmButton: "btn btn-success",
@@ -245,7 +247,7 @@
                 $.ajax({
                     url: "{{ route('voucher.penjualan.store') }}",
                     type: "POST",
-                    data: $(this).serialize(),
+                    data: $(this).serialize() + "&action=" + action,
                     beforeSend: function()
                     {
                         $(".view_form").empty();
@@ -279,6 +281,10 @@
             }
         });
     });
-
+    var showPrint = function(el)
+    {
+        var id_head = $(el).val();
+        window.open('{{ url("voucher/penjualan/print") }}/'+id_head);
+    }
 </script>
 @endsection

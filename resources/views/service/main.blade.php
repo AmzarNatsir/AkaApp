@@ -282,6 +282,7 @@
         });
     }
     var _validFileExtensions = [".jpg", ".jpeg", ".png"];
+    var _maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
     var loadFile = function(oInput) {
         if (oInput.type == "file") {
             var sFileName = oInput.value;
@@ -303,6 +304,17 @@
                         icon: 'warning',
                         title: 'Warning!',
                         text: sFileName + " tidak valid. Jenis file yang boleh diupload adalah: " + _validFileExtensions.join(", ")
+                    });
+                    oInput.value = "";
+                    return false;
+                }
+
+                 // ✅ Max file size check
+                 if (sSizeFile > _maxFileSize) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File Terlalu Besar!',
+                        text: "Ukuran maksimum file adalah 2 MB."
                     });
                     oInput.value = "";
                     return false;

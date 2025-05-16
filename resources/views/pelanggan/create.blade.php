@@ -41,6 +41,22 @@
                 <div class="invalid-tooltip">Paket internet belum dipilih</div>
             </div>
             <hr>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaSales">Nama Sales</label>
+                <input class="form-control" id="inpNamaSales" name="inpNamaSales" type="text" maxlength="100">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNotelSales">No. Telepon Sales</label>
+                <input class="form-control" id="inpNotelSales" name="inpNotelSales" type="text" maxlength="100">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNorekSales">No. Rekening Bank</label>
+                <input class="form-control" id="inpNorekSales" name="inpNorekSales" type="text" maxlength="100">
+            </div>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaBankSales">Nama Bank Sales</label>
+                <input class="form-control" id="inpNamaBankSales" name="inpNamaBankSales" type="text" maxlength="100">
+            </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary" type="submit">Save changes</button>
@@ -50,26 +66,75 @@
 </div>
 <script>
     $(document).ready(function () {
-        const forms = document.querySelectorAll(".needs-validation");
+        // const forms = document.querySelectorAll(".needs-validation");
         $(".select").select2({
             placeholder: "Pilihan",
             allowClear: true
         });
-        Array.from(forms).forEach((form) => {
-            form.addEventListener(
-            "submit",
-            (event) => {
-                if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                }
-                form.classList.add("was-validated");
+        // Array.from(forms).forEach((form) => {
+        //     form.addEventListener(
+        //     "submit",
+        //     (event) => {
+        //         if (!form.checkValidity()) {
+        //         event.preventDefault();
+        //         event.stopPropagation();
+        //         }
+        //         form.classList.add("was-validated");
+        //     },
+        //     false
+        //     );
+        // });
+        $("#createForm").validate({
+            rules: {
+                inpNama: {
+                    required: true,
+                },
+                inpAlamat: {
+                    required: true,
+                },
+                inpNotel_1: {
+                    required: true,
+                },
+                selectWilayah: {
+                    required: true,
+                },
+                selectpaket: {
+                    required: true,
+                },
             },
-            false
-            );
+            messages: {
+                inpNama: {
+                    required: "Nama pelanggan tidak boleh kosong",
+                },
+                inpNama: {
+                    required: "Alamat pelanggan tidak boleh kosong",
+                },
+                inpNotel_1: {
+                    required: "Nomor Telepon pelanggan tidak boleh kosong",
+                },
+                selectWilayah: {
+                    required: "Pilihan wilayah pelanggan tidak boleh kosong",
+                },
+                selectpaket: {
+                    required: "Pilihan paket internet pelanggan tidak boleh kosong",
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
         });
+
         $('#createForm').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+            if (!$(this).valid()) {
+                return false;
+            }
+
             let formData = new FormData(document.getElementById('createForm'));
             $.ajax({
                 url: "{{ route('pelanggan.store') }}", // Update this with your route

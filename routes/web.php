@@ -106,6 +106,8 @@ Route::middleware('auth')->group(function ()
         Route::get('kontrol', [MaterialController::class, 'kontrol'])->name('material.kontrol');
         Route::post('getAllData', [MaterialController::class, 'kontrol_get_data_material'])->name('material.kontrol.get_data');
         Route::get('getDetailTransaksi/{gudang}/{material}', [MaterialController::class, 'kontrol_get_detail'])->name('material.kontrol.get_detail_transaksi');
+        //pencatian material
+        Route::get('searchMaterial', [MaterialController::class, 'searchMaterial'])->name('material.searchMaterial');
     });
 
     Route::group(["prefix" => "pembelian"], function(){
@@ -253,6 +255,8 @@ Route::middleware('auth')->group(function ()
         Route::get('edit/{id}', [PelangganController::class, 'edit'])->name('pelanggan.edit');
         Route::put('update/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
         Route::get('destroy/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
+        Route::get('aktivasi/{id}', [PelangganController::class, 'aktivasi'])->name('pelanggan.aktivasi'); //pelanggan lama
+        Route::post('simpanAktivasi', [PelangganController::class, 'simpanAktivasi'])->name('pelanggan.simpanAktivasi'); //pelanggan lama
         //proses pemasangan tahap 1 - pengaturan awal
         Route::get('proses/{id}', [PelangganController::class, 'proses'])->name('pelanggan.proses');
         Route::post('storeProses', [PelangganController::class, 'storeProses'])->name('pelanggan.storeProses');
@@ -267,6 +271,19 @@ Route::middleware('auth')->group(function ()
         Route::get('pembayaran', [PelangganController::class, 'pembayaran'])->name('pelanggan.pembayaran');
         Route::get('getPelanggan', [PelangganController::class, 'getPelanggan'])->name('pelanggan.getPelanggan');
         Route::get('detailPelanggan/{id}', [PelangganController::class, 'detailPelanggan'])->name('pelanggan.detailPelanggan');
+        Route::post('storePembayaran', [PelangganController::class, 'storePembayaran'])->name('pelanggan.storePembayaran');
+        //daftar pelanggan aktif
+        Route::get('daftar', [PelangganController::class, 'daftar'])->name("pelanggan.daftar");
+        Route::get('getDataPelanggan', [PelangganController::class, 'getDataPelangganAktif'])->name('pelanggan.getDataPelanggan');
+        Route::get('profilPelanggan/{id}', [PelangganController::class, 'profilPelanggan'])->name('pelanggan.profilPelanggan');
+        Route::get('editPelanggan/{id}', [PelangganController::class, 'editPelanggan'])->name('pelanggan.editPelanggan');
+        Route::get('listPembayaranPelanggan/{id}', [PelangganController::class, 'showPembayaranPelanggan'])->name('pelanggan.listPembayaranPelanggan');
+        //pembaharuan data
+        Route::get('pembaharuanData/{id}', [PelangganController::class, 'pembaharuanData'])->name('pelanggan.pembaharuanData');
+        Route::put('simpanPembaharuanDataPelanggan/{id}', [PelangganController::class, 'simpanPembaharuanDataPelanggan'])->name('pelanggan.simpanPembaharuanDataPelanggan');
+        //tools
+        Route::get('importPelanggan', [PelangganController::class, 'importData'])->name('pelanggan.import');
+        Route::post('doImportPelanggan', [PelangganController::class, 'doImportData'])->name('pelanggan.doImportPelanggan');
     });
 
     Route::group(['prefix' => 'service'], function() {
@@ -292,6 +309,8 @@ Route::middleware('auth')->group(function ()
         Route::post('penjualanVoucherGetData', [ReportController::class, 'penjualanVoucherGetData'])->name('report.penjualanVoucher.getdata');
         Route::get('penjualanVoucher/load_data_penjualan/{bulan}/{tahun}/{agen}', [ReportController::class, 'load_data_penjualan_voucher'])->name('report.penjualanVoucher.load_data_penjualan_voucher');
         Route::get('penjualanVoucher/print/{bulan}/{tahun}/{agen}', [ReportController::class, 'penjualanVoucherPrint'])->name('report.penjualanVoucher.print');
+        Route::get('showDetailPenjualanVoucher/{id}', [ReportController::class, 'showDetaiPenjualanVoucher'])->name('report.showDetailPenjualanVoucher');
+        Route::get('printDetailPenjualanVoucher/{bulan}/{tahun}/{agen}', [ReportController::class, 'printDetailPenjualanVoucher'])->name('report.printDetailPenjualanVoucher');
         //keuangan
         Route::get('keuangan', [ReportController::class, 'keuangan'])->name('report.keuangan');
         Route::post('keuanganGetData', [ReportController::class, 'filterKeuangan'])->name('report.keuangan.getdata');

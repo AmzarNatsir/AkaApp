@@ -16,6 +16,7 @@ use App\Traits\General;
 use Generator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -331,5 +332,25 @@ class MaterialController extends Controller
             'getKategori' => General::class,
         ];
         return view('material.detail_transaksi', $data);
+    }
+
+    //tools
+    public function searchMaterial(Request $request)
+    {
+        $search = $request->get('q');
+
+        $results = Material::with(['getMerek'])
+            ->where('material', 'LIKE', "%$search%")
+            // ->select('id', DB::raw("material as text"))
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => $item->material . ' - ' . ($item->getMerek->merek ?? '-') . '(Qty: '.$item->stok_akhir.')'
+                ];
+            });
+
+        return response()->json($results);
     }
 }

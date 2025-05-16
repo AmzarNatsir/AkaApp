@@ -4,6 +4,10 @@
     @csrf
     <input type="hidden" name="id_pelanggan" id="id_pelanggan" value="{{ $pelanggan->id }}">
     <input type="hidden" name="id_pemasangan" id="id_pemasangan" value="{{ $pemasangan_detail->id }}">
+    <input type="hidden" name="id_nama_pelanggan" id="id_nama_pelanggan" value="{{ $pelanggan->nama_pelanggan }}">
+    <input type="hidden" name="id_nama_sales" id="id_nama_sales" value="{{ $pelanggan->nama_sales }}">
+    <input type="hidden" name="id_norek_sales" id="id_norek_sales" value="{{ $pelanggan->no_rekening_sales }}">
+    <input type="hidden" name="id_bank_sales" id="id_bank_sales" value="{{ $pelanggan->nama_bank }}">
     <div class="modal-body">
         <div class="todo">
             <div class="todo-list-wrapper theme-scrollbar">
@@ -16,15 +20,96 @@
                                         <div class="card-body">
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
+                                                    <h6 class="f-w-600">
+                                                        <span class="pull-right"><i class="fa fa-calendar"></i> Post at : {{ $pemakaian_material->tanggal }}</span>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xxl-6 col-md-6 box-col-6">
+                                                    <div class="card">
+                                                        <div class="card-body pt-2 row important-project">
+                                                            <ul class="pro-services">
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Pelanggan : {{ $pelanggan->nama_pelanggan }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Alamat : {{ $pelanggan->alamat }} - {{ $pelanggan->getWilayah->wilayah }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>No. Telepon : {{ $pelanggan->no_telepon_1 }}{{ (!empty($pelanggan->no_telepon_2)) ? " - ".$pelanggan->no_telepon_2 : "" }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Paket : {{ $pelanggan->getPaket->nama_paket }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-6 col-md-6 box-col-6">
+                                                    <div class="card">
+                                                        <div class="card-body pt-2 row important-project">
+                                                            <ul class="pro-services">
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Sales : {{ $pelanggan->nama_sales }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>No. Telepon : {{ $pelanggan->no_telepon_sales }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>No. Rekening : {{ $pelanggan->no_rekening_sales }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Nama Bank : Paket: {{ $pelanggan->nama_bank }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{-- <div class="d-flex">
+                                                <div class="flex-grow-1">
                                                     <h6 class="f-w-600"> <a href="#">Pelanggan : {{ $pelanggan->nama_pelanggan }}</a>
                                                         <span class="pull-right"><i class="fa fa-calendar"></i> Post at : {{ $pemakaian_material->tanggal }}</span>
                                                     </h6>
                                                     <p><i class="fa fa-location-arrow"></i> {{ $pelanggan->alamat }} - {{ $pelanggan->getWilayah->wilayah }}<br>
                                                     <i class="fa fa-phone"></i> {{ $pelanggan->no_telepon_1 }}{{ (!empty($pelanggan->no_telepon_2)) ? " - ".$pelanggan->no_telepon_2 : "" }}<br>
                                                     <span><i class="fa fa-star font-warning"></i> Paket: {{ $pelanggan->getPaket->nama_paket }}</span></p>
+                                                    <span><i class="fa fa-user font-warning"></i> Sales: {{ $pelanggan->nama_sales }}</span></p>
+                                                </div>
+                                            </div> --}}
+                                            <div class="row">
+                                                <div class="col-xxl-12 col-md-6 box-col-6">
+                                                    <div class="card">
+                                                        <div class="card-body pt-2 row important-project">
+                                                            <ul class="pro-services">
+                                                            <li>
+                                                                <div class="media-body">
+                                                                    <h5>Deskripsi : {{ $pemakaian_material->keterangan }}</h5>
+                                                                </div>
+                                                            </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <p>Deskripsi : {{ $pemakaian_material->keterangan }}</p>
+                                            {{-- <p>Deskripsi : {{ $pemakaian_material->keterangan }}</p> --}}
                                             <div class="project-meeting-details">
                                                 <div class="project-meeting">
                                                     <span class="f-light f-12 f-w-500">Completed at</span>
@@ -199,13 +284,19 @@
                                                 <div class="card-body">
                                                     <div class="form theme-form">
                                                         <div class="row form-row align-items-end">
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-4">
                                                                 <label>Tanggal Aktivasi</label>
                                                                 <input class="form-control" name="inpTanggalAktivasi" id="inpTanggalAktivasi" type="date" value="{{ date('Y-m-d') }}" required>
 
                                                             </div>
-                                                            <div class="col-md-9">
-                                                                <button class="btn btn-primary" type="submit">Finished</button>
+                                                            <div class="col-md-4">
+                                                                <label>Pembayaran Awal (Rp.)</label>
+                                                                <input class="form-control angka" name="inpPembayaranAwal" id="inpPembayaranAwal" type="text" value="0" style="text-align: right" required>
+
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Fee Sales (Rp.)</label>
+                                                                <input class="form-control angka" name="inpFeeSales" id="inpFeeSales" type="text" value="0" style="text-align: right" {{ (empty($pelanggan->nama_sales)) ? "readonly" : "" }}>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -222,14 +313,51 @@
         </div>
     </div>
     <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Finished</button>
         <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
     </div>
     </form>
 </div>
 <script>
     $(document).ready(function () {
+        $(".angka").number(true, 0);
+        $("#aktivasiForm").validate({
+            rules: {
+                inpTanggalAktivasi: {
+                    required: true,
+                },
+                inpPembayaranAwal: {
+                    required: true,
+                    number: true,
+                    min: 1 // must be at least 1 (greater than 0)
+                },
+            },
+            messages: {
+                inpTanggalAktivasi: {
+                    required: "Inputan tanggal aktivasi tidak boleh kosong",
+                },
+                inpPembayaranAwal: {
+                    required: "Nominal pembayaran awal tidak boleh kosong",
+                    number: "Nominal pembayaran awal harus berupa angka",
+                    min: "Nominal pembayaran pembayaran awal harus lebih besar dari 0"
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
+        });
         $('#aktivasiForm').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+
+            if (!$(this).valid()) {
+                return false;
+            }
+
             let formData = new FormData(document.getElementById('aktivasiForm'));
             $.ajax({
                 url: "{{ route('pelanggan.storeAktivasi') }}", // Update this with your route
@@ -245,9 +373,12 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Good Job!',
-                            text: response.message
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
                         });
-                        location.reload();
                     } else {
                         Swal.fire({
                             icon: 'error',

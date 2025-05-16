@@ -148,11 +148,11 @@ class ReportController extends Controller
          if($query){
              $counter = $request->input('start') + 1;
              foreach($query as $r){
-                 $btn2 = '<ul class="action">
-                             <li class="edit"> <a href="javascript:void(0)"><i class="icon-pencil-alt"></i></a></li>
-                             <li class="delete"><a href="javascript:void(0)"><i class="icon-trash"></i></a></li>
-                         </ul>';
-                 $Data['act'] = $btn2;
+                $btn = "";
+                $btn .= '<div class="btn-group">';
+                    $btn .="<button type='button' class='btn btn-info btn-sm' title='Detail' id='btn_detail' data-bs-toggle='modal' data-bs-target='#modalDetail' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-eye'></i></button>";
+                $btn .='</div>';
+                 $Data['act'] = $btn;
                  $Data['id'] =  $r->id;
                  $Data['bulan'] =  General::get_nama_bulan($r->bulan)." ".$r->tahun; // $r->material;
                  $Data['agen'] =  $r->getAgen->nama_agen;
@@ -183,6 +183,47 @@ class ReportController extends Controller
            "list_penjualan" => VoucherDetailModel::where('head_id', $idH)->get()
         ];
         $pdf = Pdf::loadView('report.voucher.penjualan.print', $data)->setPaper('A4', 'potrait');
+        return $pdf->stream();
+    }
+    public function showDetaiPenjualanVoucher($id)
+    {
+        $dHead = VoucherHeadModel::with(['getAgen'])->find($id);
+        $data = [
+            'resHead' => $dHead,
+            'resDetail' => VoucherDetailModel::where('head_id', $id)->get(),
+            'periode' =>  General::get_nama_bulan($dHead->bulan)." ".$dHead->tahun
+        ];
+        return view('report.voucher.penjualan.detail', $data);
+    }
+
+    public function printDetailPenjualanVoucher($bulan, $tahun, $agen)
+    {
+        $dataH  = VoucherHeadModel::with([
+                        "getAgen"
+                    ])->where('status', 'close');
+        if(!empty($bulan) || $bulan != 0)
+        {
+            $dataH->where('bulan', $bulan);
+        }
+        if(!empty($tahun) || $tahun != 0)
+        {
+            $dataH->where('tahun', $tahun);
+        }
+        if(!empty($agen) || $agen != 0)
+        {
+            $dataH->where('agen_id', $agen);
+        }
+        $resultData = $dataH->get()->map( function($row) {
+            $arr = $row->toArray();
+                $arr['detail'] = VoucherDetailModel::where('head_id', $arr['id'])->get();
+                return $arr;
+        });
+        $data = [
+           "list_penjualan" => $resultData,
+           'getGeneral' => General::class
+        ];
+        // dd($data);
+        $pdf = Pdf::loadView('report.voucher.penjualan.print_with_detail', $data)->setPaper('A4', 'landscape');
         return $pdf->stream();
     }
     //keuangan

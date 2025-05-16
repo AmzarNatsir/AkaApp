@@ -405,11 +405,17 @@ class VoucherController extends Controller
     {
         DB::beginTransaction();
         try {
+            if($request->action=="simpan")
+            {
+                $status = "open";
+            } else {
+                $status = "close";
+            }   
             $idHead = $request->postHeadID;
             VoucherHeadModel::find($idHead)->update([
                 "total_voucher" => str_replace(",","", $request['inpTotalTerjual']),
                 "total_laba" => str_replace(",","", $request['inpTotalLaba']),
-                "status" => "close"
+                "status" => $status
             ]);
             $jml_item = count($request->idDetail);
             foreach(array($request) as $key => $value)

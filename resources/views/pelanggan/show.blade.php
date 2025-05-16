@@ -22,13 +22,29 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="inpWilayah">Wilayah</label>
-                <input class="form-control" id="inpWilayah" name="inpWilayah" type="text" value="{{ $res->getWilayah->wilayah }}" disabled>
+                <input class="form-control" id="inpWilayah" name="inpWilayah" type="text" value="{{ (empty($res->wilayah)) ? "" : $res->getWilayah->wilayah }}" disabled>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="inpPaket">Paket</label>
-                <input class="form-control" id="inpPaket" name="inpPaket" type="text" value="{{ $res->getPaket->nama_paket }}" disabled>
+                <input class="form-control" id="inpPaket" name="inpPaket" type="text" value="{{ (empty($res->paket_internet)) ? "" : $res->getPaket->nama_paket }}" disabled>
             </div>
             <hr>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaSales">Nama Sales</label>
+                <input class="form-control" id="inpNamaSales" name="inpNamaSales" type="text" maxlength="100" value="{{ $res->nama_sales }}" disabled>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNotelSales">No. Telepon Sales</label>
+                <input class="form-control" id="inpNotelSales" name="inpNotelSales" type="text" maxlength="100" value="{{ $res->no_telepon_sales }}" disabled>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNorekSales">No. Rekening Bank</label>
+                <input class="form-control" id="inpNorekSales" name="inpNorekSales" type="text" maxlength="100" value="{{ $res->no_rekening_sales }}" disabled>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaBankSales">Nama Bank Sales</label>
+                <input class="form-control" id="inpNamaBankSales" name="inpNamaBankSales" type="text" maxlength="100" value="{{ $res->nama_bank }}" disabled>
+            </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
             </div>

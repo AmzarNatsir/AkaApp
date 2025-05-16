@@ -349,34 +349,6 @@
                                         </table>
                                     </div>
                                     {{-- end menu paket internet --}}
-                                    <hr>
-                                    <h6 class="sub-title"><i class="me-2" data-feather="check-circle"></i>Pelanggan </h6>
-                                    <div class="form-check checkbox checkbox-primary mb-0">
-                                        <input class="form-check-input" id="pelanggan_view" name="menu[]" value="pelanggan_view" type="checkbox">
-                                        <label class="form-check-label" for="pelanggan_view">Pelanggan</label>
-                                        <table style="width: 100%">
-                                            <tr>
-                                                <td style="width: 30%">
-                                                    <div class="form-check checkbox checkbox-secondary">
-                                                        <input class="form-check-input" id="pelanggan_create" name="menu[]" type="checkbox" value="pelanggan_create">
-                                                        <label class="form-check-label" for="pelanggan_create">Create</label>
-                                                    </div>
-                                                </td>
-                                                <td style="width: 30%">
-                                                    <div class="form-check checkbox checkbox-secondary">
-                                                        <input class="form-check-input" id="pelanggan_edit" name="menu[]" type="checkbox" value="pelanggan_edit">
-                                                        <label class="form-check-label" for="pelanggan_edit">Edit</label>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-check checkbox checkbox-secondary">
-                                                        <input class="form-check-input" id="pelanggan_delete" name="menu[]" type="checkbox" value="pelanggan_delete">
-                                                        <label class="form-check-label" for="pelanggan_delete">Delete</label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
                                 </div>
                             </div>
 
@@ -690,6 +662,10 @@
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="pelanggan_monitoring_view" name="menu[]" type="checkbox" value="pelanggan_monitoring_view">
                                         <label class="form-check-label" for="pelanggan_monitoring_view">Monitoring</label>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-primary">
+                                        <input class="form-check-input" id="pelanggan_view" name="menu[]" value="pelanggan_view" type="checkbox">
+                                        <label class="form-check-label" for="pelanggan_view">Daftar Pelanggan</label>
                                     </div>
                                     <div class="form-check checkbox checkbox-primary">
                                         <input class="form-check-input" id="pelanggan_pembayaran_view" name="menu[]" type="checkbox" value="pelanggan_pembayaran_view">

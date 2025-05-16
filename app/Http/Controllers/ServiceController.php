@@ -47,31 +47,31 @@ class ServiceController extends Controller
             $fileLainnya = NULL;
             if($request->hasFile('fileRumah'))
             {
-                $fileRumah = General::upload_gambar($request->file('fileRumah'), 'gambar_rumah');
+                $fileRumah = General::upload_gambar($request->file('fileRumah'), 'gambar_rumah', 1);
             }
             if($request->hasFile('fileODP'))
             {
-                $fileODP = General::upload_gambar($request->file('fileODP'), 'gambar_odp');
+                $fileODP = General::upload_gambar($request->file('fileODP'), 'gambar_odp', 2);
             }
             if($request->hasFile('fileOntTerpasang'))
             {
-                $fileOntTerpasang = General::upload_gambar($request->file('fileOntTerpasang'), 'gambar_ont_terpasang');
+                $fileOntTerpasang = General::upload_gambar($request->file('fileOntTerpasang'), 'gambar_ont_terpasang', 3);
             }
             if($request->hasFile('fileOntBelakang'))
             {
-                $fileOntBelakang = General::upload_gambar($request->file('fileOntBelakang'), 'gambar_ont_belakang');
+                $fileOntBelakang = General::upload_gambar($request->file('fileOntBelakang'), 'gambar_ont_belakang', 4);
             }
             if($request->hasFile('fileRedamanDiOdp'))
             {
-                $fileRedamanDiOdp = General::upload_gambar($request->file('fileRedamanDiOdp'), 'gambar_redaman_odp');
+                $fileRedamanDiOdp = General::upload_gambar($request->file('fileRedamanDiOdp'), 'gambar_redaman_odp', 5);
             }
             if($request->hasFile('fileRedamanRumahPelanggan'))
             {
-                $fileRedamanRumahPelanggan = General::upload_gambar($request->file('fileRedamanRumahPelanggan'), 'gambar_redaman_rumah_pelanggan');
+                $fileRedamanRumahPelanggan = General::upload_gambar($request->file('fileRedamanRumahPelanggan'), 'gambar_redaman_rumah_pelanggan', 6);
             }
             if($request->hasFile('fileLainnya'))
             {
-                $fileLainnya = General::upload_gambar($request->file('fileLainnya'), 'gambar_lainnya');
+                $fileLainnya = General::upload_gambar($request->file('fileLainnya'), 'gambar_lainnya', 7);
             }
             $data = [
                 'id_pelanggan' => $request->id_pelanggan,
@@ -98,7 +98,7 @@ class ServiceController extends Controller
 
             PelangganModel::find($request->id_pelanggan)->update([
                 'status' => 'onCompleted',
-                'tgl_completed' => date("Y-m-d")
+                'tgl_completed' => date("Y-m-d"),
             ]);
 
             DB::commit();

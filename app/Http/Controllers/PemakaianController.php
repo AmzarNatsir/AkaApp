@@ -51,9 +51,10 @@ class PemakaianController extends Controller
 
     public function getItem(Request $request)
     {
+        $resMaterial = Material::with(['getMerek', 'getSatuan'])->find($request->itemID);
         return response()->json([
             'success' => true,
-            'result' => Material::with(['getMerek', 'getSatuan'])->find($request->itemID),
+            'result' => $resMaterial,
             'message' => "Data ditemukan"
         ]);
     }

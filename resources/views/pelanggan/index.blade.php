@@ -4,7 +4,7 @@
     <div class="page-title">
         <div class="row">
             <div class="col-6">
-                <h4>Registrasi Pelanggan Baru</h4>
+                <h4>Pelanggan Prospek</h4>
                 </div>
                 <div class="col-6">
                 <ol class="breadcrumb">
@@ -22,22 +22,23 @@
         @can("pelanggan_create")
         <div class="col-md-12 project-list">
             <div class="card">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group mb-0 me-0"></div>
-                  <button class="btn btn-primary" type="button" id="btn_add" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i data-feather="plus-square"> </i> Registrasi Pelanggan Baru</button>
-                    <div class="table-responsive custom-scrollbar">
+                <div class="row">
+                    <div class="col-md-12">
+                    {{-- <div class="form-group mb-0 me-0"></div> --}}
+                        <button class="btn btn-primary" type="button" id="btn_add" data-bs-toggle="modal" data-bs-target="#exampleModalgetbootstrap" data-whatever="@getbootstrap"><i data-feather="plus-square"> </i> Data Baru</button>
+                        <button class="btn btn-secondary" type="button" id="btn_import" data-bs-toggle="modal" data-bs-target="#modalImport" data-whatever="@getbootstrap"><i class="fa fa-table"> </i> Import</button>
+                    </div>
                 </div>
-              </div>
             </div>
         </div>
         @endcan
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>Data Pelanggan Baru</h4><span>Daftar pelanggan baru</span>
+                    <h4>Daftar Pelanggan Prospek</h4>
                 </div>
                 <div class="card-body table-responsive">
+                    <div class="table-responsive custom-scrollbar">
                         <table class="display" id="table_view">
                           <thead>
                             <tr>
@@ -47,12 +48,13 @@
                               <th style="width: 15%">No.Telepon</th>
                               <th style="width: 15%">Wilayah</th>
                               <th style="width: 15%">Paket</th>
+                              <th style="width: 15%">Sales</th>
                               <th style="width: 15%"></th>
                             </tr>
                           </thead>
                           <tbody></tbody>
                         </table>
-                      </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,6 +68,16 @@
 <div class="modal fade" id="modalProses" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalProses" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content" id="form_proses"></div>
+    </div>
+</div>
+<div class="modal fade" id="modalImport" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalgetbootstrap" aria-hidden="true">
+    <div class="modal-dialog modal-ml" role="document">
+        <div class="modal-content" id="form_import"></div>
+    </div>
+</div>
+<div class="modal fade" id="modalAktivasi" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalgetbootstrap" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="form_aktivasi"></div>
     </div>
 </div>
 <script>
@@ -83,6 +95,7 @@
                 { data: 'no_telepon' },
                 { data: 'wilayah' },
                 { data: 'paket_internet' },
+                { data: 'sales' },
                 { data: 'act' },
             ],
             responsive: true,
@@ -98,6 +111,12 @@
         });
         $("#table_view").on('click', '#btn_proses', function(){
             $("#form_proses").load("{{ url('pelanggan/proses') }}/"+$(this).val());
+        });
+        $("#table_view").on('click', '#btn_aktivasi', function(){
+            window.location.href = "{{ url('pelanggan/aktivasi') }}/"+$(this).val();
+        });
+        $("#btn_import").on("click", function(){
+            $("#form_import").load("{{ route('pelanggan.import') }}");
         });
     });
         var konfirmDelete = function(el) {

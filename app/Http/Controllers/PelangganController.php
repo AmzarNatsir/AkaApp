@@ -2,20 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\PelangganImport;
+use App\Models\ArusKasModel;
+use App\Models\KasKeluarModel;
+use App\Models\KasMasukModel;
 use App\Models\Material;
 use App\Models\PaketInternetModel;
 use App\Models\PelangganModel;
 use App\Models\PemakaianDetailModel;
 use App\Models\PemakaianModel;
 use App\Models\PemasanganDetailModel;
+use App\Models\PembayaranPelangganModel;
 use App\Models\PetugasModel;
 use App\Models\WilayahModel;
+use App\Traits\General;
+use App\Traits\GenerateNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
 class PelangganController extends Controller
 {
+    use GenerateNumber;
+    use General;
     public function index(){
         return view('pelanggan.index');
     }
@@ -33,7 +45,8 @@ class PelangganController extends Controller
         $totalFiltered = $query->count();
         $query = $query->offset($request->input('start'))
                       ->limit($request->input('length'))
-                        ->orderBy('id', 'asc')
+                        ->orderBy('created_at', 'asc')
+                        ->orderBy('nama_pelanggan', 'asc')
                       ->get();
         // dd($query);
         $data = array();
@@ -42,7 +55,6 @@ class PelangganController extends Controller
             foreach($query as $r){
                 $btn = "";
                 $btn .= '<div class="btn-group">';
-                $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses' id='btn_proses' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i></button>";
                 $btn .="<button type='button' class='btn btn-warning btn-sm' title='Detail' id='btn_show' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-eye'></i></button>";
                 if(auth()->user()->can("pelanggan_edit")) {
                     $btn .="<button type='button' class='btn btn-success btn-sm' title='Edit' id='btn_edit' data-bs-toggle='modal' data-bs-target='#exampleModalgetbootstrap' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-pencil-alt'></i></button>";
@@ -50,14 +62,20 @@ class PelangganController extends Controller
                 if(auth()->user()->can("pelanggan_delete")) {
                     $btn .= "<button type='button' class='btn btn-danger btn-sm' title='Hapus' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
                 }
+                if(!empty($r->wilayah) || (!empty($r->paket_internet)))
+                {
+                    $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses' id='btn_proses' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i></button>";
+                    $btn .="<button type='button' class='btn btn-success btn-sm' title='Aktivasi' id='btn_aktivasi' value='".$r->id."'><i class='fa fa-calendar'></i></button>";
+                }
                 $btn .='</div>';
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
                 $Data['nama_pelanggan'] =  $r->nama_pelanggan;
                 $Data['alamat'] =  $r->alamat;
                 $Data['no_telepon'] =  $r->no_telepon_1." / ".$r->no_telepon_2;
-                $Data['wilayah'] =  $r->getWilayah->wilayah;
-                $Data['paket_internet'] =  $r->getPaket->nama_paket;
+                $Data['wilayah'] = (empty($r->wilayah)) ? "" : $r->getWilayah->wilayah;
+                $Data['paket_internet'] = (empty($r->paket_internet)) ? "" : $r->getPaket->nama_paket;
+                $Data['sales'] = (empty($r->nama_sales)) ? "-" : $r->nama_sales;
                 $Data['no'] = $counter;
                 $data[] = $Data;
                 $counter++;
@@ -87,6 +105,10 @@ class PelangganController extends Controller
                 "wilayah" => $request->selectWilayah,
                 "paket_internet" => $request->selectpaket,
                 "aktif" => 'y',
+                "nama_sales" => $request->inpNamaSales,
+                "no_telepon_sales" => $request->inpNotelSales,
+                "no_rekening_sales" => $request->inpNorekSales,
+                "nama_bank" => $request->inpNamaBankSales,
             ]);
             $rs = response()->json([
                 'success' => true,
@@ -128,6 +150,10 @@ class PelangganController extends Controller
                 'no_telepon_2' => $request->inpNotel_2,
                 'wilayah' => $request->selectWilayah,
                 'paket_internet' => $request->selectpaket,
+                "nama_sales" => $request->inpNamaSales,
+                "no_telepon_sales" => $request->inpNotelSales,
+                "no_rekening_sales" => $request->inpNorekSales,
+                "nama_bank" => $request->inpNamaBankSales,
             ]);
             if($updateExec) {
                 $status = true;
@@ -159,6 +185,226 @@ class PelangganController extends Controller
         } else {
             $rs = response()->json([
                 'success' => false
+            ]);
+        }
+        return $rs;
+    }
+
+    public function aktivasi($id)
+    {
+        $gudang=1;
+        if($gudang==1) {
+            $list_material = Material::with(['getMerek'])->get();
+        }
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'pemakaian' => PemakaianModel::where('id_pelanggan', $id)->first(),
+            'listPetugas' => PetugasModel::where('aktif', 'y')->get(),
+            'listMaterial' => $list_material
+        ];
+        return view('pelanggan.aktivasi', $data);
+    }
+    //daftar pelanggan aktif
+    public function daftar()
+    {
+        return view('pelanggan.daftar.list');
+    }
+    public function getDataPelangganAktif(Request $request) {
+        $columns = ['created_at'];
+        $totalData = PelangganModel::where('aktif', 'y')->where('status', 'onFinished')->count();
+        $search = $request->input('search.value');
+        $query = PelangganModel::with(['getWilayah', 'getPaket'])->where('aktif', 'y')->where('status', 'onFinished');
+        if(!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->Where('nama_pelanggan', 'like', "%{$search}%");
+            });
+        }
+        $totalFiltered = $query->count();
+        $query = $query->offset($request->input('start'))
+                      ->limit($request->input('length'))
+                      ->orderBy('tgl_finished', 'desc')
+                      ->get();
+        // dd($query);
+        $data = array();
+        if($query){
+            $counter = $request->input('start') + 1;
+            foreach($query as $r){
+                $btn = "";
+                $btn .= '<div class="btn-group">';
+                $btn .="<button type='button' class='btn btn-secondary btn-sm' title='Profil' id='btn_profil' data-bs-toggle='modal' data-bs-target='#modalProfil' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i></button>";
+                if(auth()->user()->can("pelanggan_edit")) {
+                    $btn .="<button type='button' class='btn btn-success btn-sm' title='Perbaharui Data' id='btn_edit' value='".$r->id."'><i class='fa fa-pencil'></i></button>";
+                }
+                $btn .="<button type='button' class='btn btn-info btn-sm' title='Pembayaran' id='btn_pembayaran' data-bs-toggle='modal' data-bs-target='#modalPembayaran' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-money'></i></button>";
+                $btn .='</div>';
+                $Data['act'] = $btn;
+                $Data['id'] =  $r->id;
+                $Data['nama_pelanggan'] =  $r->nama_pelanggan;
+                $Data['alamat'] =  $r->alamat;
+                $Data['no_telepon'] =  $r->no_telepon_1." / ".$r->no_telepon_2;
+                $Data['wilayah'] = (empty($r->wilayah)) ? "" : $r->getWilayah->wilayah;
+                $Data['paket_internet'] = (empty($r->paket_internet)) ? "" : $r->getPaket->nama_paket;
+                $Data['sales'] = (empty($r->nama_sales)) ? "-" : $r->nama_sales;
+                $Data['no'] = $counter;
+                $data[] = $Data;
+                $counter++;
+            }
+        }
+        return response()->json([
+            'draw' => intval($request->input('draw')),
+            'recordsTotal' => $totalData,
+            'recordsFiltered' => $totalFiltered,
+            'data' => $data
+        ]);
+    }
+    public function profilPelanggan($id)
+    {
+        $resPemakaian = PemakaianModel::where('id_pelanggan', $id)->first();
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'pemakaian' => $resPemakaian,
+            'listPetugas' => PetugasModel::where('aktif', 'y')->get(),
+            'pemasangan_detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
+            'pemakaian_material' => PemakaianDetailModel::with(['getMaterial'])->where('head_id', $resPemakaian->id)->get(),
+            'qty_material' => PemakaianDetailModel::where('head_id', $resPemakaian->id)->sum('jumlah')
+        ];
+        // dd($data);
+        return view('pelanggan.daftar.profil', $data);
+    }
+    //daftar pelanggan
+    public function editPelanggan($id)
+    {
+        $gudang=1;
+        if($gudang==1) {
+            $list_material = Material::with(['getMerek'])->get();
+        }
+        $resPemakaian = PemakaianModel::where('id_pelanggan', $id)->first();
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'pemakaian' => $resPemakaian,
+            'listPetugas' => PetugasModel::where('aktif', 'y')->get(),
+            'listMaterial' => $list_material,
+            'pemasangan_detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
+            'pemakaian_material' => PemakaianDetailModel::with(['getMaterial'])->where('head_id', $resPemakaian->id)->get(),
+            'qty_material' => PemakaianDetailModel::where('head_id', $resPemakaian->id)->sum('jumlah')
+        ];
+        return view('pelanggan.daftar.form_pembaharuan_data', $data);
+    }
+    public function showPembayaranPelanggan($id)
+    {
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
+            'list_pembayaran' => PembayaranPelangganModel::where('id_pelanggan', $id)->get(),
+            'total_pembayaran' => PembayaranPelangganModel::where('id_pelanggan', $id)->sum('nominal')
+        ];
+        return view('pelanggan.daftar.list_pembayaran', $data);
+    }
+
+    public function simpanAktivasi(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fileRumah = General::handleNewFileUpload($request, 'fileRumah', 'gambar_rumah', 1);
+            $fileODP = General::handleNewFileUpload($request, 'fileODP', 'gambar_odp', 2);
+            $fileOntTerpasang = General::handleNewFileUpload($request, 'fileOntTerpasang', 'gambar_ont_terpasang', 3);
+            $fileOntBelakang = General::handleNewFileUpload($request, 'fileOntBelakang', 'gambar_ont_belakang', 4);
+            $fileRedamanDiOdp = General::handleNewFileUpload($request, 'fileRedamanDiOdp', 'gambar_redaman_odp', 5);
+            $fileRedamanRumahPelanggan = General::handleNewFileUpload($request, 'fileRedamanRumahPelanggan', 'gambar_redaman_rumah_pelanggan', 6);
+            $fileLainnya = General::handleNewFileUpload($request, 'fileLainnya', 'gambar_lainnya', 7);
+            $dataH = [
+                "tanggal" => date('Y-m-d'),
+                "kategori_id" => 1, //pemasangan baru
+                "wilayah_id" => $request->id_wilayah,
+                "petugas" => implode(',', $request->pilPetugas),
+                "keterangan" => "Pemasangan Baru (Pelanggan Lama)",
+                "user_id" => auth()->user()->id,
+                "gudang_id" => $request->gudangID,
+                "id_pelanggan" => $request->id_pelanggan,
+            ];
+            $saveH = PemakaianModel::create($dataH);
+            $id_pemakaian = $saveH->id;
+
+            $dataPemasangan = [
+                'id_pelanggan' => $request->id_pelanggan,
+                'id_pemakaian' => $id_pemakaian,
+                'sn_ont' => $request->inpSN_ONT,
+                'model_ont' => $request->inpModel_ONT,
+                'odp' => $request->inpODP,
+                'tikor_odp' => $request->inpTikorODP,
+                'tikor_pelanggan' => $request->inpTikorPelanggan,
+                'port' => $request->inpPort,
+                'port_ifle' => $request->inpPortIfle,
+                'splitter' => $request->inpSplitter,
+                'kabel_dc' => $request->inpKabelDC,
+                'gambar_rumah' => $fileRumah,
+                'gambar_odp' => $fileODP,
+                'gambar_ont_terpasang' => $fileOntTerpasang,
+                'gambar_belakang_ont' => $fileOntBelakang,
+                'gambar_redaman_odp' => $fileRedamanDiOdp,
+                'gambar_redaman_rumah_pelanggan' => $fileRedamanRumahPelanggan,
+                'gambar_lainnya' => $fileLainnya,
+                'user_id' => auth()->user()->id,
+                'tgl_aktivasi' => $request->inpTanggalAktivasi
+            ];
+            PemasanganDetailModel::create($dataPemasangan);
+            if($request->totalItem > 0)
+            {
+                $jml_item = count($request->item_id_material);
+                foreach(array($request) as $key => $value)
+                {
+                    for($i=0; $i<$jml_item; $i++)
+                    {
+                        $dataD = [
+                            "head_id" => $id_pemakaian,
+                            "material_id" => $value['item_id_material'][$i],
+                            "jumlah" => $value['item_qty'][$i],
+                            "harga" => $value['current_harga'][$i],
+                            "gudang_id" => $request->gudangID,
+                        ];
+                        PemakaianDetailModel::create($dataD);
+                        //update stok
+                        if($request->gudangID==1)
+                        {
+                            $updateStok = Material::find($value['item_id_material'][$i]);
+                            $updateStok->stok_akhir -= str_replace(",","", $value['item_qty'][$i]);
+                            $updateStok->update();
+                        }
+                    }
+
+                }
+            }
+            PelangganModel::find($request->id_pelanggan)->update([
+                'status' => 'onFinished',
+                'tgl_finished' => $request->inpTanggalAktivasi,
+                'tgl_completed' => $request->inpTanggalAktivasi,
+                'petugas' => implode(',', $request->pilPetugas)
+            ]);
+
+            DB::commit();
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Data berhasil disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback transaction on error
+            // Log the error for debugging
+            // \Log::error('Transaction failed: '.$e->getMessage());
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data. error: ".$e->getMessage()
             ]);
         }
         return $rs;
@@ -228,6 +474,7 @@ class PelangganController extends Controller
             ]);
 
         } catch (Throwable $e) {
+            DB::rollBack();
             $rs = response()->json([
                 'success' => false,
                 'message' => "Terdapat error pada proses penyimpanan data.".$e->getMessage()
@@ -243,9 +490,9 @@ class PelangganController extends Controller
 
     public function getDataMonitoring(Request $request){
         $columns = ['created_at'];
-        $totalData = PelangganModel::where('aktif', 'y')->whereNotNull('status')->count();
+        $totalData = PelangganModel::where('aktif', 'y')->whereIn('status', ['onProses', 'onCanceled'])->count();
         $search = $request->input('search.value');
-        $query = PelangganModel::with(['getWilayah', 'getPaket'])->where('aktif', 'y')->whereNotNull('status');
+        $query = PelangganModel::with(['getWilayah', 'getPaket'])->where('aktif', 'y')->whereIn('status', ['onProses', 'onCanceled']);
         if(!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->Where('nama_pelanggan', 'like', "%{$search}%");
@@ -263,7 +510,7 @@ class PelangganController extends Controller
             foreach($query as $r){
                 $btn = "";
                 $btn .= '<div class="btn-group">';
-                if($r->status=="onProses") {
+                if(empty($r->status)) {
                     $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses' id='btn_proses' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i></button>";
                 }
                 if($r->status=="onCanceled" || empty($r->status)) {
@@ -274,6 +521,7 @@ class PelangganController extends Controller
                 }
                 if($r->status=="onFinished") {
                     $btn .="<button type='button' class='btn btn-success btn-sm' title='Detail Pelanggan' id='btn_detail_finished' data-bs-toggle='modal' data-bs-target='#modalAktivasi' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i> Detail</button>";
+                    $btn .="<button type='button' class='btn btn-primary btn-sm' title='Pembaharuan Data' id='btn_update_data' value='".$r->id."'><i class='icon-pencil'></i> Update</button>";
                 }
                 $btn .='</div>';
                 if(empty($r->status)) {
@@ -358,20 +606,84 @@ class PelangganController extends Controller
     }
     public function storeAktivasi(Request $request)
     {
+        DB::beginTransaction();
         try {
+            $fee_sales = NULL;
+            if($request->inpFeeSales > 0)
+            {
+                $fee_sales = str_replace(",","", $request->inpFeeSales);
+            }
             $data = [
                 'tgl_finished' => date('Y-m-d'),
-                'status' => 'onFinished'
+                'status' => 'onFinished',
+                'fee_sales' => $fee_sales
             ];
             PelangganModel::find($request->id_pelanggan)->update($data);
             PemasanganDetailModel::find($request->id_pemasangan)->update([
                 'tgl_aktivasi' => $request->inpTanggalAktivasi
             ]);
+            //kas masuk
+            $uUIDH = Str::uuid();
+            $uUIDAK = Str::uuid();
+            $ket_kas_masuk = "Pembayaran awal pelanggan an. " . $request->id_nama_pelanggan;
+            $data = [
+                'uuid' => $uUIDH,
+                'tgl_transaksi' => $request->inpTanggalAktivasi,
+                'no_transaksi' => GenerateNumber::generateNoKas("in", $request->inpTanggalAktivasi),
+                'keterangan' => $ket_kas_masuk,
+                'nominal' => str_replace(",","", $request->inpPembayaranAwal),
+                'id_user' => auth()->user()->id,
+                'created_at' => date("Y-m-d H:i:s")
+            ];
+            KasMasukModel::create($data);
+            //insert to arus kas
+            $dataAK = [
+                'uuid' => $uUIDAK,
+                'no_ref' => $uUIDH,
+                'tgl_transaksi' => $request->inpTanggalAktivasi,
+                'keterangan' => $ket_kas_masuk,
+                'debet' => str_replace(",","", $request->inpPembayaranAwal),
+                'kredit' => 0,
+                'kategori_transaksi' => 'Kas Masuk',
+                'id_user' => auth()->user()->id
+            ];
+            ArusKasModel::create($dataAK);
+            //kas keluar jika nominal fee sales terisi
+            if($request->inpFeeSales > 0)
+            {
+                $ket_kas_keluar = "Pembayaran fee sales an. " . $request->id_nama_sales. " untuk pemasangan pelanggan an. " .$request->id_nama_pelanggan;
+                $uUIDH_2 = Str::uuid();
+                $uUIDAK_2 = Str::uuid();
+                $data = [
+                    'uuid' => $uUIDH_2,
+                    'tgl_transaksi' => $request->inpTanggalAktivasi,
+                    'no_transaksi' => GenerateNumber::generateNoKas("ot", $request->inpTanggalAktivasi),
+                    'keterangan' => $ket_kas_keluar,
+                    'nominal' => str_replace(",","", $request->inpFeeSales),
+                    'id_user' => auth()->user()->id,
+                    'created_at' => date("Y-m-d H:i:s")
+                ];
+                KasKeluarModel::create($data);
+                //insert to arus kas
+                $dataAK = [
+                    'uuid' => $uUIDAK_2,
+                    'no_ref' => $uUIDH_2,
+                    'tgl_transaksi' => $request->inpTanggalAktivasi,
+                    'keterangan' => $ket_kas_keluar,
+                    'debet' => 0,
+                    'kredit' => str_replace(",","", $request->inpFeeSales),
+                    'kategori_transaksi' => 'Kas Keluar',
+                    'id_user' => auth()->user()->id
+                ];
+                ArusKasModel::create($dataAK);
+            }
+            DB::commit(); // Commit Transaction if everything is successful
             $rs = response()->json([
                 'success' => true,
                 'message' => "Data pemakaian material berhasil disimpan."
             ]);
         } catch (Throwable $e) {
+            DB::rollBack();
             $rs = response()->json([
                 'success' => false,
                 'message' => "Terdapat error pada proses penyimpanan data.".$e->getMessage()
@@ -402,10 +714,23 @@ class PelangganController extends Controller
     {
         $search = $request->get('q');
 
-        $results = PelangganModel::where('nama_pelanggan', 'LIKE', "%$search%")
-            ->orWhere('no_telepon_1', 'LIKE', "%$search%")
-            ->where('status', 'onFinished')
-            ->select('id', 'nama_pelanggan as text') // 'text' is required by Select2
+        $results = PelangganModel::where('status', 'onFinished')
+            ->where('aktif', 'y')
+            ->where(function ($query) use ($search) {
+                $query->where('nama_pelanggan', 'LIKE', "%$search%")
+                ->orWhere('no_telepon_1', 'LIKE', "%$search%");
+            })
+            ->select('id', DB::raw("
+                CASE
+                    WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != '' AND no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
+                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1, ' / ', no_telepon_2)
+                    WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != ''
+                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1)
+                    WHEN no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
+                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_2)
+                    ELSE nama_pelanggan
+                END as text
+            "))
             ->limit(10)
             ->get();
 
@@ -419,8 +744,151 @@ class PelangganController extends Controller
                 'getWilayah',
                 'getPaket'
             ])->find($id),
-            'detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first()
+            'detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
+            'list_pembayaran' => PembayaranPelangganModel::where('id_pelanggan', $id)->get(),
+            'total_pembayaran' => PembayaranPelangganModel::where('id_pelanggan', $id)->sum('nominal')
         ];
         return view('pelanggan.pembayaran.form_pembayaran', $data);
+    }
+
+    public function storePembayaran(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = [
+                "tgl_bayar" => $request->inpTanggal,
+                "id_pelanggan" => $request->idPelanggan,
+                "id_pemasangan" => $request->idPemasangan,
+                "nominal" => str_replace(",","", $request->inpNominal),
+                "id_user" => auth()->user()->id
+            ];
+            PembayaranPelangganModel::create($data);
+            DB::commit(); // Commit Transaction if everything is successful
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Data pembayaran pelanggan berhasil disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data.".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+
+    //pembaharuan data
+    public function pembaharuanData($id)
+    {
+        $gudang=1;
+        if($gudang==1) {
+            $list_material = Material::with(['getMerek'])->get();
+        }
+        $resPemakaian = PemakaianModel::where('id_pelanggan', $id)->first();
+        $data = [
+            'pelanggan' => PelangganModel::with([
+                'getWilayah',
+                'getPaket'
+            ])->find($id),
+            'pemakaian' => $resPemakaian,
+            'listPetugas' => PetugasModel::where('aktif', 'y')->get(),
+            'listMaterial' => $list_material,
+            'pemasangan_detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
+            'pemakaian_material' => PemakaianDetailModel::with(['getMaterial'])->where('head_id', $resPemakaian->id)->get(),
+            'qty_material' => PemakaianDetailModel::where('head_id', $resPemakaian->id)->sum('jumlah')
+        ];
+        // dd($data);
+        return view('pelanggan.pembaharuan', $data);
+    }
+    public function simpanPembaharuanDataPelanggan(Request $request, $id_pelanggan)
+    {
+        DB::beginTransaction();
+        try {
+            $fileRumah = General::handleFileUpload($request, 'fileRumah', 'tmp_gambar_rumah', 'gambar_rumah', 1);
+            $fileODP = General::handleFileUpload($request, 'fileODP', 'tmp_gambar_odp', 'gambar_odp', 2);
+            $fileOntTerpasang = General::handleFileUpload($request, 'fileOntTerpasang', 'tmp_gambar_ont_terpasang', 'gambar_ont_terpasang', 3);
+            $fileOntBelakang = General::handleFileUpload($request, 'fileOntBelakang', 'tmp_gambar_ont_belakang', 'gambar_ont_belakang', 4);
+            $fileRedamanDiOdp = General::handleFileUpload($request, 'fileRedamanDiOdp', 'tmp_gambar_redaman_odp', 'gambar_redaman_odp', 5);
+            $fileRedamanRumahPelanggan = General::handleFileUpload($request, 'fileRedamanRumahPelanggan', 'tmp_gambar_redaman_rumah_pelanggan', 'gambar_redaman_rumah_pelanggan', 6);
+            $fileLainnya = General::handleFileUpload($request, 'fileLainnya', 'tmp_gambar_lainnya', 'gambar_lainnya', 7);
+            $dataPemasangan = [
+                'gambar_rumah' => $fileRumah,
+                'gambar_odp' => $fileODP,
+                'gambar_ont_terpasang' => $fileOntTerpasang,
+                'gambar_belakang_ont' => $fileOntBelakang,
+                'gambar_redaman_odp' => $fileRedamanDiOdp,
+                'gambar_redaman_rumah_pelanggan' => $fileRedamanRumahPelanggan,
+                'gambar_lainnya' => $fileLainnya,
+            ];
+            PemasanganDetailModel::find($request->id_pemasangan)->update($dataPemasangan);
+            if($request->totalItem > 0)
+            {
+                $jml_item = count($request->item_id_material);
+                foreach(array($request) as $key => $value)
+                {
+                    for($i=0; $i<$jml_item; $i++)
+                    {
+                        $dataD = [
+                            "head_id" => $request->id_pemakaian,
+                            "material_id" => $value['item_id_material'][$i],
+                            "jumlah" => $value['item_qty'][$i],
+                            "harga" => $value['current_harga'][$i],
+                            "gudang_id" => $request->gudangID,
+                        ];
+                        PemakaianDetailModel::create($dataD);
+                        //update stok
+                        if($request->gudangID==1)
+                        {
+                            $updateStok = Material::find($value['item_id_material'][$i]);
+                            $updateStok->stok_akhir -= str_replace(",","", $value['item_qty'][$i]);
+                            $updateStok->update();
+                        }
+                    }
+
+                }
+            }
+
+            DB::commit();
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Data berhasil disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback transaction on error
+            // Log the error for debugging
+            Log::error('Transaction failed: '.$e->getMessage());
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data. error: ".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+    //tools
+    public function importData()
+    {
+        return view('pelanggan.tools.formImport');
+    }
+    public function doImportData(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            Excel::import(new PelangganImport, $request->file('inpFile'));
+            DB::commit();
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Data berhasil disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback transaction on error
+            // Log the error for debugging
+            Log::error('Transaction failed: '.$e->getMessage());
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data. error: ".$e->getMessage()
+            ]);
+        }
+        return $rs;
     }
 }

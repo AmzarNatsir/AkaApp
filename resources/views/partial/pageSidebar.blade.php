@@ -43,6 +43,7 @@ $canTransKasKeluar = auth()->user()->can('trans_keuangan_kas_keluar_view');
 $canRegistrasiPelangan = auth()->user()->can('pelanggan_registrasi_view');
 $canMonitoringPelangan = auth()->user()->can('pelanggan_monitoring_view');
 $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
+$canDaftarPelangan = auth()->user()->can('pelanggan_view');
 @endphp
 <div class="logo-wrapper"><a href="{{ route('home') }}"><img class="img-fluid" src="{{ asset('assets/images/logo/akagroup.png') }}" style="width: 85%" alt=""></a>
     <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
@@ -91,13 +92,6 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                 </ul>
             </li>
             @endif
-            {{-- <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-layout') }}"></use></svg>
-                <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-layout') }}"></use></svg><span>Summary</span></a>
-                <ul class="sidebar-submenu">
-                    <li><a href="{{ route('home') }}">Coming Soon</a></li>
-                </ul>
-            </li> --}}
             @if($canPenggunaRole || $canPenggunaUsers || $canMasterMerek || $canMasterSatuan || $canMasterMaterial || $canMasterMaterialCreate || $canMaterialKartuStok || $canMasterCabang || $canMasterWilayah || $canMasterPetugas)
             <li class="sidebar-main-title"><div><h6>Manajemen Data</h6></div></li>
             @endif
@@ -225,19 +219,19 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                 </ul>
             </li>
             @endif
-            @if($canRegistrasiPelangan || $canMonitoringPelangan || $canPembayaranPelangan)
+            @if($canRegistrasiPelangan || $canMonitoringPelangan || $canDaftarPelangan)
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use></svg><span>Pelanggan</span></a>
                 <ul class="sidebar-submenu">
                     @if($canRegistrasiPelangan)
-                    <li><a href="{{ route('pelanggan.index') }}">Registrasi</a></li>
+                    <li><a href="{{ route('pelanggan.index') }}">Prospek</a></li>
                     @endif
                     @if($canMonitoringPelangan)
                     <li><a href="{{ route('pelanggan.monitoring') }}">Monitoring</a></li>
                     @endif
-                    @if($canPembayaranPelangan)
-                    <li><a href="{{ route('pelanggan.pembayaran') }}">Pembayaran</a></li>
+                    @if($canDaftarPelangan)
+                    <li><a href="{{ route('pelanggan.daftar') }}">Pelanggan</a></li>
                     @endif
                 </ul>
             </li>
@@ -278,7 +272,7 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                 </ul>
             </li>
             @endif
-            @if($canTransKasMasuk || $canTransKasKeluar)
+            @if($canTransKasMasuk || $canTransKasKeluar || $canPembayaranPelangan)
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-bonus-kit') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-bonus-kit') }}"></use></svg><span>Keuangan</span></a>
@@ -288,6 +282,9 @@ $canPembayaranPelangan = auth()->user()->can('pelanggan_pembayaran_view');
                     @endif
                     @if($canTransKasKeluar)
                     <li><a href="{{ route('keuangan.kasKeluar.daftar') }}">Kas Keluar</a></li>
+                    @endif
+                    @if($canPembayaranPelangan)
+                    <li><a href="{{ route('pelanggan.pembayaran') }}">Pembayaran Pelanggan</a></li>
                     @endif
                 </ul>
             </li>

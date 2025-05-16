@@ -22,13 +22,13 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <form class="theme-form">
+                    {{-- <form class="theme-form"> --}}
                         <div class="input-group m-0 flex-nowrap">
                             <select class="form-control select" name="searhPelanggan" id="searhPelanggan">
                                 <option value=""></option>
                             </select>
                         </div>
-                    </form>
+                    {{-- </form> --}}
                 </div>
             </div>
         </div>

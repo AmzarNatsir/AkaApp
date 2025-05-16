@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\PemasanganDetailModel;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -72,7 +73,7 @@ trait General
         }
     }
 
-    public static function upload_gambar($file, $folder)
+    public static function upload_gambar($file, $folder, $nom)
     {
         try {
             $path = storage_path("app/public/".$folder);
@@ -80,7 +81,7 @@ trait General
                 $path = Storage::disk('public')->makeDirectory($folder);
             }
             $image = $file;
-            $fileName = time() . '.' . $image->getClientOriginalExtension();
+            $fileName = $nom."_".time() . '.' . $image->getClientOriginalExtension();
             $image->storeAs("public/" . $folder, $fileName);
             return $fileName;
         } catch (\Throwable $th)
@@ -88,5 +89,26 @@ trait General
             report($th);
             return $th->getMessage();
         }
+    }
+
+    public static function handleNewFileUpload($request, $fileKey, $folder, $urutan) {
+        if ($request->hasFile($fileKey)) {
+            return General::upload_gambar($request->file($fileKey), $folder, $urutan);
+        }
+        return null;
+    }
+    public static function handleFileUpload($request, $fileKey, $tmpKey, $folder, $urutan) {
+        if ($request->hasFile($fileKey)) {
+            if (!empty($request->$tmpKey)) {
+                General::hapus_file_gambar($folder, $request->$tmpKey);
+            }
+            return General::upload_gambar($request->file($fileKey), $folder, $urutan);
+        }
+        return (!empty($request->$tmpKey)) ? $request->$tmpKey : null;
+    }
+
+    public static function hapus_file_gambar($folder, $file)
+    {
+        Storage::delete('public/'.$folder.'/'.$file);
     }
 }

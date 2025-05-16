@@ -23,7 +23,13 @@ class PelangganModel extends Model
         "tgl_submit_cancel",
         "keterangan_cancel",
         "tgl_canceled",
-        "user_canceled"
+        "user_canceled",
+        "nama_sales",
+        "no_telepon_sales",
+        "no_rekening_sales",
+        "nama_bank",
+        "fee_sales",
+        "petugas"
     ];
 
     public function getWilayah()

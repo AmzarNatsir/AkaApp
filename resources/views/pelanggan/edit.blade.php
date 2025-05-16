@@ -26,7 +26,7 @@
             <div class="col-md-6 position-relative">
                 <label class="form-label" for="selectWilayah">Wilayah</label>
                 <select class="form-select select" id="selectWilayah" name="selectWilayah" required="">
-                    {{-- <option selected="" disabled="" value="">Pilihan...</option> --}}
+                    <option selected="" disabled="" value="">Pilihan...</option>
                     @foreach ($listWilayah as $wilayah)
                     @if($wilayah['id'] == $res->wilayah)
                     <option value="{{ $wilayah['id'] }}" selected="">{{ $wilayah['wilayah'] }}</option>
@@ -40,7 +40,7 @@
             <div class="col-md-6 position-relative">
                 <label class="form-label" for="selectpaket">Paket Internet</label>
                 <select class="form-select select" id="selectpaket" name="selectpaket" required="">
-                    {{-- <option selected="" disabled="" value="">Pilihan...</option> --}}
+                    <option selected="" disabled="" value="">Pilihan...</option>
                     @foreach ($listPaket as $paket)
                     @if($paket['id'] == $res->paket_internet)
                     <option value="{{ $paket['id'] }}" selected="">{{ $paket['nama_paket'] }}</option>
@@ -52,6 +52,22 @@
                 <div class="invalid-tooltip">Paket internet belum dipilih</div>
             </div>
             <hr>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaSales">Nama Sales</label>
+                <input class="form-control" id="inpNamaSales" name="inpNamaSales" type="text" maxlength="100" value="{{ $res->nama_sales }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNotelSales">No. Telepon Sales</label>
+                <input class="form-control" id="inpNotelSales" name="inpNotelSales" type="text" maxlength="100" value="{{ $res->no_telepon_sales }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="inpNorekSales">No. Rekening Bank</label>
+                <input class="form-control" id="inpNorekSales" name="inpNorekSales" type="text" maxlength="100" value="{{ $res->no_rekening_sales }}">
+            </div>
+            <div class="col-md-12">
+                <label class="form-label" for="inpNamaBankSales">Nama Bank Sales</label>
+                <input class="form-control" id="inpNamaBankSales" name="inpNamaBankSales" type="text" maxlength="100" value="{{ $res->nama_bank }}">
+            </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary" type="submit">Save changes</button>
@@ -61,27 +77,68 @@
 </div>
 <script>
     $(document).ready(function () {
-        const forms = document.querySelectorAll(".needs-validation");
+        // const forms = document.querySelectorAll(".needs-validation");
         $(".select").select2({
             placeholder: "Pilihan",
             allowClear: true
         });
-        Array.from(forms).forEach((form) => {
-            form.addEventListener(
-            "submit",
-            (event) => {
-                if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                }
+        // Array.from(forms).forEach((form) => {
+        //     form.addEventListener(
+        //     "submit",
+        //     (event) => {
+        //         if (!form.checkValidity()) {
+        //         event.preventDefault();
+        //         event.stopPropagation();
+        //         }
 
-                form.classList.add("was-validated");
+        //         form.classList.add("was-validated");
+        //     },
+        //     false
+        //     );
+        // });
+        $("#updateForm").validate({
+            rules: {
+                inpNama: {
+                    required: true,
+                },
+                inpAlamat: {
+                    required: true,
+                },
+                inpNotel_1: {
+                    required: true,
+                },
+                selectWilayah: {
+                    required: true,
+                },
+                selectpaket: {
+                    required: true,
+                },
             },
-            false
-            );
+            messages: {
+                inpNama: {
+                    required: "Nama pelanggan tidak boleh kosong",
+                },
+                inpNama: {
+                    required: "Alamat pelanggan tidak boleh kosong",
+                },
+                inpNotel_1: {
+                    required: "Nomor Telepon pelanggan tidak boleh kosong",
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
         });
         $('#updateForm').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+            if (!$(this).valid()) {
+                return false;
+            }
             let formData = new FormData(document.getElementById('updateForm'));
             $.ajax({
                 url: "{{ url('pelanggan/update') }}/"+$("#idData").val(), // Update this with your route
@@ -91,7 +148,11 @@
                 processData: false,
                 success: function (response) {
                     if (response.success==true) {
-                        swal("Good job!", response.message, "success");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Good Job!',
+                            text: response.message
+                        });
                         // $('#updateForm')[0].reset();
                         location.reload();
                     } else {
@@ -100,7 +161,11 @@
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText); // Debugging errors
-                    swal("It's danger", "Something went wrong!", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: "It's danger!",
+                        text: "Something went wrong! "+response.message
+                    });
                 }
             });
         });

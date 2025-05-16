@@ -85,9 +85,9 @@
                                         <div class="card">
                                             <div class="card-body pt-0">
                                                 <div class="table-order table-responsive custom-scrollbar">
-                                                    <table class="table table-order" style="width: 100%">
+                                                    <table class="display table-order" style="width: 100%">
                                                         <thead>
-                                                            <th style="width: 5%"></th>
+                                                            <th style="width: 10%; height: 30px"></th>
                                                             <th>Material</th>
                                                             <th style="width: 15%">Jumlah</th>
                                                         </thead>
@@ -138,34 +138,58 @@
     var addItem = function(el)
     {
         var materialID = $("#pilItem").val();
-        $.ajax({
-            headers : {
-                'X-CSRF-TOKEN' : '<?php echo csrf_token() ?>'
-            },
-            url: "{{ route('pemakaianMaterial.getItem') }}", // Update this with your route
-            type: "POST",
-            data: {
-                itemID: materialID
-            },
-            success: function (response) {
-                if (response.success==true) {
-                    // alert(response.message);
-                    var content_item = '<tr class="rows_item" name="rows_item[]"><td><input type="hidden" name="current_stok[]" value='+response.result.stok_akhir+'><input type="hidden" name="current_harga[]" value='+response.result.harga_beli+'><button type="button" title="Hapus Baris" class="btn btn-secondary btn-sm" onclick="hapus_item(this)"><i class="fa fa-minus"></i></button></td>'+
-                        '<td><input type="hidden" name="item_id_material[]" value="'+response.result.id+'"><div class="product-names"><p>'+response.result.material+'</p></div></td>'+
-                        '<td align="center"><input type="text" min="1" max="'+response.result.stok_akhir+'" id="item_qty[]" name="item_qty[]" class="form-control angka" value="1" style="text-align:center" onInput="checkStokAkhir(this)" onblur="checkStokAkhir(this)"></td>'+'</tr>';
-                    $(".row_baru").after(content_item);
-                    $(".angka").number(true, 0);
-                    calculateTotalItem();
-                } else {
-                    swal("It's danger", response.message, "error");
-                    return false;
+        if (materialID) {
+            var duplicate = false;
+            $('input[name="item_id_material[]"]').each(function () {
+                if ($(this).val() == materialID) {
+                    duplicate = true;
+                    return false; // break loop
                 }
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText); // Debugging errors
-                swal("It's danger", "Something went wrong!", "error");
+            });
+            if (duplicate) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: "Duplicate Material",
+                    text: "Material yang anda pilih sudah ada!"
+                });
+                // Clear and reopen Select2
+                $('.selectMaterial').val(null).trigger('change');
+                setTimeout(function () {
+                    $('.selectMaterial').select2('open');
+                }, 100);
+                return;
             }
-        });
+            $.ajax({
+                headers : {
+                    'X-CSRF-TOKEN' : '<?php echo csrf_token() ?>'
+                },
+                url: "{{ route('pemakaianMaterial.getItem') }}", // Update this with your route
+                type: "POST",
+                data: {
+                    itemID: materialID
+                },
+                success: function (response) {
+                    if (response.success==true) {
+                        // alert(response.message);
+                        var content_item = '<tr class="rows_item" name="rows_item[]"><td><input type="hidden" name="current_stok[]" value='+response.result.stok_akhir+'><input type="hidden" name="current_harga[]" value='+response.result.harga_beli+'><button type="button" title="Hapus Baris" class="btn btn-secondary btn-sm" onclick="hapus_item(this)"><i class="fa fa-minus"></i></button></td>'+
+                            '<td><input type="hidden" name="item_id_material[]" value="'+response.result.id+'"><div class="product-names"><p>'+response.result.material+'</p></div></td>'+
+                            '<td align="center"><input type="text" min="1" max="'+response.result.stok_akhir+'" id="item_qty[]" name="item_qty[]" class="form-control angka" value="1" style="text-align:center" onInput="checkStokAkhir(this)" onblur="checkStokAkhir(this)"></td>'+'</tr>';
+                        $(".row_baru").after(content_item);
+                        $(".angka").number(true, 0);
+                        calculateTotalItem();
+                    } else {
+                        swal("It's danger", response.message, "error");
+                        return false;
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText); // Debugging errors
+                    swal("It's danger", "Something went wrong!", "error");
+                }
+            });
+        } else {
+            $('#row_baru').empty();
+        }
     }
     var hapus_item = function(el){
         $(el).parent().parent().slideUp(100,function(){
