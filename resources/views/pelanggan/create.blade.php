@@ -23,22 +23,20 @@
             <div class="col-md-6 position-relative">
                 <label class="form-label" for="selectWilayah">Wilayah</label>
                 <select class="form-select select" id="selectWilayah" name="selectWilayah" required="">
-                    {{-- <option selected="" disabled="" value="">Pilihan...</option> --}}
+                    <option selected="" disabled="" value="">Pilihan...</option>
                     @foreach ($listWilayah as $wilayah)
                     <option value="{{ $wilayah['id'] }}">{{ $wilayah['wilayah'] }}</option>
                     @endforeach
                 </select>
-                <div class="invalid-tooltip">Wilayah belum dipilih</div>
             </div>
             <div class="col-md-6 position-relative">
                 <label class="form-label" for="selectpaket">Paket Internet</label>
                 <select class="form-select select" id="selectpaket" name="selectpaket" required="">
-                    {{-- <option selected="" disabled="" value="">Pilihan...</option> --}}
+                    <option selected="" disabled="" value="">Pilihan...</option>
                     @foreach ($listPaket as $paket)
                     <option value="{{ $paket['id'] }}">{{ $paket['nama_paket'] }}</option>
                     @endforeach
                 </select>
-                <div class="invalid-tooltip">Paket internet belum dipilih</div>
             </div>
             <hr>
             <div class="col-md-12">
@@ -66,24 +64,10 @@
 </div>
 <script>
     $(document).ready(function () {
-        // const forms = document.querySelectorAll(".needs-validation");
         $(".select").select2({
             placeholder: "Pilihan",
             allowClear: true
         });
-        // Array.from(forms).forEach((form) => {
-        //     form.addEventListener(
-        //     "submit",
-        //     (event) => {
-        //         if (!form.checkValidity()) {
-        //         event.preventDefault();
-        //         event.stopPropagation();
-        //         }
-        //         form.classList.add("was-validated");
-        //     },
-        //     false
-        //     );
-        // });
         $("#createForm").validate({
             rules: {
                 inpNama: {
@@ -144,15 +128,15 @@
                 processData: false,
                 success: function (response) {
                     if (response.success==true) {
-                        // swal("Good job!", response.message, "success");
                         Swal.fire({
                             icon: 'success',
                             title: 'Good Job!',
-                            text: response.message
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
                         });
                         $('#createForm')[0].reset();
                         $('#table_view').DataTable().ajax.reload(); // Refresh DataTable
-                        // location.reload();
                     } else {
                         return false;
                     }

@@ -44,7 +44,6 @@
                                     <label>Kategori</label>
                                     <select class="form-control select" name="pilKategori" id="pilKategori" required="">
                                         <option selected="" disabled="" value="">Pilihan...</option>
-                                        <option value="1">Pemesangan Baru</option>
                                         <option value="2">Pengembangan</option>
                                         <option value="3">Maintanance - Perbaikan</option>
                                         <option value="4">Maintanance - Penggantian</option>

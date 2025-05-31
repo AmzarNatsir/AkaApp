@@ -30,6 +30,7 @@ class PemasanganDetailModel extends Model
         "gambar_redaman_rumah_pelanggan",
         "gambar_lainnya",
         "user_id",
+        "metode_bayar"
     ];
 
 }

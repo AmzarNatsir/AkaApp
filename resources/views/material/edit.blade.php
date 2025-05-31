@@ -85,7 +85,7 @@
                                 <img class="img-thumbnail" src="{{ url(Storage::url('material/'.$res->gambar)) }}" id="preview_upload" itemprop="thumbnail" alt="Image description">
                             </div>
                             <div class="col-md-8 position-relative">
-                                <label class="form-label" for="inpFile">Upload file untuk mengganti gambar (* jpg, png, jpeg)</label>
+                                <label class="form-label" for="inpFile">Upload file untuk mengganti gambar (* jpg, png, jpeg) - (Maksimal 2MB)</label>
                                 <input class="form-control" id="inpFile" name="inpFile" type="file" onchange="loadFile(this)">
                                 <input type="hidden" name="tmpFile" id="tmpFile" value="{{ $res->gambar }}">
                                 <input type="hidden" name="tmpFilePath" id="tmpFilePath" value="{{ $res->path_gambar }}">
@@ -141,10 +141,14 @@
                             title: 'Good Job!',
                             text: response.message
                         });
-                        $('#createForm')[0].reset();
-                        location.reload();
+                        window.location.href = "{{ url('material/list') }}";
                     } else {
                         return false;
+                    //    Swal.fire({
+                    //         icon: 'error',
+                    //         title: "It's danger!",
+                    //         text: response.message
+                    //     });
                     }
                 },
                 error: function (xhr) {
@@ -163,6 +167,7 @@
         $("#inpStokAkhir").val($(el).val());
     }
     var _validFileExtensions = [".jpg", ".jpeg", ".png"];
+    var _maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
     var loadFile = function(oInput) {
         if (oInput.type == "file") {
             var sFileName = oInput.value;
@@ -186,6 +191,16 @@
                         text: "Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", ")
                     });
                     // alert("Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", "));
+                    oInput.value = "";
+                    return false;
+                }
+                // ✅ Max file size check
+                 if (sSizeFile > _maxFileSize) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File Terlalu Besar!',
+                        text: "Ukuran maksimum file adalah 2 MB."
+                    });
                     oInput.value = "";
                     return false;
                 }

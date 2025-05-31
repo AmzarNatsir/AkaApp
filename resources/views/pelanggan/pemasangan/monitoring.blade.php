@@ -92,5 +92,41 @@
             window.location.href = "{{ url('pelanggan/pembaharuanData') }}/"+$(this).val();
         });
     });
+    var konfirmDelete = function(el) {
+        Swal.fire({
+            title: 'Yakin akan menghapus data pelanggan?',
+            text: 'Hapus data pelanggan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('pelanggan/destroyPelangganAktif') }}/" + $(el).val(),
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                $('#table_view').DataTable().ajax.reload();
+                            });
+                        } else {
+                            Swal.fire('Oops!', 'Data gagal dihapus!', 'warning');
+                        }
+                    }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Penghapusan data dibatalkan', 'info');
+            }
+        });
+    }
 </script>
 @endsection

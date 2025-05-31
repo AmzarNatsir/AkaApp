@@ -31,6 +31,7 @@
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <button class="btn btn-primary" type="button" id="btnFilter" onclick="goFilter()"><i class="fa fa-table"></i> Preview</button>
+                                <button class="btn btn-danger" type="button" onclick="showPrint()"><i class="fa fa-print"></i> Print</button>
                                 <button class="btn btn-primary btn-sm" type="button" id="loaderDiv" style="display: none">
                                     <i class="fa fa-asterisk fa-spin"></i>
                                 </button>
@@ -77,8 +78,10 @@
         var ket_periode_tanggal = "";
         if(arrDate=="")
         {
-            swal('Warning! Kolom pilihan tanggal masih kosong.', {
+           Swal.fire({
                 icon: 'warning',
+                title: 'Warning!',
+                text: "Kolom pilihan tanggal masih kosong"
             });
             return false;
         }
@@ -118,49 +121,31 @@
             }
         });
     }
-
-    var showForm = function()
-    {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
-        }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-
-        $("#view_form").load("{{ url('report/penjualanVoucher/load_data_penjualan') }}/"+pil_bulan+"/"+pil_tahun+"/"+pil_agen, function(){
-            $(".angka").number(true, 0);
-        });
-    }
-
     var showPrint = function()
     {
-        if($("#pilBulan").val()=="" || $("#pilBulan").val()==null) {
-            swal("Warning", "Pilihan periode bulan tidak boleh kosong", "error");
+        var arrDate = $('#range-date-filter').val().split(" to ");
+        var tglStart = "";
+        var tglEnd = "";
+        var ket_periode_tanggal = "";
+        if(arrDate=="")
+        {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning!',
+                text: "Kolom pilihan tanggal masih kosong"
+            });
             return false;
         }
-        if($("#pilTahun").val()=="" || $("#pilTahun").val()==null) {
-            swal("Warning", "Pilihan periode tahun tidak boleh kosong", "error");
-            return false;
+        if(arrDate.length==1) {
+            tglStart = arrDate[0];
+            tglEnd = "";
+            ket_periode_tanggal = tglStart;
+        } else {
+            tglStart = arrDate[0];
+            tglEnd = arrDate[1];
+            ket_periode_tanggal = tglStart+" s/d "+tglEnd;
         }
-        if($("#pilAgen").val()=="" || $("#pilAgen").val()==null) {
-            swal("Warning", "Pilihan agen tidak boleh kosong", "error");
-            return false;
-        }
-        var pil_bulan = $("#pilBulan").val();
-        var pil_tahun = $("#pilTahun").val();
-        var pil_agen = $("#pilAgen").val();
-        window.open('{{ url("report/penjualanVoucher/print") }}/'+pil_bulan+"/"+pil_tahun+"/"+pil_agen);
+        window.open('{{ url("report/keuanganPrint") }}/'+tglStart+"/"+tglEnd);
     }
-
 </script>
 @endsection

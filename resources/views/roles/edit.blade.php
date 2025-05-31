@@ -73,6 +73,10 @@
                                         <label class="form-check-label" for="report_penjualan_voucher_view">Penjualan Voucher </label>
                                     </div>
                                     <div class="form-check checkbox checkbox-secondary mb-0">
+                                        <input class="form-check-input" id="report_pembayaran_pelanggan_view" name="menu[]" value="report_pembayaran_pelanggan_view" type="checkbox" {{ (in_array("report_pembayaran_pelanggan_view", $rolePermissions)) ? "checked" : "" }}>
+                                        <label class="form-check-label" for="report_pembayaran_pelanggan_view">Pembayaran Pelanggan </label>
+                                    </div>
+                                    <div class="form-check checkbox checkbox-secondary mb-0">
                                         <input class="form-check-input" id="report_keuangan_view" name="menu[]" value="report_keuangan_view" type="checkbox" {{ (in_array("report_keuangan_view", $rolePermissions)) ? "checked" : "" }}>
                                         <label class="form-check-label" for="report_keuangan_view">Keuangan </label>
                                     </div>

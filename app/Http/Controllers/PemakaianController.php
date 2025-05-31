@@ -133,7 +133,7 @@ class PemakaianController extends Controller
         $totalFiltered = $query->count();
         $query = $query->offset($request->input('start'))
                       ->limit($request->input('length'))
-                        ->orderBy('id', 'asc')
+                        ->orderBy('tanggal', 'desc')
                       ->get();
 
         $data = array();

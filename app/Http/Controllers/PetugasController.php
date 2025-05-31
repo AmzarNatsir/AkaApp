@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PetugasModel;
+use App\Traits\General;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,7 @@ use Throwable;
 
 class PetugasController extends Controller
 {
+    use General;
     public function list()
     {
         return view('petugas.list');
@@ -86,17 +88,8 @@ class PetugasController extends Controller
             $path = NULL;
             if($request->hasFile('inpFile'))
             {
-                $path = storage_path("app/public/petugas");
-                if(!File::isDirectory($path)) {
-                    $path = Storage::disk('public')->makeDirectory('petugas');
-                }
                 $image = $request->file('inpFile');
-                $fileImage = time() . '.' . $image->getClientOriginalExtension();
-                $image_resize = Image::read($image->getRealPath());
-                $image_resize->resize(300, 300, function($construction){
-                    $construction->aspectRatio();
-                });
-                $image_resize->save(storage_path("app/public/petugas/".$fileImage));
+                $fileImage = General::upload_gambar($image, "petugas", "petugas");
 
             }
                 PetugasModel::create([
@@ -144,18 +137,8 @@ class PetugasController extends Controller
                 if(!empty($fileImage)) {
                     $this->del_image_folder($id);
                 }
-                $path = storage_path("app/public/petugas");
-                if(!File::isDirectory($path)) {
-                    $path = Storage::disk('public')->makeDirectory('petugas');
-                }
                 $image = $request->file('inpFile');
-                $fileImage = time() . '.' . $image->getClientOriginalExtension();
-                $image_resize = Image::read($image->getRealPath());
-                $image_resize->resize(300, 300, function($construction){
-                    $construction->aspectRatio();
-                });
-                $image_resize->save(storage_path("app/public/petugas/".$fileImage));
-
+                $fileImage = General::upload_gambar($image, "petugas", "petugas");
             }
 
             $updateExec = PetugasModel::find($id)->update([

@@ -471,7 +471,7 @@
                             title: 'Good Job!',
                             text: response.message
                         });
-                        window.location.href = "{{ url('pelanggan/monitoring') }}";
+                        window.location.href = "{{ url('pelanggan/daftar') }}";
                     } else {
                         Swal.fire({
                             icon: 'error',

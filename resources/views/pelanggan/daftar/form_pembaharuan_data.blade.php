@@ -37,60 +37,69 @@
                     <div class="row">
                         <div class="col-xxl-6 col-md-6 box-col-6">
                             <div class="card-body pt-2 row important-project">
-                                <ul class="pro-services">
-                                <li>
-                                    <div class="media-body">
-                                        <h4>Pelanggan : {{ $pelanggan->nama_pelanggan }}</h4>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="media-body">
-                                        <h5>Alamat : {{ $pelanggan->alamat }} - {{ $pelanggan->getWilayah->wilayah }}</h5>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="media-body">
-                                        <h5>No. Telepon : {{ $pelanggan->no_telepon_1 }}{{ (!empty($pelanggan->no_telepon_2)) ? " - ".$pelanggan->no_telepon_2 : "" }}</h5>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="media-body">
-                                        <h5>Paket : {{ $pelanggan->getPaket->nama_paket }}</h5>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="media-body">
-                                        <h5>Deskripsi : {{ $pemakaian->keterangan }}</h5>
-                                    </div>
-                                </li>
-                                </ul>
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label" for="inpNama">Nama Pelanggan<span class="font-danger">*</span></label>
+                                    <input class="form-control" id="inpNama" name="inpNama" type="text" maxlength="100" value="{{ $pelanggan->nama_pelanggan }}"  required="">
+                                </div>
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label" for="inpAlamat">Alamat<span class="font-danger">*</span></label>
+                                    <input class="form-control" id="inpAlamat" name="inpAlamat" type="text" maxlength="100" value="{{ $pelanggan->alamat }}"  required="">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label" for="inpNotel_1">No.Telepon 1<span class="font-danger">*</span></label>
+                                    <input class="form-control" id="inpNotel_1" name="inpNotel_1" type="text" value="{{ $pelanggan->no_telepon_1 }}" maxlength="20" required="">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label" for="inpNotel_2">No.Telepon</label>
+                                    <input class="form-control" id="inpNotel_2" name="inpNotel_2" type="text" value="{{ $pelanggan->no_telepon_2 }}" maxlength="20">
+                                </div>
+                                <div class="col-md-6 position-relative">
+                                    <label class="form-label" for="selectWilayah">Wilayah<span class="font-danger">*</span></label>
+                                    <select class="form-select select" id="selectWilayah" name="selectWilayah" required="">
+                                        <option selected="" disabled="" value="">Pilihan...</option>
+                                        @foreach ($listWilayah as $wilayah)
+                                        @if($wilayah['id'] == $pelanggan->wilayah)
+                                        <option value="{{ $wilayah['id'] }}" selected="">{{ $wilayah['wilayah'] }}</option>
+                                        @else
+                                        <option value="{{ $wilayah['id'] }}">{{ $wilayah['wilayah'] }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 position-relative">
+                                    <label class="form-label" for="selectpaket">Paket Internet<span class="font-danger">*</span></label>
+                                    <select class="form-select select" id="selectpaket" name="selectpaket" required="">
+                                        <option selected="" disabled="" value="">Pilihan...</option>
+                                        @foreach ($listPaket as $paket)
+                                        @if($paket['id'] == $pelanggan->paket_internet)
+                                        <option value="{{ $paket['id'] }}" selected="">{{ $paket['nama_paket'] }}</option>
+                                        @else
+                                        <option value="{{ $paket['id'] }}">{{ $paket['nama_paket'] }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="col-xxl-6 col-md-6 box-col-6">
                             <div class="card">
                                 <div class="card-body pt-2 row important-project">
-                                    <ul class="pro-services">
-                                    <li>
-                                        <div class="media-body">
-                                            <h4>Sales : {{ $pelanggan->nama_sales }}</h4>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media-body">
-                                            <h5>No. Telepon : {{ $pelanggan->no_telepon_sales }}</h5>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media-body">
-                                            <h5>No. Rekening : {{ $pelanggan->no_rekening_sales }}</h5>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media-body">
-                                            <h5>Nama Bank : Paket: {{ $pelanggan->nama_bank }}</h5>
-                                        </div>
-                                    </li>
-                                    </ul>
+                                    <div class="col-md-12">
+                                        <label class="form-label" for="inpNamaSales">Nama Sales</label>
+                                        <input class="form-control" id="inpNamaSales" name="inpNamaSales" type="text" maxlength="100" value="{{ $pelanggan->nama_sales }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="inpNotelSales">No. Telepon Sales</label>
+                                        <input class="form-control" id="inpNotelSales" name="inpNotelSales" type="text" maxlength="100" value="{{ $pelanggan->no_telepon_sales }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="inpNorekSales">No. Rekening Bank</label>
+                                        <input class="form-control" id="inpNorekSales" name="inpNorekSales" type="text" maxlength="100" value="{{ $pelanggan->no_rekening_sales }}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label" for="inpNamaBankSales">Nama Bank Sales</label>
+                                        <input class="form-control" id="inpNamaBankSales" name="inpNamaBankSales" type="text" maxlength="100" value="{{ $pelanggan->nama_bank }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -116,65 +125,104 @@
                                         <div class="col-xxl-6 col-md-6 box-col-6">
                                             <div class="card">
                                                 <div class="card-body pt-2 row important-project">
-                                                    {{-- <div class="collection-filter-block"> --}}
-                                                        <ul class="pro-services">
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Serian Number ONT : {{ $pemasangan_detail->sn_ont }}</h5>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpMetode_Bayar">Metode Pembayaran:<span class="font-danger">*</span></label>
+                                                                <select class="form-select select" id="inpMetode_Bayar" name="inpMetode_Bayar" required>
+                                                                    <option value="">Pilih Metode Pembayaran</option>
+                                                                    <option value="Cash" {{ $pemasangan_detail->metode_bayar == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                                                    <option value="Transfer" {{ $pemasangan_detail->metode_bayar == 'Transfer' ? 'selected' : '' }}>Transfer</option>
+                                                                </select>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Model ONT : {{ $pemasangan_detail->model_ont }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpTanggalAktivasi">Tanggal Aktivasi:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" name="inpTanggalAktivasi" id="inpTanggalAktivasi" type="date" value="{{ $pemasangan_detail->tgl_aktivasi }}">
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>ODP : {{ $pemasangan_detail->odp }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpSN_ONT">Serial Number ONT:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpSN_ONT" name="inpSN_ONT" type="text" maxlength="100" value="{{ $pemasangan_detail->sn_ont }}" required>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Titik Kordinat ODP : {{ $pemasangan_detail->tikor_odp }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpModel_ONT">Model ONT:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpModel_ONT" name="inpModel_ONT" type="text" maxlength="100" value="{{ $pemasangan_detail->model_ont }}" required>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Titik Kordinat Pelanggan : {{ $pemasangan_detail->tikor_pelanggan }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpODP">ODP:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpODP" name="inpODP" type="text" maxlength="100" value="{{ $pemasangan_detail->odp }}" required>
                                                             </div>
-                                                        </li>
-                                                        </ul>
-                                                    {{-- </div> --}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpTikorODP">Titik Kordinat ODP:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpTikorODP" name="inpTikorODP" type="text" maxlength="100" value="{{ $pemasangan_detail->tikor_odp }}" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-xxl-6 col-md-6 box-col-6">
                                             <div class="card">
                                                 <div class="card-body pt-1 row important-project">
-                                                    {{-- <div class="collection-filter-block"> --}}
-                                                        <ul class="pro-services">
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Port : {{ $pemasangan_detail->port }}</h5>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpTikorPelanggan">Titik Kordinat Pelanggan:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpTikorPelanggan" name="inpTikorPelanggan" type="text" maxlength="100" value="{{ $pemasangan_detail->tikor_pelanggan }}" required>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Port Ifle : {{ $pemasangan_detail->port_ifle }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpPort">Port:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpPort" name="inpPort" type="text" maxlength="50" value="{{ $pemasangan_detail->port }}" required>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Splitter : {{ $pemasangan_detail->splitter }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpPortIfle">Port Ifle:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpPortIfle" name="inpPortIfle" type="text" maxlength="50" value="{{ $pemasangan_detail->port_ifle }}" required>
                                                             </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="media-body">
-                                                                <h5>Kabel DC : {{ $pemasangan_detail->kabel_dc }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpSplitter">Splitter:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpSplitter" name="inpSplitter" type="text" maxlength="50" value="{{ $pemasangan_detail->splitter }}" required>
                                                             </div>
-                                                        </li>
-                                                        </ul>
-                                                    {{-- </div> --}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="inpKabelDC">Kabel DC:<span class="font-danger">*</span></label>
+                                                                <input class="form-control" id="inpKabelDC" name="inpKabelDC" type="text" value="{{ $pemasangan_detail->kabel_dc }}" maxlength="50" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -337,8 +385,8 @@
                                                 @foreach ($pemakaian_material as $r)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $r->getMaterial->material }}<br>Merek: {{ $r->getMaterial->getMerek->merek }}</td>
-                                                    <td>{{ $r->jumlah }}</td>
+                                                    <td>{{ $r->getMaterial->material }}{{ (empty($r->getMaterial->merek_id)) ? '' : ' - Merek: '. $r->getMaterial->getMerek->merek }}</td>
+                                                    <td class="text-center">{{ $r->jumlah }} {{ (empty($r->getMaterial->satuan_id)) ? '' :  $r->getMaterial->getSatuan->satuan }}</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -455,9 +503,10 @@
                     success: function (response) {
                         console.log(response.result);
                         if (response.success==true) {
+                            var nm_merek = (response.result.merek_id==null) ? "" : response.result.get_merek.merek;
                             // alert(response.message);
                             var content_item = '<tr class="rows_item" name="rows_item[]" style="height: 30px"><td class="text-center"><input type="hidden" name="current_stok[]" value='+response.result.stok_akhir+'><input type="hidden" name="current_harga[]" value='+response.result.harga_beli+'><button type="button" class="btn-warning" title="Hapus Baris" onclick="hapus_item(this)"><i class="fa fa-minus"></i></button></td>'+
-                                '<td><input type="hidden" name="item_id_material[]" value="'+response.result.id+'">'+response.result.material+'<br>Merek: '+response.result.get_merek.merek+'</td>'+
+                                '<td><input type="hidden" name="item_id_material[]" value="'+response.result.id+'">'+response.result.material+'<br>Merek: '+nm_merek+'</td>'+
                                 '<td align="center"><input type="text" min="1" max="'+response.result.stok_akhir+'" id="item_qty[]" name="item_qty[]" class="form-control angka" value="1" style="text-align:center" onInput="checkStokAkhir(this)" onblur="checkStokAkhir(this)"></td>'+'</tr>';
                             $(".row_baru").after(content_item);
                             $(".angka").number(true, 0);
@@ -490,8 +539,115 @@
                 $('#row_baru').empty();
             }
         });
+        $("#pembaharuanForm").validate({
+            rules: {
+                inpNama: {
+                    required: true,
+                },
+                inpAlamat: {
+                    required: true,
+                },
+                inpNotel_1: {
+                    required: true,
+                },
+                selectWilayah: {
+                    required: true,
+                },
+                selectpaket: {
+                    required: true,
+                },
+                inpMetode_Bayar: {
+                    required: true,
+                },
+                inpSN_ONT: {
+                    required: true,
+                },
+                inpModel_ONT: {
+                    required: true,
+                },
+                inpODP: {
+                    required: true,
+                },
+                inpTikorODP: {
+                    required: true,
+                },
+                inpTikorPelanggan: {
+                    required: true,
+                },
+                inpPort: {
+                    required: true,
+                },
+                inpPortIfle: {
+                    required: true,
+                },
+                inpSplitter: {
+                    required: true,
+                },
+                inpKabelDC: {
+                    required: true,
+                },
+            },
+            messages: {
+                inpNama: {
+                    required: "Nama pelanggan tidak boleh kosong",
+                },
+                inpAlamat: {
+                    required: "Alamat pelanggan tidak boleh kosong",
+                },
+                inpNotel_1: {
+                    required: "Nomor Telepon pelanggan tidak boleh kosong",
+                },
+                selectWilayah: {
+                    required: "Pilihan wilayah tidak boleh kosong",
+                },
+                selectpaket: {
+                    required: "Pilihan paket internet tidak boleh kosong",
+                },
+                inpMetode_Bayar: {
+                    required: "Pilihan metode pembayaran tidak boleh kosong",
+                },
+                inpSN_ONT: {
+                    required: "Inputan Serial Number ONT tidak boleh kosong",
+                },
+                inpModel_ONT: {
+                    required: "Inputan Model ONT tidak boleh kosong",
+                },
+                inpODP: {
+                    required: "Inputan ODP tidak boleh kosong",
+                },
+                inpTikorODP: {
+                    required: "Inputan Titik Kordinat ODP tidak boleh kosong",
+                },
+                inpTikorPelanggan: {
+                    required: "Inputan Titik Kordinat Pelanggan tidak boleh kosong",
+                },
+                inpPort: {
+                    required: "Inputan Port tidak boleh kosong",
+                },
+                inpPortIfle: {
+                    required: "Inputan Port Ifle tidak boleh kosong",
+                },
+                inpSplitter: {
+                    required: "Inputan Splitter tidak boleh kosong",
+                },
+                inpKabelDC: {
+                    required: "Inputan Kabel DC tidak boleh kosong",
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
+        });
         $('#pembaharuanForm').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+            if (!$(this).valid()) {
+                return false;
+            }
             Swal.fire({
                 title: "Yakin akan menyimpan data?",
                 text: "Simpan perubahan data!",
@@ -508,7 +664,7 @@
                 if (result.isConfirmed) {
                     let formData = new FormData(document.getElementById('pembaharuanForm'));
                     $.ajax({
-                        url: "{{ url('pelanggan/simpanPembaharuanDataPelanggan') }}/"+$("#id_pelanggan").val(), // Update this with your route
+                        url: "{{ url('pelanggan/simpanPembaharuanDataPelangganAll') }}/"+$("#id_pelanggan").val(), // Update this with your route
                         type: "POST",
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),

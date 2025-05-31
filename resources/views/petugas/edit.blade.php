@@ -49,7 +49,7 @@
                     <img class="img-thumbnail" src="{{ url(Storage::url('petugas/'.$res->photo)) }}" id="preview_upload" itemprop="thumbnail" alt="Image description">
                 </div>
                 <div class="col-md-8 position-relative">
-                    <label class="form-label" for="inpFile">Upload photo untuk mengganti photo (* jpg, png, jpeg)</label>
+                    <label class="form-label" for="inpFile">Upload photo untuk mengganti photo (* jpg, png, jpeg) - (Maksimal 2MB)</label>
                     <input class="form-control" id="inpFile" name="inpFile" type="file" onchange="loadFile(this)">
                     <input type="hidden" name="tmpFile" id="tmpFile" value="{{ $res->photo }}">
                     <input type="hidden" name="tmpFilePath" id="tmpFilePath" value="{{ $res->photo_path }}">
@@ -96,8 +96,7 @@
                             title: 'Good Job!',
                             text: response.message
                         });
-                        // $('#updateForm')[0].reset();
-                        location.reload();
+                        window.location.href = "{{ url('petugas/list') }}";
                     } else {
                         return false;
                     }
@@ -114,6 +113,7 @@
         });
     });
     var _validFileExtensions = [".jpg", ".jpeg", ".png"];
+    var _maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
     var loadFile = function(oInput) {
         if (oInput.type == "file") {
             var sFileName = oInput.value;
@@ -135,6 +135,17 @@
                         icon: 'error',
                         title: "It's danger!",
                         text: "Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", ")
+                    });
+                    oInput.value = "";
+                    return false;
+                }
+
+                // ✅ Max file size check
+                 if (sSizeFile > _maxFileSize) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File Terlalu Besar!',
+                        text: "Ukuran maksimum file adalah 2 MB."
                     });
                     oInput.value = "";
                     return false;

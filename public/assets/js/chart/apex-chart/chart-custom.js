@@ -1544,7 +1544,7 @@ var options1 = {
 var chart1 = new ApexCharts(document.querySelector("#area-spaline"), options1);
 
 chart1.render();
- 
+
 // basic bar chart
 var options2 = {
   chart: {
@@ -2349,7 +2349,7 @@ var options9 = {
         },
       },
     },
-  ], 
+  ],
   colors: ["#dc3545", "#f8d62b", RihoAdminConfig.primary, "#51bb25", "#173878"],
 };
 

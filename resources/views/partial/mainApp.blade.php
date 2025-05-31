@@ -20,7 +20,7 @@
             <div class="sidebar-wrapper" data-layout="stroke-svg">
                 @include('partial.pageSidebar')
             </div>
-            <div class="page-body">
+            <div class="page-body mb-5">
                 @yield('content')
             </div>
             @include('partial.footer')

@@ -15,7 +15,7 @@
             <td>{{ $r->nama_voucher }}<input type="hidden" name="inpVoucher[]" id="inpVoucher[]" value="{{ $r->nama_voucher }}"><input type="hidden" name="inpVoucherID[]" id="inpVoucherID[]" value="{{ $r->id }}"></td>
             <td>Rp. {{ number_format($r->harga_modal, 0) }}<input type="hidden" name="inphargaModal[]" id="inphargaModal[]" value="{{ $r->harga_modal }}"></td>
             <td>Rp. {{ number_format($r->harga_jual, 0) }}<input type="hidden" name="inphargaJual[]" id="inphargaJual[]" value="{{ $r->harga_jual }}"></td>
-            <td><input type="text" class="form-control angka" name="inpStokAwal[]" value="0" onblur="changeToNull(this)"></td>
+            <td><input type="text" class="form-control angka" name="inpStokAwal[]" placeholder="0" onblur="changeToNull(this)"></td>
         </tr>
         @endforeach
         <tr>

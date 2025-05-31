@@ -4,6 +4,7 @@ $canDashboard = auth()->user()->can('dashboard_one_view');
 $canReportDistribusiVoucher = auth()->user()->can('report_distribusi_voucher_view');
 $canReportPenjualanVoucher = auth()->user()->can('report_penjualan_voucher_view');
 $canReportKeuangan = auth()->user()->can('report_keuangan_view');
+$canReportPembayaranPelanggan = auth()->user()->can('report_pembayaran_pelanggan_view');
 //Pengguna
 $canPenggunaRole = auth()->user()->can('roles_view');
 $canPenggunaUsers = auth()->user()->can('users_view');
@@ -75,7 +76,7 @@ $canDaftarPelangan = auth()->user()->can('pelanggan_view');
                 </ul>
             </li>
             @endif
-            @if($canReportDistribusiVoucher || $canReportPenjualanVoucher || $canReportKeuangan)
+            @if($canReportDistribusiVoucher || $canReportPenjualanVoucher || $canReportKeuangan || $canReportPembayaranPelanggan)
             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-widget') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-widget') }}"></use></svg><span>Reports</span></a>
@@ -88,6 +89,9 @@ $canDaftarPelangan = auth()->user()->can('pelanggan_view');
                     @endif
                     @if($canReportKeuangan)
                     <li><a href="{{ route('report.keuangan') }}">Keuangan</a></li>
+                    @endif
+                    @if($canReportPembayaranPelanggan)
+                    <li><a href="{{ route('report.pelanggan.pembayaran') }}">Pembayaran Pelanggan</a></li>
                     @endif
                 </ul>
             </li>
@@ -290,13 +294,13 @@ $canDaftarPelangan = auth()->user()->can('pelanggan_view');
             </li>
             @endif
 
-            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
+            {{-- <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                 <svg class="stroke-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#stroke-bonus-kit') }}"></use></svg>
                 <svg class="fill-icon"><use href="{{ asset('assets/svg/icon-sprite.svg#fill-bonus-kit') }}"></use></svg><span>Asset</span></a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('asset.list') }}">Daftar</a></li>
                 </ul>
-            </li>
+            </li> --}}
 
             <li class="sidebar-main-title"></li>
         </ul>

@@ -232,13 +232,18 @@ class PelangganController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
+                $queryPemasangan = PemasanganDetailModel::where('id_pelanggan', $r->id)->first();
+                $tgl_aktivasi = (empty($queryPemasangan->tgl_aktivasi)) ? "" : date('d-m-Y', strtotime($queryPemasangan->tgl_aktivasi));
                 $btn = "";
                 $btn .= '<div class="btn-group">';
-                $btn .="<button type='button' class='btn btn-secondary btn-sm' title='Profil' id='btn_profil' data-bs-toggle='modal' data-bs-target='#modalProfil' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i></button>";
+                $btn .="<button type='button' class='btn btn-info btn-sm' title='Profil' id='btn_profil' data-bs-toggle='modal' data-bs-target='#modalProfil' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i></button>";
                 if(auth()->user()->can("pelanggan_edit")) {
                     $btn .="<button type='button' class='btn btn-success btn-sm' title='Perbaharui Data' id='btn_edit' value='".$r->id."'><i class='fa fa-pencil'></i></button>";
                 }
-                $btn .="<button type='button' class='btn btn-info btn-sm' title='Pembayaran' id='btn_pembayaran' data-bs-toggle='modal' data-bs-target='#modalPembayaran' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-money'></i></button>";
+                $btn .="<button type='button' class='btn btn-primary btn-sm' title='Pembayaran' id='btn_pembayaran' data-bs-toggle='modal' data-bs-target='#modalPembayaran' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-money'></i></button>";
+                if(auth()->user()->can("pelanggan_delete")) {
+                    $btn .= "<button type='button' class='btn btn-danger btn-sm' title='Hapus' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                }
                 $btn .='</div>';
                 $Data['act'] = $btn;
                 $Data['id'] =  $r->id;
@@ -248,6 +253,7 @@ class PelangganController extends Controller
                 $Data['wilayah'] = (empty($r->wilayah)) ? "" : $r->getWilayah->wilayah;
                 $Data['paket_internet'] = (empty($r->paket_internet)) ? "" : $r->getPaket->nama_paket;
                 $Data['sales'] = (empty($r->nama_sales)) ? "-" : $r->nama_sales;
+                $Data['tgl_aktivasi'] = $tgl_aktivasi;
                 $Data['no'] = $counter;
                 $data[] = $Data;
                 $counter++;
@@ -282,7 +288,7 @@ class PelangganController extends Controller
     {
         $gudang=1;
         if($gudang==1) {
-            $list_material = Material::with(['getMerek'])->get();
+            $list_material = Material::with(['getMerek', 'getSatuan'])->get();
         }
         $resPemakaian = PemakaianModel::where('id_pelanggan', $id)->first();
         $data = [
@@ -295,7 +301,9 @@ class PelangganController extends Controller
             'listMaterial' => $list_material,
             'pemasangan_detail' => PemasanganDetailModel::where('id_pelanggan', $id)->first(),
             'pemakaian_material' => PemakaianDetailModel::with(['getMaterial'])->where('head_id', $resPemakaian->id)->get(),
-            'qty_material' => PemakaianDetailModel::where('head_id', $resPemakaian->id)->sum('jumlah')
+            'qty_material' => PemakaianDetailModel::where('head_id', $resPemakaian->id)->sum('jumlah'),
+            'listWilayah' => WilayahModel::all(),
+            'listPaket' => PaketInternetModel::where('aktif', 'y')->get()
         ];
         return view('pelanggan.daftar.form_pembaharuan_data', $data);
     }
@@ -490,9 +498,9 @@ class PelangganController extends Controller
 
     public function getDataMonitoring(Request $request){
         $columns = ['created_at'];
-        $totalData = PelangganModel::where('aktif', 'y')->whereIn('status', ['onProses', 'onCanceled'])->count();
+        $totalData = PelangganModel::where('aktif', 'y')->whereIn('status', ['onProses', 'onCompleted', 'onCanceled'])->count();
         $search = $request->input('search.value');
-        $query = PelangganModel::with(['getWilayah', 'getPaket'])->where('aktif', 'y')->whereIn('status', ['onProses', 'onCanceled']);
+        $query = PelangganModel::with(['getWilayah', 'getPaket'])->where('aktif', 'y')->whereIn('status', ['onProses', 'onCompleted', 'onCanceled']);
         if(!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->Where('nama_pelanggan', 'like', "%{$search}%");
@@ -515,6 +523,9 @@ class PelangganController extends Controller
                 }
                 if($r->status=="onCanceled" || empty($r->status)) {
                     $btn .="<button type='button' class='btn btn-danger btn-sm' title='Detail' id='btn_show' data-bs-toggle='modal' data-bs-target='#modalProses' data-whatever='@getbootstrap' value='".$r->id."'><i class='icon-user'></i> Detail</button>";
+                    if(auth()->user()->can("pelanggan_delete")) {
+                        $btn .= "<button type='button' class='btn btn-danger btn-sm' title='Hapus' id='btn_delete' value='".$r->id."' onclick='konfirmDelete(this)'><i class='icon-trash'></i></button>";
+                    }
                 }
                 if($r->status=="onCompleted") {
                     $btn .="<button type='button' class='btn btn-info btn-sm' title='Proses Aktivasi' id='btn_proses_aktivasi' data-bs-toggle='modal' data-bs-target='#modalAktivasi' data-whatever='@getbootstrap' value='".$r->id."'><i class='fa fa-gears'></i> Aktivasi</button>";
@@ -711,7 +722,7 @@ class PelangganController extends Controller
     }
 
     public function getPelanggan(Request $request)
-    {
+        {
         $search = $request->get('q');
 
         $results = PelangganModel::where('status', 'onFinished')
@@ -721,20 +732,23 @@ class PelangganController extends Controller
                 ->orWhere('no_telepon_1', 'LIKE', "%$search%");
             })
             ->select('id', DB::raw("
-                CASE
-                    WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != '' AND no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
-                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1, ' / ', no_telepon_2)
-                    WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != ''
-                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1)
-                    WHEN no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
-                        THEN CONCAT(nama_pelanggan, ' - ', no_telepon_2)
-                    ELSE nama_pelanggan
-                END as text
+                CONCAT(nama_pelanggan, ' - ', alamat) as text
             "))
             ->limit(10)
             ->get();
 
         return response()->json($results);
+        // ->select('id', DB::raw("
+        //         CASE
+        //             WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != '' AND no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
+        //                 THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1, ' / ', no_telepon_2, ' - ', alamat)
+        //             WHEN no_telepon_1 IS NOT NULL AND no_telepon_1 != ''
+        //                 THEN CONCAT(nama_pelanggan, ' - ', no_telepon_1, ' - ', alamat)
+        //             WHEN no_telepon_2 IS NOT NULL AND no_telepon_2 != ''
+        //                 THEN CONCAT(nama_pelanggan, ' - ', no_telepon_2, ' - ', alamat)
+        //             ELSE CONCAT(nama_pelanggan, ' - ', alamat)
+        //         END as text
+        //     "))
     }
 
     public function detailPelanggan($id)
@@ -861,6 +875,157 @@ class PelangganController extends Controller
             $rs = response()->json([
                 'success' => false,
                 'message' => "Terdapat error pada proses penyimpanan data. error: ".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+    public function simpanPembaharuanDataPelangganAll(Request $request, $id_pelanggan)
+    {
+        DB::beginTransaction();
+        try {
+            $fileRumah = General::handleFileUpload($request, 'fileRumah', 'tmp_gambar_rumah', 'gambar_rumah', 1);
+            $fileODP = General::handleFileUpload($request, 'fileODP', 'tmp_gambar_odp', 'gambar_odp', 2);
+            $fileOntTerpasang = General::handleFileUpload($request, 'fileOntTerpasang', 'tmp_gambar_ont_terpasang', 'gambar_ont_terpasang', 3);
+            $fileOntBelakang = General::handleFileUpload($request, 'fileOntBelakang', 'tmp_gambar_ont_belakang', 'gambar_ont_belakang', 4);
+            $fileRedamanDiOdp = General::handleFileUpload($request, 'fileRedamanDiOdp', 'tmp_gambar_redaman_odp', 'gambar_redaman_odp', 5);
+            $fileRedamanRumahPelanggan = General::handleFileUpload($request, 'fileRedamanRumahPelanggan', 'tmp_gambar_redaman_rumah_pelanggan', 'gambar_redaman_rumah_pelanggan', 6);
+            $fileLainnya = General::handleFileUpload($request, 'fileLainnya', 'tmp_gambar_lainnya', 'gambar_lainnya', 7);
+            $dataPemasangan = [
+                'tgl_aktivasi' => $request->inpTanggalAktivasi,
+                'gambar_rumah' => $fileRumah,
+                'gambar_odp' => $fileODP,
+                'gambar_ont_terpasang' => $fileOntTerpasang,
+                'gambar_belakang_ont' => $fileOntBelakang,
+                'gambar_redaman_odp' => $fileRedamanDiOdp,
+                'gambar_redaman_rumah_pelanggan' => $fileRedamanRumahPelanggan,
+                'gambar_lainnya' => $fileLainnya,
+                'sn_ont' => $request->inpSN_ONT,
+                'model_ont' => $request->inpModel_ONT,
+                'odp' => $request->inpODP,
+                'tikor_odp' => $request->inpTikorODP,
+                'tikor_pelanggan' => $request->inpTikorPelanggan,
+                'port' => $request->inpPort,
+                'port_ifle' => $request->inpPortIfle,
+                'splitter' => $request->inpSplitter,
+                'kabel_dc' => $request->inpKabelDC,
+                'metode_bayar' => $request->inpMetode_Bayar,
+            ];
+            PemasanganDetailModel::find($request->id_pemasangan)->update($dataPemasangan);
+            //update data pelanggan
+            $pelanggan = [
+                "nama_pelanggan" => $request->inpNama,
+                "alamat" => $request->inpAlamat,
+                "no_telepon_1" => $request->inpNotel_1,
+                "no_telepon_2" => $request->inpNotel_2,
+                "wilayah" => $request->selectWilayah,
+                "paket_internet" => $request->selectpaket,
+                "nama_sales" => $request->inpNamaSales,
+                "no_telepon_sales" => $request->inpNotelSales,
+                "no_rekening_sales" => $request->inpNorekSales,
+                "nama_bank" => $request->inpNamaBankSales,
+            ];
+            PelangganModel::find($id_pelanggan)->update($pelanggan);
+            if($request->totalItem > 0)
+            {
+                $jml_item = count($request->item_id_material);
+                foreach(array($request) as $key => $value)
+                {
+                    for($i=0; $i<$jml_item; $i++)
+                    {
+                        $dataD = [
+                            "head_id" => $request->id_pemakaian,
+                            "material_id" => $value['item_id_material'][$i],
+                            "jumlah" => $value['item_qty'][$i],
+                            "harga" => $value['current_harga'][$i],
+                            "gudang_id" => $request->gudangID,
+                        ];
+                        PemakaianDetailModel::create($dataD);
+                        //update stok
+                        if($request->gudangID==1)
+                        {
+                            $updateStok = Material::find($value['item_id_material'][$i]);
+                            $updateStok->stok_akhir -= str_replace(",","", $value['item_qty'][$i]);
+                            $updateStok->update();
+                        }
+                    }
+
+                }
+            }
+
+            DB::commit();
+            $rs = response()->json([
+                'success' => true,
+                'message' => "Data berhasil disimpan."
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback transaction on error
+            // Log the error for debugging
+            Log::error('Transaction failed: '.$e->getMessage());
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penyimpanan data. error: ".$e->getMessage()
+            ]);
+        }
+        return $rs;
+    }
+    public function destroyPelangganAktif($id)
+    {
+        DB::beginTransaction();
+        try {
+            // 1. Hapus dan kembalikan stok dari pemakaian
+            $pemakaian = PemakaianModel::where('id_pelanggan', $id)->first();
+            if ($pemakaian) {
+                $pemakaianDetails = PemakaianDetailModel::where('head_id', $pemakaian->id)->get();
+                foreach ($pemakaianDetails as $detail) {
+                    $material = Material::find($detail->material_id);
+                    if ($material) {
+                        $material->stok_akhir += $detail->jumlah;
+                        $material->update();
+                    }
+                }
+                PemakaianDetailModel::where('head_id', $pemakaian->id)->delete();
+            }
+            // 2. Hapus gambar & data pemasangan
+            $pemasangan = PemasanganDetailModel::where('id_pelanggan', $id)->first();
+            if ($pemasangan) {
+                $gambarFields = [
+                    'gambar_rumah',
+                    'gambar_odp',
+                    'gambar_ont_terpasang',
+                    'gambar_belakang_ont',
+                    'gambar_redaman_odp',
+                    'gambar_redaman_rumah_pelanggan',
+                    'gambar_lainnya'
+                ];
+
+                foreach ($gambarFields as $field) {
+                    if (!empty($pemasangan->$field)) {
+                        General::hapus_file_gambar($field, $pemasangan->$field);
+                    }
+                }
+                $pemasangan->delete();
+            }
+            // 3. Hapus pembayaran pelanggan
+            $queryPembayaran = PembayaranPelangganModel::where('id_pelanggan', $id);
+            if($queryPembayaran->exists())
+            {
+                $queryPembayaran->delete(); //multiple row
+            }
+            //4. hapus data pelanggan permanen
+            PelangganModel::find($id)->delete();
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pelanggan berhasil dihapus.'
+            ]);
+
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback transaction on error
+            // Log the error for debugging
+            Log::error('Transaction failed: '.$e->getMessage());
+            $rs = response()->json([
+                'success' => false,
+                'message' => "Terdapat error pada proses penghapusan data. error: ".$e->getMessage()
             ]);
         }
         return $rs;

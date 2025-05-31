@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AgenVoucherModel;
 use App\Models\ArusKasModel;
+use App\Models\PembayaranPelangganModel;
 use App\Models\VoucherDetailModel;
 use App\Models\VoucherHeadModel;
+use App\Models\WilayahModel;
 use App\Traits\General;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -347,5 +349,126 @@ class ReportController extends Controller
                 'all_result' => $html
             ])
             ->withCallback($request->input('callback'));
+    }
+
+    public function keuanganPrint($tanggal_awal, $tanggal_akhir)
+    {
+        $tgl_awal = $tanggal_awal;
+        $tgl_akhir = $tanggal_akhir;
+        $saldo_d_awal = ArusKasModel::whereDate("tgl_transaksi", "<", $tgl_awal)->sum('debet');
+        $saldo_k_awal = ArusKasModel::whereDate("tgl_transaksi", "<", $tgl_awal)->sum('kredit');
+        $saldo_awal = $saldo_d_awal - $saldo_k_awal;
+        if(empty($tgl_akhir)) {
+            $query = ArusKasModel::whereDate('tgl_transaksi', '=', $tgl_awal);
+        } else {
+            $query = ArusKasModel::whereDate('tgl_transaksi', '>=', $tgl_awal)
+                        ->whereDate('tgl_transaksi', '<=', $tgl_akhir);
+        }
+        // $all_data = $query->get();
+        $data = [
+            'periode' => date('d-m-Y', strtotime($tgl_awal))." s.d ".date('d-m-Y', strtotime($tgl_akhir)),
+            'listData' => $query->get(),
+            'saldoAwal' => $saldo_awal
+        ];
+        $pdf = Pdf::loadView('report.keuangan.print', $data)->setPaper('A4', 'potrait');
+        return $pdf->stream();
+    }
+
+    //pembayaran pelanggan
+    public function pembayaranPelanggan()
+    {
+        $data = [
+             'list_bulan' => General::getListMonth(),
+             "list_wilayah" => WilayahModel::latest()->get(),
+             'start_year' => 2025,
+             'end_year' => date('Y')
+         ];
+         return view('report.pelanggan.pembayaran.index', $data);
+    }
+    public function pembayaranPelangganGetData(Request $request)
+     {
+         $columns = ['created_at'];
+         $totalData = PembayaranPelangganModel::count();
+         $search = $request->input('search.value');
+         $query = PembayaranPelangganModel::select([
+            'pembayaran_pelanggan.*',
+            'pelanggan.nama_pelanggan',
+            'wilayah.wilayah'
+         ])
+                    ->leftJoin('pelanggan', 'pembayaran_pelanggan.id_pelanggan', '=', 'pelanggan.id')
+                    ->leftJoin('wilayah', 'pelanggan.wilayah', '=', 'wilayah.id');
+         if(!empty($search)) {
+             $query->where(function($q) use ($search) {
+                 $q->Where('pelanggan.nama_pelanggan', 'like', "%{$search}%");
+             });
+         }
+         if(!empty($request->bulan))
+        {
+            $query->whereMonth('pembayaran_pelanggan.tgl_bayar', $request->bulan);
+        }
+        if(!empty($request->tahun))
+        {
+            $query->whereYear('pembayaran_pelanggan.tgl_bayar', $request->tahun);
+        }
+        if(!empty($request->wilayah))
+        {
+            $query->where('pelanggan.wilayah', $request->wilayah);
+        }
+
+         $totalFiltered = $query->count();
+         $query = $query->offset($request->input('start'))
+                       ->limit($request->input('length'))
+                         ->orderBy('pembayaran_pelanggan.id', 'asc')
+                       ->get();
+
+         $data = array();
+         if($query){
+             $counter = $request->input('start') + 1;
+             foreach($query as $r){
+                 $Data['id'] =  $r->id;
+                 $Data['periode'] =  $r->tgl_bayar; // $r->material;
+                 $Data['wilayah'] =  $r->wilayah;
+                 $Data['pelanggan'] =  $r->nama_pelanggan;
+                 $Data['nominal'] =  number_format($r->nominal, 0);
+                 $Data['no'] = $counter;
+                 $data[] = $Data;
+                 $counter++;
+             }
+         }
+         return response()->json([
+             'draw' => intval($request->input('draw')),
+             'recordsTotal' => $totalData,
+             'recordsFiltered' => $totalFiltered,
+             'data' => $data
+         ]);
+    }
+    public function pembayaranPelangganPrint($bulan, $tahun, $wilayah)
+    {
+        $query = PembayaranPelangganModel::select([
+                'pembayaran_pelanggan.*',
+                'pelanggan.nama_pelanggan',
+                'wilayah.wilayah'
+            ])
+            ->leftJoin('pelanggan', 'pembayaran_pelanggan.id_pelanggan', '=', 'pelanggan.id')
+            ->leftJoin('wilayah', 'pelanggan.wilayah', '=', 'wilayah.id');
+        if(!empty($bulan))
+        {
+            $query->whereMonth('pembayaran_pelanggan.tgl_bayar', $bulan);
+        }
+        if(!empty($tahun))
+        {
+            $query->whereYear('pembayaran_pelanggan.tgl_bayar', $tahun);
+        }
+        if(!empty($wilayah))
+        {
+            $query->where('pelanggan.wilayah', $wilayah);
+        }
+        $ket_periode = (empty($bulan)) ? "" : General::get_nama_bulan($bulan)." ".$tahun;
+        $data = [
+            'periode' => $ket_periode,
+            'listData' => $query->get()
+        ];
+        $pdf = Pdf::loadView('report.pelanggan.pembayaran.print', $data)->setPaper('A4', 'potrait');
+        return $pdf->stream();
     }
 }

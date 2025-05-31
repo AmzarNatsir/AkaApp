@@ -93,6 +93,7 @@ class ServiceController extends Controller
                 'gambar_redaman_rumah_pelanggan' => $fileRedamanRumahPelanggan,
                 'gambar_lainnya' => $fileLainnya,
                 'user_id' => auth()->user()->id,
+                'metode_bayar' => $request->inpMetode_Bayar,
             ];
             PemasanganDetailModel::create($data);
 
@@ -145,6 +146,7 @@ class ServiceController extends Controller
                                 'pemasangan_detail.gambar_redaman_odp',
                                 'pemasangan_detail.gambar_redaman_rumah_pelanggan',
                                 'pemasangan_detail.gambar_lainnya',
+                                'pemasangan_detail.metode_bayar',
                             ])
                             ->leftJoin('pemakaian', 'pemakaian.id_pelanggan', '=', 'pelanggan.id')
                             ->leftJoin('wilayah', 'wilayah.id', '=', 'pelanggan.wilayah')
@@ -199,6 +201,7 @@ class ServiceController extends Controller
                                 'pemasangan_detail.gambar_redaman_odp',
                                 'pemasangan_detail.gambar_redaman_rumah_pelanggan',
                                 'pemasangan_detail.gambar_lainnya',
+                                'pemasangan_detail.metode_bayar'
                             ])
                             ->leftJoin('pemakaian', 'pemakaian.id_pelanggan', '=', 'pelanggan.id')
                             ->leftJoin('wilayah', 'wilayah.id', '=', 'pelanggan.wilayah')

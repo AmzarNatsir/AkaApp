@@ -72,7 +72,7 @@
                                 <img class="img-thumbnail" src="{{ asset('assets/images/ecommerce/product-table-7.png') }}" id="preview_upload" itemprop="thumbnail" alt="Empty">
                             </div>
                             <div class="col-md-8 position-relative">
-                                <label class="form-label" for="inpFile">Upload file (* jpg, png, jpeg)</label>
+                                <label class="form-label" for="inpFile">Upload file (* jpg, png, jpeg) - (Maksimal 2MB)</label>
                                 <input class="form-control" id="inpFile" name="inpFile" type="file" onchange="loadFile(this)">
                             </div>
                         </div>
@@ -125,10 +125,14 @@
                             title: 'Good Job!',
                             text: response.message
                         });
-                        $('#createForm')[0].reset();
-                        // location.reload();
+                        window.location.href = "{{ url('material/list') }}";
                     } else {
                         return false;
+                        // Swal.fire({
+                        //     icon: 'error',
+                        //     title: "It's danger!",
+                        //     text: response.message
+                        // });
                     }
                 },
                 error: function (xhr) {
@@ -147,6 +151,7 @@
         $("#inpStokAkhir").val($(el).val());
     }
     var _validFileExtensions = [".jpg", ".jpeg", ".png"];
+     var _maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
     var loadFile = function(oInput) {
         if (oInput.type == "file") {
             var sFileName = oInput.value;
@@ -170,6 +175,16 @@
                         text: "Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", ")
                     });
                     // alert("Maaf, " + sFileName + " tidak valid, jenis file yang boleh di upload adalah : " + _validFileExtensions.join(", "));
+                    oInput.value = "";
+                    return false;
+                }
+                // ✅ Max file size check
+                 if (sSizeFile > _maxFileSize) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File Terlalu Besar!',
+                        text: "Ukuran maksimum file adalah 2 MB."
+                    });
                     oInput.value = "";
                     return false;
                 }

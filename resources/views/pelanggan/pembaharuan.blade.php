@@ -337,7 +337,7 @@
                                                 @foreach ($pemakaian_material as $r)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $r->getMaterial->material }}<br>Merek: {{ $r->getMaterial->getMerek->merek }}</td>
+                                                    <td>{{ $r->getMaterial->material }}<br>Merek: {{ (empty($r->merek_id)) ? '-' : $r->getMaterial->getMerek->merek }}</td>
                                                     <td>{{ $r->jumlah }}</td>
                                                 </tr>
                                                 @endforeach

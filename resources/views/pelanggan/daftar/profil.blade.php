@@ -91,6 +91,11 @@
                                                     <ul class="pro-services">
                                                     <li>
                                                         <div class="media-body">
+                                                            <h5>Metode Pembayaran : {{ $pemasangan_detail->metode_bayar }}</h5>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="media-body">
                                                             <h5>Serian Number ONT : {{ $pemasangan_detail->sn_ont }}</h5>
                                                         </div>
                                                     </li>
@@ -109,11 +114,6 @@
                                                             <h5>Titik Kordinat ODP : {{ $pemasangan_detail->tikor_odp }}</h5>
                                                         </div>
                                                     </li>
-                                                    <li>
-                                                        <div class="media-body">
-                                                            <h5>Titik Kordinat Pelanggan : {{ $pemasangan_detail->tikor_pelanggan }}</h5>
-                                                        </div>
-                                                    </li>
                                                     </ul>
                                                 {{-- </div> --}}
                                             </div>
@@ -124,6 +124,11 @@
                                             <div class="card-body pt-1 row important-project">
                                                 {{-- <div class="collection-filter-block"> --}}
                                                     <ul class="pro-services">
+                                                    <li>
+                                                        <div class="media-body">
+                                                            <h5>Titik Kordinat Pelanggan : {{ $pemasangan_detail->tikor_pelanggan }}</h5>
+                                                        </div>
+                                                    </li>
                                                     <li>
                                                         <div class="media-body">
                                                             <h5>Port : {{ $pemasangan_detail->port }}</h5>
@@ -253,15 +258,15 @@
                                             <tr>
                                                 <th style="width: 10%; height: 30px">No.</th>
                                                 <th>Material</th>
-                                                <th style="width: 15%">Jumlah</th>
+                                                <th class="text-center" style="width: 15%">Jumlah</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($pemakaian_material as $r)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $r->getMaterial->material }}<br>Merek: {{ $r->getMaterial->getMerek->merek }}</td>
-                                                <td>{{ $r->jumlah }}</td>
+                                                <td>{{ $r->getMaterial->material }} {{ (empty($r->getMaterial->merek_id)) ? '' : ' - '. $r->getMaterial->getMerek->merek }}</td>
+                                                <td class="text-center">{{ $r->jumlah }} {{ (empty($r->getMaterial->satuan_id)) ? '' :  $r->getMaterial->getSatuan->satuan }}</td>
                                             </tr>
                                             @endforeach
                                         </tbody>

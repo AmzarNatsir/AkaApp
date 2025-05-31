@@ -13,11 +13,11 @@
             </div>
             <label class="col-md-6 text-start">Harga Beli (Rp.)</label>
             <div class="col-md-6">
-                <input class="form-control angka" id="inpHarga" name="inpHarga" type="text" value="{{ $dataItem->harga }}" style="text-align: right" required="" oninput="getTotal()">
+                <input class="form-control angka" id="inpHarga" name="inpHarga" type="text" placeholder="0" value="{{ $dataItem->harga }}" style="text-align: right" required="" oninput="getTotal()">
             </div>
             <label class="col-md-6 text-start">Jumlah</label>
             <div class="col-md-6">
-                <input class="form-control angka" id="inpJumlah" name="inpJumlah" value="{{ $dataItem->jumlah }}" type="text" style="text-align: right" required="" oninput="getTotal()">
+                <input class="form-control angka" id="inpJumlah" name="inpJumlah" placeholder="0" value="{{ $dataItem->jumlah }}" type="text" style="text-align: right" required="" oninput="getTotal()">
                 <input type="hidden" name="jumlahOld" id="jumlahOld" value="{{ $dataItem->jumlah }}">
             </div>
             <label class="col-md-6 text-start">Sub Total  (Rp.)</label>
@@ -33,24 +33,46 @@
 </div>
 <script>
     $(document).ready(function () {
-        const forms = document.querySelectorAll(".needs-validation");
-        Array.from(forms).forEach((form) => {
-            form.addEventListener(
-            "submit",
-            (event) => {
-                if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                }
-
-                form.classList.add("was-validated");
+        $("#formEditItem").validate({
+            rules: {
+                inpHarga: {
+                    required: true,
+                    number: true,
+                    min: 0 // must be at least 1 (greater than 0)
+                },
+                inpJumlah: {
+                    required: true,
+                    number: true,
+                    min: 0 // must be at least 1 (greater than 0)
+                },
             },
-            false
-            );
+            messages: {
+                inpHarga: {
+                    required: "Inputan nominal harga beli tidak boleh kosong",
+                    number: "Inputan nominal harga beli harus berupa angka",
+                    min: "Nominal harga beli harus lebih besar dari 0"
+                },
+                inpJumlah: {
+                    required: "Inputan jumlah item tidak boleh kosong",
+                    number: "Inputan jumlag item harus berupa angka",
+                    min: "Jumlah item harus lebih besar dari 0"
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
         });
         $('#formEditItem').submit(function (e) {
             var idHead = $("#idHead").val();
             e.preventDefault(); // Prevent default form submission
+            if (!$(this).valid()) {
+                return false;
+            }
             $.ajax({
                 url: "{{ url('pembelian/updateItem') }}/"+$("#idDetail").val(), // Update this with your route
                 type: "POST",

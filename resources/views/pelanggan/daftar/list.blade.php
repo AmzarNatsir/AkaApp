@@ -36,6 +36,7 @@
                               <th style="width: 15%">Wilayah</th>
                               <th style="width: 15%">Paket</th>
                               <th style="width: 15%">Sales</th>
+                              <th style="width: 10%">Aktivasi</th>
                               <th style="width: 5%"></th>
                             </tr>
                           </thead>
@@ -72,6 +73,7 @@
                 { data: 'wilayah' },
                 { data: 'paket_internet' },
                 { data: 'sales' },
+                { data: 'tgl_aktivasi' },
                 { data: 'act' },
             ],
             responsive: true,
@@ -86,5 +88,41 @@
             $("#form_list_pembayaran").load("{{ url('pelanggan/listPembayaranPelanggan') }}/"+$(this).val());
         });
     });
+    var konfirmDelete = function(el) {
+        Swal.fire({
+            title: 'Yakin akan menghapus data pelanggan?',
+            text: 'Hapus data pelanggan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('pelanggan/destroyPelangganAktif') }}/" + $(el).val(),
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                $('#table_view').DataTable().ajax.reload();
+                            });
+                        } else {
+                            Swal.fire('Oops!', 'Data gagal dihapus!', 'warning');
+                        }
+                    }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Penghapusan data dibatalkan', 'info');
+            }
+        });
+    }
 </script>
 @endsection

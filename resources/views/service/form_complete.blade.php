@@ -35,6 +35,18 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
+                                <label class="form-label" for="inpMetode_Bayar">Metode Pembayaran:<span class="font-danger">*</span></label>
+                                <select class="form-select select" id="inpMetode_Bayar" name="inpMetode_Bayar" required>
+                                    <option value="">Pilih Metode Pembayaran</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
                                 <label class="form-label" for="inpSN_ONT">Serial Number ONT:<span class="font-danger">*</span></label>
                                 <input class="form-control" id="inpSN_ONT" name="inpSN_ONT" type="text" maxlength="100" required>
                             </div>
@@ -173,8 +185,121 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#completeForm").validate({
+            rules: {
+                inpMetode_Bayar: {
+                    required: true,
+                },
+                inpSN_ONT: {
+                    required: true,
+                },
+                inpModel_ONT: {
+                    required: true,
+                },
+                inpODP: {
+                    required: true,
+                },
+                inpTikorODP: {
+                    required: true,
+                },
+                inpTikorPelanggan: {
+                    required: true,
+                },
+                inpPort: {
+                    required: true,
+                },
+                inpPortIfle: {
+                    required: true,
+                },
+                inpSplitter: {
+                    required: true,
+                },
+                inpKabelDC: {
+                    required: true,
+                },
+                fileRumah: {
+                    required: true,
+                },
+                fileODP: {
+                    required: true,
+                },
+                fileOntTerpasang: {
+                    required: true,
+                },
+                fileOntBelakang: {
+                    required: true,
+                },
+                fileRedamanDiOdp: {
+                    required: true,
+                },
+                fileRedamanRumahPelanggan: {
+                    required: true,
+                },
+            },
+            messages: {
+                inpMetode_Bayar: {
+                    required: "Pilihan metode pembayaran tidak boleh kosong",
+                },
+                inpSN_ONT: {
+                    required: "Inputan Serial Number ONT tidak boleh kosong",
+                },
+                inpModel_ONT: {
+                    required: "Inputan Model ONT tidak boleh kosong",
+                },
+                inpODP: {
+                    required: "Inputan ODP tidak boleh kosong",
+                },
+                inpTikorODP: {
+                    required: "Inputan Titik Kordinat ODP tidak boleh kosong",
+                },
+                inpTikorPelanggan: {
+                    required: "Inputan Titik Kordinat Pelanggan tidak boleh kosong",
+                },
+                inpPort: {
+                    required: "Inputan Port tidak boleh kosong",
+                },
+                inpPortIfle: {
+                    required: "Inputan Port Ifle tidak boleh kosong",
+                },
+                inpSplitter: {
+                    required: "Inputan Splitter tidak boleh kosong",
+                },
+                inpKabelDC: {
+                    required: "Inputan Kabel DC tidak boleh kosong",
+                },
+                fileRumah: {
+                    required: "Upload Gambar Rumah tidak boleh kosong",
+                },
+                fileODP: {
+                    required: "Upload Gambar ODP tidak boleh kosong",
+                },
+                fileOntTerpasang: {
+                    required: "Upload Gambar ONT Terpasang tidak boleh kosong",
+                },
+                fileOntBelakang: {
+                    required: "Upload Gambar ONT Bagian Belakang tidak boleh kosong",
+                },
+                fileRedamanDiOdp: {
+                    required: "Upload Gambar Redaman ODP tidak boleh kosong",
+                },
+                fileRedamanRumahPelanggan: {
+                    required: "Upload Gambar Redaman Rumah tidak boleh kosong",
+                }
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
+        });
         $('#completeForm').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+            if (!$(this).valid()) {
+                return false;
+            }
             let formData = new FormData(document.getElementById('completeForm'));
             $.ajax({
                 url: "{{ route('service.storeFormComplete') }}", // Update this with your route

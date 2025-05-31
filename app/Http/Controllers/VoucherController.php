@@ -410,7 +410,7 @@ class VoucherController extends Controller
                 $status = "open";
             } else {
                 $status = "close";
-            }   
+            }
             $idHead = $request->postHeadID;
             VoucherHeadModel::find($idHead)->update([
                 "total_voucher" => str_replace(",","", $request['inpTotalTerjual']),
@@ -534,7 +534,7 @@ class VoucherController extends Controller
         $ket_periode = (empty($dataH->first()->bulan)) ? "" : General::get_nama_bulan($dataH->first()->bulan)." ".$dataH->first()->tahun;
         $idH = (empty($dataH->first()->id)) ? NULL : $dataH->first()->id;
         $data = [
-            'data_head' => $dataH->first(),
+            'data_head' => $dataH,
             'periode' => $ket_periode,
            "list_penjualan" => VoucherDetailModel::where('head_id', $id)->get()
         ];

@@ -10,12 +10,12 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="inpHargaModal">Harga Modal</label>
-                <input class="form-control angka" id="inpHargaModal" name="inpHargaModal" type="text" value="0" style="text-align: right" required="">
+                <input class="form-control angka" id="inpHargaModal" name="inpHargaModal" type="text" placeholder="0" style="text-align: right" required="" onblur="changeToNull(this)" data-no-zero>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="inpHargaJual">Harga Jual</label>
-                <input class="form-control angka" id="inpHargaJual" name="inpHargaJual" type="text" value="0" style="text-align: right" required="">
+                <input class="form-control angka" id="inpHargaJual" name="inpHargaJual" type="text" placeholder="0" style="text-align: right" required="" onblur="changeToNull(this)" data-no-zero>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="modal-footer">
@@ -37,7 +37,23 @@
                 event.preventDefault();
                 event.stopPropagation();
                 }
+                // Validasi tambahan: cek input yang tidak boleh bernilai 0
+                const invalidZeroFields = form.querySelectorAll("[data-no-zero]");
+                let hasZeroValue = false;
 
+                invalidZeroFields.forEach((field) => {
+                    if (field.value.trim() === "0") {
+                        field.setCustomValidity("Nilai tidak boleh 0");
+                        hasZeroValue = true;
+                    } else {
+                        field.setCustomValidity("");
+                    }
+                });
+
+                if (hasZeroValue) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
                 form.classList.add("was-validated");
             },
             false
@@ -74,4 +90,11 @@
             });
         });
     });
+    var changeToNull = function(el)
+    {
+        if($(el).val()=="")
+        {
+            $(el).val("0");
+        }
+    }
 </script>

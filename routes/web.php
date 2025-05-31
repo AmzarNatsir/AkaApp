@@ -281,6 +281,8 @@ Route::middleware('auth')->group(function ()
         //pembaharuan data
         Route::get('pembaharuanData/{id}', [PelangganController::class, 'pembaharuanData'])->name('pelanggan.pembaharuanData');
         Route::put('simpanPembaharuanDataPelanggan/{id}', [PelangganController::class, 'simpanPembaharuanDataPelanggan'])->name('pelanggan.simpanPembaharuanDataPelanggan');
+        Route::put('simpanPembaharuanDataPelangganAll/{id}', [PelangganController::class, 'simpanPembaharuanDataPelangganAll'])->name('pelanggan.simpanPembaharuanDataPelangganAll');
+        Route::get('destroyPelangganAktif/{id}', [PelangganController::class, 'destroyPelangganAktif'])->name('pelanggan.destroyPelangganAktif');
         //tools
         Route::get('importPelanggan', [PelangganController::class, 'importData'])->name('pelanggan.import');
         Route::post('doImportPelanggan', [PelangganController::class, 'doImportData'])->name('pelanggan.doImportPelanggan');
@@ -314,5 +316,10 @@ Route::middleware('auth')->group(function ()
         //keuangan
         Route::get('keuangan', [ReportController::class, 'keuangan'])->name('report.keuangan');
         Route::post('keuanganGetData', [ReportController::class, 'filterKeuangan'])->name('report.keuangan.getdata');
+        Route::get('keuanganPrint/{tanggal_awal}/{tanggal_akhir}', [ReportController::class, 'keuanganPrint'])->name('report.keuangan.print');
+        //pelanggan - pembayaran
+        Route::get('pembayaranPelanggan', [ReportController::class, 'pembayaranPelanggan'])->name('report.pelanggan.pembayaran');
+        Route::post('pembayaranPelangganGetData', [ReportController::class, 'pembayaranPelangganGetData'])->name('report.pelanggan.pembayaran.getdata');
+        Route::get('pembayaranPelangganPrint/{bulan}/{tahun}/{wilayah}', [ReportController::class, 'pembayaranPelangganPrint'])->name('report.pelanggan.pembayaran.print');
     });
 });

@@ -124,19 +124,8 @@ class MaterialController extends Controller
             $path = NULL;
             if($request->hasFile('inpFile'))
             {
-
-                $path = storage_path("app/public/material");
-                if(!File::isDirectory($path)) {
-                    $path = Storage::disk('public')->makeDirectory('material');
-                }
                 $image = $request->file('inpFile');
-                $fileImage = time() . '.' . $image->getClientOriginalExtension();
-                $image_resize = Image::read($image->getRealPath());
-                $image_resize->resize(300, 300, function($construction){
-                    $construction->aspectRatio();
-                });
-                $image_resize->save(storage_path("app/public/material/".$fileImage));
-
+                $fileImage = General::upload_gambar($image, "material", "material");
             }
             $insert = [
                 'material' => $request->inpMaterial,
@@ -206,18 +195,8 @@ class MaterialController extends Controller
                 if(!empty($fileImage)) {
                     $this->del_image_folder($material);
                 }
-                $path = storage_path("app/public/material");
-                if(!File::isDirectory($path)) {
-                    $path = Storage::disk('public')->makeDirectory('material');
-                }
                 $image = $request->file('inpFile');
-                $fileImage = time() . '.' . $image->getClientOriginalExtension();
-                $image_resize = Image::read($image->getRealPath());
-                $image_resize->resize(300, 300, function($construction){
-                    $construction->aspectRatio();
-                });
-                $image_resize->save(storage_path("app/public/material/".$fileImage));
-
+                $fileImage = General::upload_gambar($image, "material", "material");
             }
             $update = [
                 'material' => $request->inpMaterial,

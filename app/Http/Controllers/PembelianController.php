@@ -68,7 +68,10 @@ class PembelianController extends Controller
     {
         $currTotal = BeliDetailModel::where('header_id', $id)->sum('sub_total');
         $data = [
-            'listMaterial' => Material::orderBy('material')->get(),
+            'listMaterial' => Material::with([
+                'getMerek',
+                'getSatuan'
+            ])->orderBy('material')->get(),
             'idHead' => $id,
             'tempTotal' => $currTotal
         ];
@@ -140,11 +143,12 @@ class PembelianController extends Controller
         if($query){
             $counter = $request->input('start') + 1;
             foreach($query as $r){
-                $material = '<div class="product-names">
-                                <div class="light-product-box"><a href="'.url(Storage::url('material/'.$r->getMaterial->gambar)).'" data-fancybox data-caption="'. $r->getMaterial->material.'"><img class="img-fluid" src="'.url(Storage::url('material/'.$r->getMaterial->gambar)).'" alt="gambar"></a></div>
+                $merek = (empty($r->getMaterial->merek_id)) ? '-' : $r->getMaterial->getMerek->merek;
+                $material ='<div class="product-names">
+                                <div class="light-product-box"><a href="'.url(Storage::url('material/'.$r->getMaterial->gambar)).'" data-fancybox data-caption="'.$r->getMaterial->material.'"><img class="img-fluid" src="'.url(Storage::url('material/'.$r->getMaterial->gambar)).'" alt="gambar"></a></div>
                                 <ul style="padding: 0;margin: 0;list-style: none;">
                                     <li class="invoice-title invoice-text">
-                                    <h4 style="font-weight:600; margin:4px 0px; font-size: 18px;">'.$r->getMaterial->material.'</h4><span style="opacity: 0.8; font-size: 16px;">'.$r->getMaterial->getMerek->merek.'</span><br><span style="opacity: 0.8; font-size: 16px;">'. $r->getMaterial->deskripsi.'</span></li>
+                                    <h4 style="font-weight:600; margin:4px 0px; font-size: 18px;">'.$r->getMaterial->material.'</h4><span style="opacity: 0.8; font-size: 16px;">'.$merek.'</span><br><span style="opacity: 0.8; font-size: 16px;">'. $r->getMaterial->deskripsi.'</span></li>
                             </ul>
                               </div>';
                 if($dataH->status=="draft") {

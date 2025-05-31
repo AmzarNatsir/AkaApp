@@ -39,6 +39,12 @@
                                                         <ul class="pro-services">
                                                         <li>
                                                             <div class="media-body">
+                                                                <h5>Metode Pembayaran :</h5>
+                                                                <p>{{ $r->metode_bayar }}</p>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="media-body">
                                                                 <h5>Serian Number ONT :</h5>
                                                                 <p>{{ $r->sn_ont }}</p>
                                                             </div>

@@ -7,21 +7,20 @@
             <input type="hidden" name="nilTotal" id="nilTotal" value="{{ $tempTotal }}">
             <div class="col-md-12">
                 <label class="form-label" for="selectItem">Pilih Material</label>
-                <select class="form-select select" id="selectItem" name="selectItem" required="">
+                <select class="form-select select" id="selectItem" name="selectItem">
                     <option selected="" disabled="" value="">Pilihan...</option>
                     @foreach ($listMaterial as $item)
-                        <option value="{{ $item['id'] }}">{{ $item['material'] }}</option>
+                        <option value="{{ $item['id'] }}">{{ $item['material'] }} {{ (empty($item['merek_id'])) ? "" : "(".$item['getMerek']['merek'].")" }}</option>
                     @endforeach
                 </select>
-                <div class="invalid-tooltip">Anda belum memilih item material</div>
             </div>
             <label class="col-md-6 text-start">Harga Beli (Rp.)</label>
             <div class="col-md-6">
-                <input class="form-control angka" id="inpHarga" name="inpHarga" type="text" value="0" style="text-align: right" required="" oninput="getTotal()">
+                <input class="form-control angka" id="inpHarga" name="inpHarga" type="text" placeholder="0" style="text-align: right" required="" oninput="getTotal()">
             </div>
             <label class="col-md-6 text-start">Jumlah</label>
             <div class="col-md-6">
-                <input class="form-control angka" id="inpJumlah" name="inpJumlah" value="0" type="text" style="text-align: right" required="" oninput="getTotal()">
+                <input class="form-control angka" id="inpJumlah" name="inpJumlah" placeholder="0" type="text" style="text-align: right" required="" oninput="getTotal()">
             </div>
             <label class="col-md-6 text-start">Sub Total  (Rp.)</label>
             <div class="col-md-6">
@@ -36,23 +35,53 @@
 </div>
 <script>
     $(document).ready(function () {
-        const forms = document.querySelectorAll(".needs-validation");
-        Array.from(forms).forEach((form) => {
-            form.addEventListener(
-            "submit",
-            (event) => {
-                if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                }
-
-                form.classList.add("was-validated");
+        $("#formAddItem").validate({
+            rules: {
+                selectItem: {
+                    required: true,
+                },
+                inpHarga: {
+                    required: true,
+                    number: true,
+                    min: 0 // must be at least 1 (greater than 0)
+                },
+                inpJumlah: {
+                    required: true,
+                    number: true,
+                    min: 0 // must be at least 1 (greater than 0)
+                },
             },
-            false
-            );
+            messages: {
+                selectItem: {
+                    required: "Anda belum memilih material",
+                },
+                inpHarga: {
+                    required: "Inputan nominal harga beli tidak boleh kosong",
+                    number: "Inputan nominal harga beli harus berupa angka",
+                    min: "Nominal harga beli harus lebih besar dari 0"
+                },
+                inpJumlah: {
+                    required: "Inputan jumlah item tidak boleh kosong",
+                    number: "Inputan jumlag item harus berupa angka",
+                    min: "Jumlah item harus lebih besar dari 0"
+                },
+            },
+            errorClass: "text-danger",
+            errorElement: "small",
+            highlight: function(element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element) {
+                $(element).removeClass("is-invalid");
+            }
         });
         $('#formAddItem').submit(function (e) {
             e.preventDefault(); // Prevent default form submission
+
+            if (!$(this).valid()) {
+                return false;
+            }
+
             $.ajax({
                 url: "{{ route('pembelian.storeItem') }}", // Update this with your route
                 type: "POST",
@@ -104,7 +133,8 @@
     }
     function hapus_inputan()
     {
-        $("#selectItem").val("");
+        // $("#selectItem").val("");
+        $("#selectItem").val("").trigger("change");
         $("#inpHarga").val('0');
         $("#inpJumlah").val('0');
         $("#inpSubTotal").val('0');

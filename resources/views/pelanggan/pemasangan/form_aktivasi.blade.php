@@ -180,6 +180,11 @@
                                                                         <h5>Kabel DC : {{ $pemasangan_detail->kabel_dc }}</h5>
                                                                     </div>
                                                                 </li>
+                                                                <li>
+                                                                    <div class="media-body">
+                                                                        <h5>Metode Pembayaran : {{ $pemasangan_detail->metode_bayar }}</h5>
+                                                                    </div>
+                                                                </li>
                                                                 </ul>
                                                             {{-- </div> --}}
                                                         </div>
@@ -291,7 +296,7 @@
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label>Pembayaran Awal (Rp.)</label>
-                                                                <input class="form-control angka" name="inpPembayaranAwal" id="inpPembayaranAwal" type="text" value="0" style="text-align: right" required>
+                                                                <input class="form-control angka" name="inpPembayaranAwal" id="inpPembayaranAwal" type="text" placeholder="0" style="text-align: right" required>
 
                                                             </div>
                                                             <div class="col-md-4">
@@ -329,7 +334,7 @@
                 inpPembayaranAwal: {
                     required: true,
                     number: true,
-                    min: 1 // must be at least 1 (greater than 0)
+                    min: 0 // must be at least 1 (greater than 0)
                 },
             },
             messages: {
